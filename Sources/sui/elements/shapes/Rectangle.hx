@@ -14,7 +14,8 @@ class Rectangle extends Element {
 		SUI.graphics.color = color;
 		SUI.graphics.opacity = finalOpacity;
 		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
-		SUI.graphics.fillRect(finalX, finalY, finalW, finalH);
+		SUI.graphics.pushScale(scaleX, scaleY);
+		SUI.graphics.fillRect(finalX, finalY, width, height);
 		SUI.graphics.popTransformation();
 	}
 }
