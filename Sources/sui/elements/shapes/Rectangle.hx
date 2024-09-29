@@ -1,12 +1,11 @@
-package sui.shapes;
+package sui.elements.shapes;
 
-import sui.Element.ElementProperties;
 import kha.Color;
 import kha.FastFloat;
 // sui
 import sui.SUI;
+import sui.elements.Element.ElementProperties;
 
-@:structInit
 class Rectangle extends Element {
 	public var radius:FastFloat;
 	public var color:Color;
@@ -27,6 +26,7 @@ class Rectangle extends Element {
 	}
 }
 
+@:structInit
 class RectangleProperties extends ElementProperties {
 	public var radius:FastFloat = 0.;
 	public var color:Color = Color.White;

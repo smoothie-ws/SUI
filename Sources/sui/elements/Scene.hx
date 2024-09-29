@@ -1,4 +1,4 @@
-package sui;
+package sui.elements;
 
 class Scene extends Element {
 	public function update() {

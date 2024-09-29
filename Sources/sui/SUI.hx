@@ -6,6 +6,8 @@ import kha.FastFloat;
 import kha.System;
 import kha.Color;
 import kha.graphics2.Graphics;
+// sui
+import sui.elements.Scene;
 
 class SUI {
 	public static var graphics:Graphics;
