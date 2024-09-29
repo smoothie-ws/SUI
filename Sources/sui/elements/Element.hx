@@ -1,5 +1,6 @@
 package sui.elements;
 
+import kha.Color;
 import kha.FastFloat;
 
 @:structInit
@@ -30,6 +31,8 @@ class Element {
 	public var padding:Sides = null;
 	public var margin:Sides = null;
 	public var border:Sides = null;
+	// color
+	public var color:Color = Color.White;
 
 	// final transform
 	public var finalRotation(get, never):FastFloat;
@@ -73,34 +76,37 @@ class Element {
 		return parent != null ? parent.scaleY * scaleY * height : scaleY * height;
 	}
 
-	public inline final function applyTransformation() {
+	public function draw() {}
+
+	public inline final function resize() {
+		for (child in children)
+			child.resize();
+	}
+
+	public inline final function render() {
+		SUI.graphics.color = color;
 		SUI.graphics.opacity = finalOpacity;
 		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
 		SUI.graphics.pushScale(scaleX, scaleY);
-	}
-
-	public inline final function popTransformation() {
+		draw();
 		SUI.graphics.popTransformation();
 	}
 
-	function draw() {}
-
-	public function drawAll() {
+	public function renderTree() {
 		if (!visible)
 			return;
 
-		draw();
-		for (child in children) {
-			child.drawAll();
-		}
+		render();
+		for (child in children)
+			child.renderTree();
 	}
 
-	public final function addChild(child:Element) {
+	public inline final function addChild(child:Element) {
 		children.push(child);
 		child.parent = this;
 	}
 
-	public final function removeChild(child:Element) {
+	public inline final function removeChild(child:Element) {
 		var index = children.indexOf(child);
 		if (index != -1) {
 			children.splice(index, 1);
@@ -108,22 +114,22 @@ class Element {
 		}
 	}
 
-	public final function removeChildren() {
+	public inline final function removeChildren() {
 		for (child in children) {
 			child.parent = null;
 		}
 		children = [];
 	}
 
-	public final function setParent(parent:Element) {
+	public inline final function setParent(parent:Element) {
 		parent.addChild(this);
 	}
 
-	public final function removeParent() {
+	public inline final function removeParent() {
 		parent.removeChild(this);
 	}
 
-	public final function setAnchors(top:Float, right:Float, bottom:Float, left:Float) {
+	public inline final function setAnchors(top:Float, right:Float, bottom:Float, left:Float) {
 		anchors = {
 			top: top,
 			right: right,
@@ -132,7 +138,7 @@ class Element {
 		};
 	}
 
-	public final function setPadding(top:Float, right:Float, bottom:Float, left:Float) {
+	public inline final function setPadding(top:Float, right:Float, bottom:Float, left:Float) {
 		padding = {
 			top: top,
 			right: right,
@@ -141,7 +147,7 @@ class Element {
 		};
 	}
 
-	public final function setMargin(top:Float, right:Float, bottom:Float, left:Float) {
+	public inline final function setMargin(top:Float, right:Float, bottom:Float, left:Float) {
 		margin = {
 			top: top,
 			right: right,
@@ -150,7 +156,7 @@ class Element {
 		};
 	}
 
-	public final function setBorder(top:Float, right:Float, bottom:Float, left:Float) {
+	public inline final function setBorder(top:Float, right:Float, bottom:Float, left:Float) {
 		border = {
 			top: top,
 			right: right,

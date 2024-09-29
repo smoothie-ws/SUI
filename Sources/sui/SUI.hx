@@ -31,7 +31,7 @@ class SUI {
 	public static inline function render(graphics:Graphics) {
 		SUI.graphics = graphics;
 		SUI.graphics.begin(true, Color.fromBytes(255, 255, 255));
-		scene.drawAll();
+		scene.renderTree();
 		SUI.graphics.end();
 	}
 

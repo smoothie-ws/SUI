@@ -1,6 +1,5 @@
 package sui.elements.shapes;
 
-import kha.Color;
 import kha.FastFloat;
 import kha.math.Vector2;
 // sui
@@ -8,15 +7,11 @@ import sui.SUI;
 
 @:structInit
 class Triangle extends Element {
-	public var color:Color = Color.White;
 	public var v1:Vector2 = {x: 0., y: 0.}
 	public var v2:Vector2 = {x: 0., y: 0.}
 	public var v3:Vector2 = {x: 0., y: 0.}
 
 	override function draw() {
-		applyTransformation();
-		SUI.graphics.color = color;
-
 		final x1:FastFloat = finalX + v1.x;
 		final y1:FastFloat = finalY + v1.y;
 		final x2:FastFloat = finalX + v2.x;
@@ -24,7 +19,5 @@ class Triangle extends Element {
 		final x3:FastFloat = finalX + v3.x;
 		final y3:FastFloat = finalY + v3.y;
 		SUI.graphics.fillTriangle(x1, y1, x2, y2, x3, y3);
-
-		popTransformation();
 	}
 }

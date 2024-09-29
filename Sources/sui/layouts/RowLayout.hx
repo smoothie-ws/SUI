@@ -10,7 +10,7 @@ class RowLayout extends Element {
 	public var alignment:Alignment = Alignment.Default;
 	public var spacing:FastFloat = 0.;
 
-	override public function drawAll() {
+	override public function renderTree() {
 		if (visible) {
 			final yDelta = finalH / children.length;
 			var yOffset = 0.;
@@ -22,7 +22,7 @@ class RowLayout extends Element {
 
 			for (child in children) {
 				child.y = yOffset;
-				child.drawAll();
+				child.renderTree();
 				yOffset += yDelta;
 			}
 		}
