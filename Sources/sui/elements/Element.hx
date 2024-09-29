@@ -2,33 +2,34 @@ package sui.elements;
 
 import kha.FastFloat;
 
+@:structInit
 class Element {
 	// position
-	public var x:FastFloat;
-	public var y:FastFloat;
-	public var z:Int;
+	public var x:FastFloat = 0.;
+	public var y:FastFloat = 0.;
+	public var z:Int = 0;
 	// dimensions
-	public var width:FastFloat;
-	public var height:FastFloat;
+	public var width:FastFloat = 0.;
+	public var height:FastFloat = 0.;
 	// scale
-	public var scaleX:FastFloat;
-	public var scaleY:FastFloat;
+	public var scaleX:FastFloat = 1.;
+	public var scaleY:FastFloat = 1.;
 	// rotation
-	public var rotation:FastFloat;
+	public var rotation:FastFloat = 0.;
 	// opacity
-	public var opacity:FastFloat;
+	public var opacity:FastFloat = 1.;
 	// relations
-	public var parent:Element;
-	public var children:Array<Element>;
+	public var parent:Element = null;
+	public var children:Array<Element> = [];
 	// flags
-	public var visible:Bool;
-	public var enabled:Bool;
-	public var clip:Bool;
+	public var visible:Bool = true;
+	public var enabled:Bool = true;
+	public var clip:Bool = true;
 	// box
-	public var anchors:Sides;
-	public var padding:Sides;
-	public var margin:Sides;
-	public var border:Sides;
+	public var anchors:Sides = null;
+	public var padding:Sides = null;
+	public var margin:Sides = null;
+	public var border:Sides = null;
 
 	// final transform
 	public var finalRotation(get, never):FastFloat;
@@ -38,23 +39,6 @@ class Element {
 	public var finalZ(get, never):Int;
 	public var finalW(get, never):FastFloat;
 	public var finalH(get, never):FastFloat;
-
-	public function new(properties:ElementProperties) {
-		x = properties.x;
-		y = properties.y;
-		z = properties.z;
-		width = properties.width;
-		height = properties.height;
-		scaleX = properties.scaleX;
-		scaleY = properties.scaleY;
-		rotation = properties.rotation;
-		opacity = properties.opacity;
-		parent = properties.parent;
-		children = properties.children;
-		visible = properties.visible;
-		enabled = properties.enabled;
-		clip = properties.clip;
-	}
 
 	function get_finalRotation():FastFloat {
 		return parent != null ? parent.finalRotation + rotation : rotation;
@@ -158,31 +142,6 @@ class Element {
 			left: left
 		};
 	}
-}
-
-@:structInit
-class ElementProperties {
-	// position
-	public var x:FastFloat = 0.;
-	public var y:FastFloat = 0.;
-	public var z:Int = 0;
-	// dimensions
-	public var width:FastFloat = 0.;
-	public var height:FastFloat = 0.;
-	// scale
-	public var scaleX:FastFloat = 1.;
-	public var scaleY:FastFloat = 1.;
-	// rotation
-	public var rotation:FastFloat = 0.;
-	// opacity
-	public var opacity:FastFloat = 1.;
-	// relations
-	public var parent:Element = null;
-	public var children:Array<Element> = [];
-	// flags
-	public var visible:Bool = true;
-	public var enabled:Bool = true;
-	public var clip:Bool = false;
 }
 
 typedef Sides = {

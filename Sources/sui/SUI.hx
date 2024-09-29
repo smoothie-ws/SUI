@@ -11,7 +11,7 @@ import sui.elements.Scene;
 
 class SUI {
 	public static var graphics:Graphics;
-	public static var scene:Scene = new Scene({});
+	public static var scene:Scene;
 
 	public static inline function start(options:SUIOptions) {
 		System.start({width: options.width, height: options.height, framebuffer: {samplesPerPixel: options.samplesPerPixel}}, function(_) {
