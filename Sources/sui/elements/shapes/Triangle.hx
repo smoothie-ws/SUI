@@ -14,10 +14,8 @@ class Triangle extends Element {
 	public var v3:Vector2 = {x: 0., y: 0.}
 
 	override function draw() {
+		applyTransformation();
 		SUI.graphics.color = color;
-		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
-		SUI.graphics.pushScale(scaleX, scaleY);
 
 		final x1:FastFloat = finalX + v1.x;
 		final y1:FastFloat = finalY + v1.y;
@@ -27,6 +25,6 @@ class Triangle extends Element {
 		final y3:FastFloat = finalY + v3.y;
 		SUI.graphics.fillTriangle(x1, y1, x2, y2, x3, y3);
 
-		SUI.graphics.popTransformation();
+		popTransformation();
 	}
 }

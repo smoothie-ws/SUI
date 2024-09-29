@@ -11,11 +11,9 @@ class Rectangle extends Element {
 	public var color:Color = Color.White;
 
 	override function draw() {
+		applyTransformation();
 		SUI.graphics.color = color;
-		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
-		SUI.graphics.pushScale(scaleX, scaleY);
 		SUI.graphics.fillRect(finalX, finalY, width, height);
-		SUI.graphics.popTransformation();
+		popTransformation();
 	}
 }

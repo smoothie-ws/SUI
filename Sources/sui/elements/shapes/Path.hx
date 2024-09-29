@@ -14,10 +14,8 @@ class Path extends Element {
 	public var end:Vector2 = {x: 0., y: 0.}
 
 	override function draw() {
+		applyTransformation();
 		SUI.graphics.color = color;
-		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
-		SUI.graphics.pushScale(scaleX, scaleY);
 
 		final x1:FastFloat = finalX + start.x;
 		final y1:FastFloat = finalY + start.y;
@@ -25,6 +23,6 @@ class Path extends Element {
 		final y2:FastFloat = finalY + end.y;
 		SUI.graphics.drawLine(x1, y1, x2, y2, lineWidth);
 
-		SUI.graphics.popTransformation();
+		popTransformation();
 	}
 }

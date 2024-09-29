@@ -73,6 +73,16 @@ class Element {
 		return parent != null ? parent.scaleY * scaleY * height : scaleY * height;
 	}
 
+	public inline final function applyTransformation() {
+		SUI.graphics.opacity = finalOpacity;
+		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
+		SUI.graphics.pushScale(scaleX, scaleY);
+	}
+
+	public inline final function popTransformation() {
+		SUI.graphics.popTransformation();
+	}
+
 	function draw() {}
 
 	public function drawAll() {

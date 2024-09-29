@@ -11,10 +11,8 @@ class Polygon extends Element {
 	public var vertices:Array<Vector2> = [{}];
 
 	override function draw() {
+		applyTransformation();
 		SUI.graphics.color = color;
-		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
-		SUI.graphics.pushScale(scaleX, scaleY);
 
 		var iterator = vertices.iterator();
 
@@ -32,6 +30,6 @@ class Polygon extends Element {
 			v1 = v2;
 		}
 
-		SUI.graphics.popTransformation();
+		popTransformation();
 	}
 }
