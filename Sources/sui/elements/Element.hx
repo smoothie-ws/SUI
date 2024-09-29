@@ -34,6 +34,7 @@ class Element {
 	// final transform
 	public var finalRotation(get, never):FastFloat;
 	public var finalOpacity(get, never):FastFloat;
+	public var finalEnabled(get, never):Bool;
 	public var finalX(get, never):FastFloat;
 	public var finalY(get, never):FastFloat;
 	public var finalZ(get, never):Int;
@@ -46,6 +47,10 @@ class Element {
 
 	function get_finalOpacity():FastFloat {
 		return parent != null ? parent.finalOpacity * opacity : opacity;
+	}
+
+	function get_finalEnabled():Bool {
+		return parent != null ? parent.finalEnabled && enabled : enabled;
 	}
 
 	public inline final function get_finalX():FastFloat {
@@ -70,12 +75,13 @@ class Element {
 
 	function draw() {}
 
-	public final function drawAll() {
-		if (visible) {
-			draw();
-			for (child in children) {
-				child.drawAll();
-			}
+	public function drawAll() {
+		if (!visible)
+			return;
+
+		draw();
+		for (child in children) {
+			child.drawAll();
 		}
 	}
 

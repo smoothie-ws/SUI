@@ -7,8 +7,8 @@ import sui.SUI;
 
 @:structInit
 class Rectangle extends Element {
-	public var radius:FastFloat;
-	public var color:Color;
+	public var radius:FastFloat = 0.;
+	public var color:Color = Color.White;
 
 	override function draw() {
 		SUI.graphics.color = color;
