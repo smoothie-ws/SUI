@@ -26,11 +26,8 @@ class Element {
 	public var visible:Bool = true;
 	public var enabled:Bool = true;
 	public var clip:Bool = true;
-	// box
-	public var anchors:Sides = null;
-	public var padding:Sides = null;
-	public var margin:Sides = null;
-	public var border:Sides = null;
+	// anchors
+	public var anchors:Anchors = {};
 	// color
 	public var color:Color = Color.White;
 
@@ -86,8 +83,8 @@ class Element {
 	public inline final function render() {
 		SUI.graphics.color = color;
 		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
 		SUI.graphics.pushScale(scaleX, scaleY);
+		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
 		draw();
 		SUI.graphics.popTransformation();
 	}
@@ -128,47 +125,4 @@ class Element {
 	public inline final function removeParent() {
 		parent.removeChild(this);
 	}
-
-	public inline final function setAnchors(top:Float, right:Float, bottom:Float, left:Float) {
-		anchors = {
-			top: top,
-			right: right,
-			bottom: bottom,
-			left: left
-		};
-	}
-
-	public inline final function setPadding(top:Float, right:Float, bottom:Float, left:Float) {
-		padding = {
-			top: top,
-			right: right,
-			bottom: bottom,
-			left: left
-		};
-	}
-
-	public inline final function setMargin(top:Float, right:Float, bottom:Float, left:Float) {
-		margin = {
-			top: top,
-			right: right,
-			bottom: bottom,
-			left: left
-		};
-	}
-
-	public inline final function setBorder(top:Float, right:Float, bottom:Float, left:Float) {
-		border = {
-			top: top,
-			right: right,
-			bottom: bottom,
-			left: left
-		};
-	}
 }
-
-typedef Sides = {
-	var top:Float;
-	var right:Float;
-	var bottom:Float;
-	var left:Float;
-};
