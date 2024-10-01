@@ -22,12 +22,6 @@ class Anchors {
 	public var topMargin:FastFloat = null;
 	public var rightMargin:FastFloat = null;
 	public var bottomMargin:FastFloat = null;
-	// padding
-	public var padding:FastFloat = 0.;
-	public var leftPadding:FastFloat = null;
-	public var topPadding:FastFloat = null;
-	public var rightPadding:FastFloat = null;
-	public var bottomPadding:FastFloat = null;
 }
 
 @:structInit

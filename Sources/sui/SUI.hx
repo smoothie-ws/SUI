@@ -7,11 +7,11 @@ import kha.System;
 import kha.Framebuffer;
 import kha.graphics2.Graphics;
 // sui
-import sui.elements.Scene;
+import sui.elements.Root;
 
 class SUI {
 	public static var graphics:Graphics;
-	public static var scene:Scene = {};
+	public static var root:Root = {};
 
 	public static inline function start(?options:SUIOptions) {
 		if (options == null)
@@ -28,14 +28,14 @@ class SUI {
 	}
 
 	static inline function init(window:Window) {
-		Scheduler.addTimeTask(scene.update, 0, 1 / Display.primary.frequency);
+		Scheduler.addTimeTask(root.update, 0, 1 / Display.primary.frequency);
 		System.notifyOnFrames(render);
 	}
 
 	static inline function render(frames:Array<kha.Framebuffer>) {
 		SUI.graphics = frames[0].g2;
 		SUI.graphics.begin(true, Color.fromBytes(255, 255, 255));
-		scene.renderTree();
+		root.drawTree();
 		SUI.graphics.end();
 	}
 }

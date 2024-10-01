@@ -32,19 +32,12 @@ class Element {
 	public var color:Color = Color.white;
 
 	// final transform
-	public var finalRotation(get, never):FastFloat;
 	public var finalOpacity(get, never):FastFloat;
 	public var finalEnabled(get, never):Bool;
 	public var finalX(get, never):FastFloat;
 	public var finalY(get, never):FastFloat;
 	public var finalW(get, never):FastFloat;
 	public var finalH(get, never):FastFloat;
-	public var finalScaleX(get, never):FastFloat;
-	public var finalScaleY(get, never):FastFloat;
-
-	inline function get_finalRotation():FastFloat {
-		return parent == null ? rotation : parent.finalRotation + rotation;
-	}
 
 	inline function get_finalOpacity():FastFloat {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
@@ -58,9 +51,6 @@ class Element {
 		var baseX = anchors.left.value + x;
 
 		baseX += anchors.leftMargin != null ? anchors.leftMargin : anchors.margins;
-		if (parent != null)
-			baseX += parent.anchors.leftPadding != null ? parent.anchors.leftPadding : parent.anchors.padding;
-
 		return baseX;
 	}
 
@@ -68,9 +58,6 @@ class Element {
 		var baseY = anchors.top.value + y;
 
 		baseY += anchors.topMargin != null ? anchors.topMargin : anchors.margins;
-		if (parent != null)
-			baseY += parent.anchors.topPadding != null ? parent.anchors.topPadding : parent.anchors.padding;
-
 		return baseY;
 	}
 
@@ -78,9 +65,6 @@ class Element {
 		var baseW = anchors.right.value + width;
 
 		baseW -= anchors.rightMargin != null ? anchors.rightMargin : anchors.margins;
-		if (parent != null)
-			baseW -= parent.anchors.rightPadding != null ? parent.anchors.rightPadding : parent.anchors.padding;
-
 		return baseW;
 	}
 
@@ -88,38 +72,25 @@ class Element {
 		var baseH = anchors.bottom.value + height;
 
 		baseH -= anchors.bottomMargin != null ? anchors.bottomMargin : anchors.margins;
-		if (parent != null)
-			baseH -= parent.anchors.bottomPadding != null ? parent.anchors.bottomPadding : parent.anchors.padding;
-
 		return baseH;
-	}
-
-	inline function get_finalScaleX():FastFloat {
-		return parent == null ? scaleX : parent.finalScaleX * scaleX;
-	}
-
-	inline function get_finalScaleY():FastFloat {
-		return parent == null ? scaleY : parent.finalScaleY * scaleY;
 	}
 
 	public function draw() {}
 
-	public inline final function render() {
-		SUI.graphics.color = kha.Color.fromValue(color);
-		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushScale(finalScaleX, finalScaleY);
-		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
-		draw();
-		SUI.graphics.popTransformation();
-	}
-
-	public function renderTree() {
+	public function drawTree() {
 		if (!visible)
 			return;
 
-		render();
+		SUI.graphics.color = kha.Color.fromValue(color);
+		SUI.graphics.opacity = finalOpacity;
+		SUI.graphics.pushScale(scaleX, scaleY);
+		SUI.graphics.pushRotation(rotation, 0, 0);
+		SUI.graphics.translate(finalX, finalY);
+		draw();
+		SUI.graphics.translate(-finalX, -finalY);
 		for (child in children)
-			child.renderTree();
+			child.drawTree();
+		SUI.graphics.popTransformation();
 	}
 
 	public inline final function addChild(child:Element) {

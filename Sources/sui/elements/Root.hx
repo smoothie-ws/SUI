@@ -1,6 +1,6 @@
 package sui.elements;
 
 @:structInit
-class Scene extends Element {
+class Root extends Element {
 	public inline function update() {}
 }
