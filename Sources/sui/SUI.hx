@@ -1,5 +1,7 @@
 package sui;
 
+import kha.Framebuffer;
+import kha.Window;
 import kha.Display;
 import kha.Scheduler;
 import kha.FastFloat;
@@ -11,25 +13,29 @@ import sui.elements.Scene;
 
 class SUI {
 	public static var graphics:Graphics;
-	public static var scene:Scene;
+	public static var scene:Scene = {};
 
-	public static inline function start(options:SUIOptions) {
-		System.start({width: options.width, height: options.height, framebuffer: {samplesPerPixel: options.samplesPerPixel}}, function(_) {
-			Scheduler.addTimeTask(function() {
-				scene.update();
-			}, 0, 1 / Display.primary.frequency);
-			System.notifyOnFrames(function(frames) {
-				SUI.render(frames[0].g2);
-			});
-		});
+	public static inline function start(?options:SUIOptions) {
+		if (options == null)
+			options = {};
+		System.start({
+			width: options.width,
+			height: options.height,
+			framebuffer: {samplesPerPixel: options.samplesPerPixel}
+		}, init);
 	}
 
 	public static inline function stop() {
 		System.stop();
 	}
 
-	public static inline function render(graphics:Graphics) {
-		SUI.graphics = graphics;
+	static inline function init(window:Window) {
+		Scheduler.addTimeTask(scene.update, 0, 1 / Display.primary.frequency);
+		System.notifyOnFrames(render);
+	}
+
+	static inline function render(frames:Array<kha.Framebuffer>) {
+		SUI.graphics = frames[0].g2;
 		SUI.graphics.begin(true, Color.fromBytes(255, 255, 255));
 		scene.renderTree();
 		SUI.graphics.end();
@@ -44,14 +50,15 @@ class SUI {
 		return Color.fromFloats(r, g, b, a);
 	}
 
-	public static inline function color(color:String) {
-		return Color.fromString(color);
+	public static inline function color(value:String) {
+		return Color.fromString(value);
 	}
 }
 
-typedef SUIOptions = {
-	var title:String;
-	var width:Int;
-	var height:Int;
-	var samplesPerPixel:Int;
+@:structInit
+class SUIOptions {
+	public var title:String = "SUI App";
+	public var width:Int = 800;
+	public var height:Int = 600;
+	public var samplesPerPixel:Int = 2;
 }

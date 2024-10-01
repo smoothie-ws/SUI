@@ -32,53 +32,16 @@ class Element {
 	public var color:Color = Color.White;
 
 	// final transform
-	public var finalRotation(get, never):FastFloat;
-	public var finalOpacity(get, never):FastFloat;
-	public var finalEnabled(get, never):Bool;
-	public var finalX(get, never):FastFloat;
-	public var finalY(get, never):FastFloat;
-	public var finalZ(get, never):Int;
-	public var finalW(get, never):FastFloat;
-	public var finalH(get, never):FastFloat;
-
-	function get_finalRotation():FastFloat {
-		return parent != null ? parent.finalRotation + rotation : rotation;
-	}
-
-	function get_finalOpacity():FastFloat {
-		return parent != null ? parent.finalOpacity * opacity : opacity;
-	}
-
-	function get_finalEnabled():Bool {
-		return parent != null ? parent.finalEnabled && enabled : enabled;
-	}
-
-	public inline final function get_finalX():FastFloat {
-		return parent != null ? parent.get_finalX() + x : x;
-	}
-
-	public inline final function get_finalY():FastFloat {
-		return parent != null ? parent.get_finalY() + y : y;
-	}
-
-	public inline final function get_finalZ():Int {
-		return parent != null ? parent.get_finalZ() + z : z;
-	}
-
-	public inline final function get_finalW():FastFloat {
-		return parent != null ? parent.scaleX * scaleX * width : scaleX * width;
-	}
-
-	public inline final function get_finalH():FastFloat {
-		return parent != null ? parent.scaleY * scaleY * height : scaleY * height;
-	}
+	public var finalRotation:FastFloat = 0.;
+	public var finalOpacity:FastFloat = 1.;
+	public var finalEnabled:Bool = true;
+	public var finalX:FastFloat = 0.;
+	public var finalY:FastFloat = 0.;
+	public var finalZ:Int = 0;
+	public var finalW:FastFloat = 0.;
+	public var finalH:FastFloat = 0.;
 
 	public function draw() {}
-
-	public inline final function resize() {
-		for (child in children)
-			child.resize();
-	}
 
 	public inline final function render() {
 		SUI.graphics.color = color;
