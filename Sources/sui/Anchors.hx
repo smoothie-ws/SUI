@@ -17,42 +17,17 @@ class Anchors {
 	public var horizontalCenter:FastFloat = 0.;
 	public var verticalCenter:FastFloat = 0.;
 	// margins
-	public var leftMargin:FastFloat = 0.;
-	public var topMargin:FastFloat = 0.;
-	public var rightMargin:FastFloat = 0.;
-	public var bottomMargin:FastFloat = 0.;
+	public var margins:FastFloat = 0.;
+	public var leftMargin:FastFloat = null;
+	public var topMargin:FastFloat = null;
+	public var rightMargin:FastFloat = null;
+	public var bottomMargin:FastFloat = null;
 	// padding
-	public var leftPadding:FastFloat = 0.;
-	public var topPadding:FastFloat = 0.;
-	public var rightPadding:FastFloat = 0.;
-	public var bottomPadding:FastFloat = 0.;
-
-	@:isVar public var margins(get, set):FastFloat = 0.;
-	@:isVar public var padding(get, set):FastFloat = 0.;
-
-	inline function get_margins():FastFloat {
-		return margins;
-	}
-
-	inline function set_margins(value:FastFloat):FastFloat {
-		leftMargin = value;
-		topMargin = value;
-		rightMargin = value;
-		bottomMargin = value;
-		return value;
-	}
-
-	inline function get_padding():FastFloat {
-		return padding;
-	}
-
-	inline function set_padding(value:FastFloat):FastFloat {
-		leftPadding = value;
-		topPadding = value;
-		rightPadding = value;
-		bottomPadding = value;
-		return value;
-	}
+	public var padding:FastFloat = 0.;
+	public var leftPadding:FastFloat = null;
+	public var topPadding:FastFloat = null;
+	public var rightPadding:FastFloat = null;
+	public var bottomPadding:FastFloat = null;
 }
 
 @:structInit

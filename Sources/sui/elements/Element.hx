@@ -55,23 +55,43 @@ class Element {
 	}
 
 	inline function get_finalX():FastFloat {
-		var baseX = anchors.left.value + anchors.leftMargin + x;
-		return parent == null ? baseX : baseX + parent.anchors.leftPadding;
+		var baseX = anchors.left.value + x;
+
+		baseX += anchors.leftMargin != null ? anchors.leftMargin : anchors.margins;
+		if (parent != null)
+			baseX += parent.anchors.leftPadding != null ? parent.anchors.leftPadding : parent.anchors.padding;
+
+		return baseX;
 	}
 
 	inline function get_finalY():FastFloat {
-		var baseY = anchors.top.value + anchors.topMargin + y;
-		return parent == null ? baseY : baseY + parent.anchors.topPadding;
+		var baseY = anchors.top.value + y;
+
+		baseY += anchors.topMargin != null ? anchors.topMargin : anchors.margins;
+		if (parent != null)
+			baseY += parent.anchors.topPadding != null ? parent.anchors.topPadding : parent.anchors.padding;
+
+		return baseY;
 	}
 
 	inline function get_finalW():FastFloat {
-		var baseW = anchors.right.value - anchors.rightMargin + width;
-		return parent == null ? baseW : baseW - parent.anchors.rightPadding;
+		var baseW = anchors.right.value + width;
+
+		baseW -= anchors.rightMargin != null ? anchors.rightMargin : anchors.margins;
+		if (parent != null)
+			baseW -= parent.anchors.rightPadding != null ? parent.anchors.rightPadding : parent.anchors.padding;
+
+		return baseW;
 	}
 
 	inline function get_finalH():FastFloat {
-		var baseH = anchors.bottom.value - anchors.bottomMargin + height;
-		return parent == null ? baseH : baseH - parent.anchors.bottomPadding;
+		var baseH = anchors.bottom.value + height;
+
+		baseH -= anchors.bottomMargin != null ? anchors.bottomMargin : anchors.margins;
+		if (parent != null)
+			baseH -= parent.anchors.bottomPadding != null ? parent.anchors.bottomPadding : parent.anchors.padding;
+
+		return baseH;
 	}
 
 	inline function get_finalScaleX():FastFloat {
