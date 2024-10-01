@@ -32,12 +32,19 @@ class Element {
 	public var color:Color = Color.white;
 
 	// final transform
+	public var finalRotation(get, never):FastFloat;
 	public var finalOpacity(get, never):FastFloat;
 	public var finalEnabled(get, never):Bool;
 	public var finalX(get, never):FastFloat;
 	public var finalY(get, never):FastFloat;
 	public var finalW(get, never):FastFloat;
 	public var finalH(get, never):FastFloat;
+	public var finalScaleX(get, never):FastFloat;
+	public var finalScaleY(get, never):FastFloat;
+
+	inline function get_finalRotation():FastFloat {
+		return parent == null ? rotation : parent.finalRotation + rotation;
+	}
 
 	inline function get_finalOpacity():FastFloat {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
@@ -48,49 +55,61 @@ class Element {
 	}
 
 	inline function get_finalX():FastFloat {
-		var baseX = anchors.left.value + x;
+		var baseX = anchors.left.position + anchors.left.padding + x;
 
-		baseX += anchors.leftMargin != null ? anchors.leftMargin : anchors.margins;
+		baseX += anchors.left.margin != null ? anchors.left.margin : anchors.margins;
 		return baseX;
 	}
 
 	inline function get_finalY():FastFloat {
-		var baseY = anchors.top.value + y;
+		var baseY = anchors.top.position + anchors.top.padding + y;
 
-		baseY += anchors.topMargin != null ? anchors.topMargin : anchors.margins;
+		baseY += anchors.top.margin != null ? anchors.top.margin : anchors.margins;
 		return baseY;
 	}
 
 	inline function get_finalW():FastFloat {
-		var baseW = anchors.right.value + width;
+		var baseW = anchors.right.position - anchors.right.padding + width;
 
-		baseW -= anchors.rightMargin != null ? anchors.rightMargin : anchors.margins;
+		baseW -= anchors.right.margin != null ? anchors.right.margin : anchors.margins;
 		return baseW;
 	}
 
 	inline function get_finalH():FastFloat {
-		var baseH = anchors.bottom.value + height;
+		var baseH = anchors.bottom.position - anchors.bottom.padding + height;
 
-		baseH -= anchors.bottomMargin != null ? anchors.bottomMargin : anchors.margins;
+		baseH -= anchors.bottom.margin != null ? anchors.bottom.margin : anchors.margins;
 		return baseH;
 	}
 
+	inline function get_finalScaleX():FastFloat {
+		return parent == null ? scaleX : parent.finalScaleX * scaleX;
+	}
+
+	inline function get_finalScaleY():FastFloat {
+		return parent == null ? scaleY : parent.finalScaleY * scaleY;
+	}
+
 	public function draw() {}
+
+	public inline final function render() {
+		SUI.graphics.color = kha.Color.fromValue(color);
+		SUI.graphics.opacity = finalOpacity;
+		SUI.graphics.pushScale(finalScaleX, finalScaleY);
+		SUI.graphics.pushRotation(finalRotation, 0, 0);
+		SUI.graphics.translate(finalX, finalY);
+		draw();
+		SUI.graphics.translate(-finalX, -finalY);
+		SUI.graphics.popTransformation();
+	}
 
 	public function drawTree() {
 		if (!visible)
 			return;
 
-		SUI.graphics.color = kha.Color.fromValue(color);
-		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushScale(scaleX, scaleY);
-		SUI.graphics.pushRotation(rotation, 0, 0);
-		SUI.graphics.translate(finalX, finalY);
-		draw();
-		SUI.graphics.translate(-finalX, -finalY);
+		render();
 		for (child in children)
 			child.drawTree();
-		SUI.graphics.popTransformation();
 	}
 
 	public inline final function addChild(child:Element) {
