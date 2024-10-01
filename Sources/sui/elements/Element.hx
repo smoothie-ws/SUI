@@ -1,14 +1,14 @@
 package sui.elements;
 
-import kha.Color;
 import kha.FastFloat;
+// sui
+import sui.Color;
 
 @:structInit
 class Element {
 	// position
 	public var x:FastFloat = 0.;
 	public var y:FastFloat = 0.;
-	public var z:Int = 0;
 	// dimensions
 	public var width:FastFloat = 0.;
 	public var height:FastFloat = 0.;
@@ -29,24 +29,65 @@ class Element {
 	// anchors
 	public var anchors:Anchors = {};
 	// color
-	public var color:Color = Color.White;
+	public var color:Color = Color.white;
 
 	// final transform
-	public var finalRotation:FastFloat = 0.;
-	public var finalOpacity:FastFloat = 1.;
-	public var finalEnabled:Bool = true;
-	public var finalX:FastFloat = 0.;
-	public var finalY:FastFloat = 0.;
-	public var finalZ:Int = 0;
-	public var finalW:FastFloat = 0.;
-	public var finalH:FastFloat = 0.;
+	public var finalRotation(get, never):FastFloat;
+	public var finalOpacity(get, never):FastFloat;
+	public var finalEnabled(get, never):Bool;
+	public var finalX(get, never):FastFloat;
+	public var finalY(get, never):FastFloat;
+	public var finalW(get, never):FastFloat;
+	public var finalH(get, never):FastFloat;
+	public var finalScaleX(get, never):FastFloat;
+	public var finalScaleY(get, never):FastFloat;
+
+	inline function get_finalRotation():FastFloat {
+		return parent == null ? rotation : parent.finalRotation + rotation;
+	}
+
+	inline function get_finalOpacity():FastFloat {
+		return parent == null ? opacity : parent.finalOpacity * opacity;
+	}
+
+	inline function get_finalEnabled():Bool {
+		return parent == null ? enabled : parent.finalEnabled && enabled;
+	}
+
+	inline function get_finalX():FastFloat {
+		var baseX = anchors.left.value + anchors.leftMargin + x;
+		return parent == null ? baseX : baseX + parent.anchors.leftPadding;
+	}
+
+	inline function get_finalY():FastFloat {
+		var baseY = anchors.top.value + anchors.topMargin + y;
+		return parent == null ? baseY : baseY + parent.anchors.topPadding;
+	}
+
+	inline function get_finalW():FastFloat {
+		var baseW = anchors.right.value - anchors.rightMargin + width;
+		return parent == null ? baseW : baseW - parent.anchors.rightPadding;
+	}
+
+	inline function get_finalH():FastFloat {
+		var baseH = anchors.bottom.value - anchors.bottomMargin + height;
+		return parent == null ? baseH : baseH - parent.anchors.bottomPadding;
+	}
+
+	inline function get_finalScaleX():FastFloat {
+		return parent == null ? scaleX : parent.finalScaleX * scaleX;
+	}
+
+	inline function get_finalScaleY():FastFloat {
+		return parent == null ? scaleY : parent.finalScaleY * scaleY;
+	}
 
 	public function draw() {}
 
 	public inline final function render() {
-		SUI.graphics.color = color;
+		SUI.graphics.color = kha.Color.fromValue(color);
 		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushScale(scaleX, scaleY);
+		SUI.graphics.pushScale(finalScaleX, finalScaleY);
 		SUI.graphics.pushRotation(finalRotation, finalX, finalY);
 		draw();
 		SUI.graphics.popTransformation();
