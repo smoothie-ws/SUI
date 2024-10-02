@@ -1,5 +1,6 @@
 package sui.elements;
 
+import kha.math.FastMatrix3;
 import kha.FastFloat;
 // sui
 import sui.Color;
@@ -30,7 +31,6 @@ class Element {
 	public var anchors:Anchors = {};
 	// color
 	public var color:Color = Color.white;
-
 	// final transform
 	public var finalRotation(get, never):FastFloat;
 	public var finalOpacity(get, never):FastFloat;
@@ -57,28 +57,28 @@ class Element {
 	inline function get_finalX():FastFloat {
 		var baseX = anchors.left.position + anchors.left.padding + x;
 
-		baseX += anchors.left.margin != null ? anchors.left.margin : anchors.margins;
+		baseX += anchors.left.margin != Math.NaN ? anchors.left.margin : anchors.margins;
 		return baseX;
 	}
 
 	inline function get_finalY():FastFloat {
 		var baseY = anchors.top.position + anchors.top.padding + y;
 
-		baseY += anchors.top.margin != null ? anchors.top.margin : anchors.margins;
+		baseY += anchors.top.margin != Math.NaN ? anchors.top.margin : anchors.margins;
 		return baseY;
 	}
 
 	inline function get_finalW():FastFloat {
 		var baseW = anchors.right.position - anchors.right.padding + width;
 
-		baseW -= anchors.right.margin != null ? anchors.right.margin : anchors.margins;
+		baseW -= anchors.right.margin != Math.NaN ? anchors.right.margin : anchors.margins;
 		return baseW;
 	}
 
 	inline function get_finalH():FastFloat {
 		var baseH = anchors.bottom.position - anchors.bottom.padding + height;
 
-		baseH -= anchors.bottom.margin != null ? anchors.bottom.margin : anchors.margins;
+		baseH -= anchors.bottom.margin != Math.NaN ? anchors.bottom.margin : anchors.margins;
 		return baseH;
 	}
 
@@ -110,6 +110,16 @@ class Element {
 		render();
 		for (child in children)
 			child.drawTree();
+	}
+
+	public inline function construct() {
+		anchors = anchors.fill == null ? anchors : anchors.fill.anchors;
+	}
+
+	public inline final function constructTree() {
+		construct();
+		for (child in children)
+			child.constructTree();
 	}
 
 	public inline final function addChild(child:Element) {

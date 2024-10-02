@@ -30,11 +30,14 @@ class SUI {
 	static inline function init(window:Window) {
 		Scheduler.addTimeTask(root.update, 0, 1 / Display.primary.frequency);
 		System.notifyOnFrames(render);
+
+		window.notifyOnResize(root.resize);
+		root.constructTree();
 	}
 
 	static inline function render(frames:Array<kha.Framebuffer>) {
 		SUI.graphics = frames[0].g2;
-		SUI.graphics.begin(true, Color.fromBytes(255, 255, 255));
+		SUI.graphics.begin(true, cast(root.color, kha.Color));
 		root.drawTree();
 		SUI.graphics.end();
 	}

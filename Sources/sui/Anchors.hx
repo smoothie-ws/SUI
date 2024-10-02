@@ -18,11 +18,12 @@ class Anchors {
 	public var verticalCenter:FastFloat = 0.;
 
 	public var margins:FastFloat = 0.;
+	public var padding:FastFloat = 0.;
 }
 
 @:structInit
 class AnchorLine {
-	public var position = 0.;
-	public var padding = 0.;
-	public var margin = null;
+	public var position:FastFloat = Math.NaN;
+	public var padding:FastFloat = Math.NaN;
+	public var margin:FastFloat = Math.NaN;
 }
