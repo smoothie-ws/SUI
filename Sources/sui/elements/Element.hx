@@ -1,6 +1,7 @@
 package sui.elements;
 
 import kha.math.FastMatrix3;
+import kha.math.FastMatrix3;
 import kha.FastFloat;
 // sui
 import sui.Color;
@@ -59,6 +60,11 @@ class Element {
 		return oX;
 	}
 
+	inline function get_finalY():FastFloat {
+		var baseY = anchors.top.position + anchors.top.padding + y;
+
+		baseY += anchors.top.margin != Math.NaN ? anchors.top.margin : anchors.margins;
+		return baseY;
 	inline function get_offsetY():FastFloat {
 		var itemToFill = anchors.fill;
 		var oY = 0.;
@@ -71,6 +77,10 @@ class Element {
 	}
 
 	inline function get_finalW():FastFloat {
+		var baseW = anchors.right.position - anchors.right.padding + width;
+
+		baseW -= anchors.right.margin != Math.NaN ? anchors.right.margin : anchors.margins;
+		return baseW;
 		var itemToFill = anchors.fill;
 		var fW = 0.;
 		if (itemToFill == null)

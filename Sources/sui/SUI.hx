@@ -41,6 +41,7 @@ class SUI {
 	static inline function render(frames:Array<kha.Framebuffer>) {
 		SUI.graphics = frames[0].g2;
 		SUI.graphics.begin(true, cast(root.color, kha.Color));
+		SUI.graphics.begin(true, cast(root.color, kha.Color));
 		root.drawTree();
 		SUI.graphics.end();
 	}
