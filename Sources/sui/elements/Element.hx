@@ -1,5 +1,6 @@
 package sui.elements;
 
+import kha.math.FastMatrix3;
 import kha.FastFloat;
 // sui
 import sui.Color;
@@ -31,20 +32,13 @@ class Element {
 	// color
 	public var color:Color = Color.white;
 
-	// final transform
-	public var finalRotation(get, never):FastFloat;
-	public var finalOpacity(get, never):FastFloat;
-	public var finalEnabled(get, never):Bool;
-	public var finalX(get, never):FastFloat;
-	public var finalY(get, never):FastFloat;
-	public var finalW(get, never):FastFloat;
-	public var finalH(get, never):FastFloat;
-	public var finalScaleX(get, never):FastFloat;
-	public var finalScaleY(get, never):FastFloat;
-
-	inline function get_finalRotation():FastFloat {
-		return parent == null ? rotation : parent.finalRotation + rotation;
-	}
+	// final transformation
+	var finalOpacity(get, never):FastFloat;
+	var finalEnabled(get, never):Bool;
+	var offsetX(get, never):FastFloat;
+	var offsetY(get, never):FastFloat;
+	var finalW(get, never):FastFloat;
+	var finalH(get, never):FastFloat;
 
 	inline function get_finalOpacity():FastFloat {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
@@ -54,62 +48,71 @@ class Element {
 		return parent == null ? enabled : parent.finalEnabled && enabled;
 	}
 
-	inline function get_finalX():FastFloat {
-		var baseX = anchors.left.position + anchors.left.padding + x;
-
-		baseX += anchors.left.margin != null ? anchors.left.margin : anchors.margins;
-		return baseX;
+	inline function get_offsetX():FastFloat {
+		var itemToFill = anchors.fill;
+		var oX = 0.;
+		if (itemToFill == null)
+			oX = Math.isNaN(anchors.left.position) ? 0. : anchors.left.position;
+		else
+			oX = itemToFill.offsetX;
+		oX += Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
+		return oX;
 	}
 
-	inline function get_finalY():FastFloat {
-		var baseY = anchors.top.position + anchors.top.padding + y;
-
-		baseY += anchors.top.margin != null ? anchors.top.margin : anchors.margins;
-		return baseY;
+	inline function get_offsetY():FastFloat {
+		var itemToFill = anchors.fill;
+		var oY = 0.;
+		if (itemToFill == null)
+			oY = Math.isNaN(anchors.top.position) ? 0. : anchors.top.position;
+		else
+			oY = itemToFill.offsetY;
+		oY += Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
+		return oY;
 	}
 
 	inline function get_finalW():FastFloat {
-		var baseW = anchors.right.position - anchors.right.padding + width;
-
-		baseW -= anchors.right.margin != null ? anchors.right.margin : anchors.margins;
-		return baseW;
+		var itemToFill = anchors.fill;
+		var fW = 0.;
+		if (itemToFill == null)
+			fW = Math.isNaN(anchors.right.position) ? width : anchors.right.position;
+		else
+			fW = itemToFill.finalW;
+		fW -= Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
+		fW -= Math.isNaN(anchors.right.margin) ? anchors.margins : anchors.right.margin;
+		return fW;
 	}
 
 	inline function get_finalH():FastFloat {
-		var baseH = anchors.bottom.position - anchors.bottom.padding + height;
-
-		baseH -= anchors.bottom.margin != null ? anchors.bottom.margin : anchors.margins;
-		return baseH;
-	}
-
-	inline function get_finalScaleX():FastFloat {
-		return parent == null ? scaleX : parent.finalScaleX * scaleX;
-	}
-
-	inline function get_finalScaleY():FastFloat {
-		return parent == null ? scaleY : parent.finalScaleY * scaleY;
+		var itemToFill = anchors.fill;
+		var fH = 0.;
+		if (itemToFill == null)
+			fH = Math.isNaN(anchors.bottom.position) ? width : anchors.bottom.position;
+		else
+			fH = itemToFill.finalH;
+		fH -= Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
+		fH -= Math.isNaN(anchors.bottom.margin) ? anchors.margins : anchors.bottom.margin;
+		return fH;
 	}
 
 	public function draw() {}
-
-	public inline final function render() {
-		SUI.graphics.color = kha.Color.fromValue(color);
-		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushScale(finalScaleX, finalScaleY);
-		SUI.graphics.pushRotation(finalRotation, 0, 0);
-		SUI.graphics.translate(finalX, finalY);
-		draw();
-		SUI.graphics.translate(-finalX, -finalY);
-		SUI.graphics.popTransformation();
-	}
 
 	public function drawTree() {
 		if (!visible)
 			return;
 
-		render();
+		SUI.graphics.color = kha.Color.fromValue(color);
+		SUI.graphics.opacity = finalOpacity;
+		SUI.graphics.pushRotation(rotation, 0, 0);
+		SUI.graphics.pushScale(scaleX, scaleY);
+
+		SUI.graphics.translate(offsetX, offsetY);
+		draw();
+		SUI.graphics.translate(-offsetX, -offsetY);
 		for (child in children)
 			child.drawTree();
+
+		SUI.graphics.pushScale(1 / scaleX, 1 / scaleY);
+		SUI.graphics.pushRotation(-rotation, 0, 0);
 	}
 
 	public inline final function addChild(child:Element) {

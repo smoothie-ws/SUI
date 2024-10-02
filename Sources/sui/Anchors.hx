@@ -22,7 +22,6 @@ class Anchors {
 
 @:structInit
 class AnchorLine {
-	public var position = 0.;
-	public var padding = 0.;
-	public var margin = null;
+	public var position:FastFloat = Math.NaN;
+	public var margin:FastFloat = Math.NaN;
 }
