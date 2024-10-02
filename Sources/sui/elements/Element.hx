@@ -13,8 +13,9 @@ class Element {
 	public var width:FastFloat = 0.;
 	public var height:FastFloat = 0.;
 	// scale
-	public var scaleX:FastFloat = 1.;
-	public var scaleY:FastFloat = 1.;
+	public var scale:FastFloat = 1.;
+	public var scaleX:FastFloat = Math.NaN;
+	public var scaleY:FastFloat = Math.NaN;
 	// rotation
 	public var rotation:FastFloat = 0.;
 	// opacity
@@ -34,6 +35,8 @@ class Element {
 	// final transformation
 	var finalOpacity(get, never):FastFloat;
 	var finalEnabled(get, never):Bool;
+	var finalScaleX(get, never):FastFloat;
+	var finalScaleY(get, never):FastFloat;
 	var offsetX(get, never):FastFloat;
 	var offsetY(get, never):FastFloat;
 	var finalW(get, never):FastFloat;
@@ -45,6 +48,14 @@ class Element {
 
 	inline function get_finalEnabled():Bool {
 		return parent == null ? enabled : parent.finalEnabled && enabled;
+	}
+
+	inline function get_finalScaleX():FastFloat {
+		return Math.isNaN(scaleX) ? scale : scaleX;
+	}
+
+	inline function get_finalScaleY():FastFloat {
+		return Math.isNaN(scaleY) ? scale : scaleY;
 	}
 
 	inline function get_offsetX():FastFloat {
@@ -99,19 +110,27 @@ class Element {
 		if (!visible)
 			return;
 
-		SUI.graphics.color = kha.Color.fromValue(color);
-		SUI.graphics.opacity = finalOpacity;
-		SUI.graphics.pushRotation(rotation, 0, 0);
-		SUI.graphics.pushScale(scaleX, scaleY);
+		final fO = finalOpacity;
+		final fsX = finalScaleX;
+		final fsY = finalScaleY;
+		final oX = offsetX;
+		final oY = offsetY;
 
-		SUI.graphics.translate(offsetX, offsetY);
+		SUI.graphics.color = kha.Color.fromValue(color);
+		SUI.graphics.opacity = fO;
+
+		SUI.graphics.pushScale(fsX, fsY);
+		SUI.graphics.pushRotation(rotation, 0, 0);
+
+		SUI.graphics.pushTranslation(oX, oY);
 		draw();
-		SUI.graphics.translate(-offsetX, -offsetY);
+		SUI.graphics.pushTranslation(-oX, -oY);
+
 		for (child in children)
 			child.drawTree();
 
-		SUI.graphics.pushScale(1 / scaleX, 1 / scaleY);
 		SUI.graphics.pushRotation(-rotation, 0, 0);
+		SUI.graphics.pushScale(1 / fsX, 1 / fsY);
 	}
 
 	public inline final function addChild(child:Element) {
