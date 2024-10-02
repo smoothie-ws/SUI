@@ -18,7 +18,6 @@ class Anchors {
 	public var verticalCenter:FastFloat = 0.;
 
 	public var margins:FastFloat = 0.;
-	public var padding:FastFloat = 0.;
 }
 
 @:structInit
