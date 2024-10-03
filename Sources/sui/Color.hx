@@ -325,45 +325,45 @@ enum abstract Color(Int) from Int from UInt to Int to UInt {
 
 	public static inline function hsva(h:Int, s:Int, v:Int, a:Int = 255) {
 		h = h % 360;
-		var sN = s / 100;
-		var vN = v / 100;
+		var sN = s / 100.0;
+		var vN = v / 100.0;
 
 		var c = sN * vN;
-		var x = c * (1 - Math.abs((h / 60) % 2 - 1));
+		var x = c * (1.0 - Math.abs((h / 60.0) % 2.0 - 1.0));
 		var m = vN - c;
 
-		var r = 0.;
-		var g = 0.;
-		var b = 0.;
+		var r = 0.0;
+		var g = 0.0;
+		var b = 0.0;
 
-		switch (Std.int(h / 60)) {
+		switch (Math.floor(h / 60.0)) {
 			case 0:
 				r = c;
 				g = x;
-				b = 0;
+				b = 0.0;
 			case 1:
 				r = x;
 				g = c;
-				b = 0;
+				b = 0.0;
 			case 2:
-				r = 0;
+				r = 0.0;
 				g = c;
 				b = x;
 			case 3:
-				r = 0;
+				r = 0.0;
 				g = x;
 				b = c;
 			case 4:
 				r = x;
-				g = 0;
+				g = 0.0;
 				b = c;
 			case 5:
 				r = c;
-				g = 0;
+				g = 0.0;
 				b = x;
 		}
 
-		return rgba(Std.int((r + m) * 255), Std.int((g + m) * 255), Std.int((b + m) * 255), a);
+		return rgba(Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255), a);
 	}
 
 	public function toString():String {

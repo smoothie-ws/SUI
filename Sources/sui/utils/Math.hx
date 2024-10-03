@@ -1,7 +1,5 @@
 package sui.utils;
 
-import kha.FastFloat;
-
 inline function arrMax(arr:Array<Dynamic>) {
 	var max:Dynamic = arr[0];
 	for (i in 1...arr.length)

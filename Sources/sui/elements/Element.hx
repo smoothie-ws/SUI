@@ -110,27 +110,24 @@ class Element {
 		if (!visible)
 			return;
 
-		final fO = finalOpacity;
-		final fsX = finalScaleX;
-		final fsY = finalScaleY;
 		final oX = offsetX;
 		final oY = offsetY;
 
 		SUI.graphics.color = kha.Color.fromValue(color);
-		SUI.graphics.opacity = fO;
+		SUI.graphics.opacity = finalOpacity;
 
-		SUI.graphics.pushScale(fsX, fsY);
-		SUI.graphics.pushRotation(rotation, 0, 0);
+		SUI.graphics.pushScale(finalScaleX, finalScaleY);
+		SUI.graphics.pushRotation(rotation, oX, oY);
 
 		SUI.graphics.pushTranslation(oX, oY);
 		draw();
-		SUI.graphics.pushTranslation(-oX, -oY);
+		SUI.graphics.popTransformation();
 
 		for (child in children)
 			child.drawTree();
 
-		SUI.graphics.pushRotation(-rotation, 0, 0);
-		SUI.graphics.pushScale(1 / fsX, 1 / fsY);
+		SUI.graphics.popTransformation();
+		SUI.graphics.popTransformation();
 	}
 
 	public inline final function addChild(child:Element) {
