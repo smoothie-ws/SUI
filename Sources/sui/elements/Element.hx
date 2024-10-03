@@ -1,5 +1,7 @@
 package sui.elements;
 
+import sui.transform.Transform;
+import sui.Anchors.AnchorLine;
 import kha.FastFloat;
 // sui
 import sui.Color;
@@ -31,8 +33,10 @@ class Element {
 	public var anchors:Anchors = {};
 	// color
 	public var color:Color = Color.white;
+	// transform
+	public var transform:Transform = {};
 
-	// final transformation
+	// final transform
 	var finalOpacity(get, never):FastFloat;
 	var finalEnabled(get, never):Bool;
 	var finalScaleX(get, never):FastFloat;
@@ -51,11 +55,13 @@ class Element {
 	}
 
 	inline function get_finalScaleX():FastFloat {
-		return Math.isNaN(scaleX) ? scale : scaleX;
+		var sX = Math.isNaN(scaleX) ? scale : scaleX;
+		return sX * transform.scale.x;
 	}
 
 	inline function get_finalScaleY():FastFloat {
-		return Math.isNaN(scaleY) ? scale : scaleY;
+		var sY = Math.isNaN(scaleY) ? scale : scaleY;
+		return sY * transform.scale.y;
 	}
 
 	inline function get_offsetX():FastFloat {
@@ -66,7 +72,7 @@ class Element {
 		else
 			oX = Math.isNaN(anchors.left.position) ? itemToFill.offsetX : anchors.left.position;
 		oX += Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
-		return oX;
+		return oX + transform.translate.x;
 	}
 
 	inline function get_offsetY():FastFloat {
@@ -77,7 +83,7 @@ class Element {
 		else
 			oY = Math.isNaN(anchors.top.position) ? itemToFill.offsetY : anchors.top.position;
 		oY += Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
-		return oY;
+		return oY + transform.translate.y;
 	}
 
 	inline function get_finalW():FastFloat {
@@ -96,7 +102,7 @@ class Element {
 		var itemToFill = anchors.fill;
 		var fH = 0.;
 		if (itemToFill == null)
-			fH = Math.isNaN(anchors.bottom.position) ? width : anchors.bottom.position;
+			fH = Math.isNaN(anchors.bottom.position) ? height : anchors.bottom.position;
 		else
 			fH = Math.isNaN(anchors.bottom.position) ? itemToFill.finalH : anchors.bottom.position;
 		fH -= Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
@@ -120,10 +126,16 @@ class Element {
 		SUI.graphics.opacity = finalOpacity;
 
 		SUI.graphics.pushTranslation(oX, oY);
-		SUI.graphics.pushTranslation(-centerX, -centerY);
+
+		var cXS = Math.isNaN(transform.scale.origin.x) ? centerX : oX + transform.scale.origin.x;
+		var cYS = Math.isNaN(transform.scale.origin.y) ? centerY : oY + transform.scale.origin.y;
+		SUI.graphics.pushTranslation(-cXS, -cYS);
 		SUI.graphics.pushScale(finalScaleX, finalScaleY);
-		SUI.graphics.pushTranslation(centerX, centerY);
-		SUI.graphics.pushRotation(rotation, centerX, centerY);
+		SUI.graphics.pushTranslation(cXS, cYS);
+
+		var cXR = Math.isNaN(transform.rotation.origin.x) ? centerX : oX + transform.scale.origin.x;
+		var cYR = Math.isNaN(transform.rotation.origin.y) ? centerY : oY + transform.scale.origin.y;
+		SUI.graphics.pushRotation((rotation + transform.rotation.angle) * Math.PI / 180, cXR, cYR);
 
 		draw();
 		SUI.graphics.pushTranslation(-oX, -oY);
