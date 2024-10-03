@@ -116,8 +116,8 @@ class Element {
 		SUI.graphics.color = kha.Color.fromValue(color);
 		SUI.graphics.opacity = finalOpacity;
 
-		SUI.graphics.pushScale(finalScaleX, finalScaleY);
-		SUI.graphics.pushRotation(rotation, oX, oY);
+		// SUI.graphics.pushScale(finalScaleX, finalScaleY);
+		// SUI.graphics.pushRotation(rotation, oX, oY);
 
 		SUI.graphics.pushTranslation(oX, oY);
 		draw();
@@ -126,8 +126,8 @@ class Element {
 		for (child in children)
 			child.drawTree();
 
-		SUI.graphics.popTransformation();
-		SUI.graphics.popTransformation();
+		// SUI.graphics.popTransformation();
+		// SUI.graphics.popTransformation();
 	}
 
 	public inline final function addChild(child:Element) {
