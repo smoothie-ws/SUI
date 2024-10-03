@@ -62,7 +62,7 @@ class Element {
 		var itemToFill = anchors.fill;
 		var oX = 0.;
 		if (itemToFill == null)
-			oX = Math.isNaN(anchors.left.position) ? 0. : anchors.left.position;
+			oX = Math.isNaN(anchors.left.position) ? x : anchors.left.position;
 		else
 			oX = Math.isNaN(anchors.left.position) ? itemToFill.offsetX : anchors.left.position;
 		oX += Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
@@ -73,7 +73,7 @@ class Element {
 		var itemToFill = anchors.fill;
 		var oY = 0.;
 		if (itemToFill == null)
-			oY = Math.isNaN(anchors.top.position) ? 0. : anchors.top.position;
+			oY = Math.isNaN(anchors.top.position) ? y : anchors.top.position;
 		else
 			oY = Math.isNaN(anchors.top.position) ? itemToFill.offsetY : anchors.top.position;
 		oY += Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
@@ -113,21 +113,30 @@ class Element {
 		final oX = offsetX;
 		final oY = offsetY;
 
+		final centerX = oX + finalW / 2;
+		final centerY = oY + finalH / 2;
+
 		SUI.graphics.color = kha.Color.fromValue(color);
 		SUI.graphics.opacity = finalOpacity;
 
-		// SUI.graphics.pushScale(finalScaleX, finalScaleY);
-		// SUI.graphics.pushRotation(rotation, oX, oY);
-
 		SUI.graphics.pushTranslation(oX, oY);
+		SUI.graphics.pushTranslation(-centerX, -centerY);
+		SUI.graphics.pushScale(finalScaleX, finalScaleY);
+		SUI.graphics.pushTranslation(centerX, centerY);
+		SUI.graphics.pushRotation(rotation, centerX, centerY);
+
 		draw();
-		SUI.graphics.popTransformation();
+		SUI.graphics.pushTranslation(-oX, -oY);
 
 		for (child in children)
 			child.drawTree();
 
-		// SUI.graphics.popTransformation();
-		// SUI.graphics.popTransformation();
+		SUI.graphics.popTransformation();
+		SUI.graphics.popTransformation();
+		SUI.graphics.popTransformation();
+		SUI.graphics.popTransformation();
+		SUI.graphics.popTransformation();
+		SUI.graphics.popTransformation();
 	}
 
 	public inline final function addChild(child:Element) {

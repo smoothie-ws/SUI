@@ -9,6 +9,6 @@ class Rectangle extends Element {
 	public var radius:FastFloat = 0.;
 
 	override function draw() {
-		SUI.graphics.fillRect(x, y, finalW, finalH);
+		SUI.graphics.fillRect(0., 0., finalW, finalH);
 	}
 }
