@@ -64,7 +64,7 @@ class Element {
 		if (itemToFill == null)
 			oX = Math.isNaN(anchors.left.position) ? 0. : anchors.left.position;
 		else
-			oX = itemToFill.offsetX;
+			oX = Math.isNaN(anchors.left.position) ? itemToFill.offsetX : anchors.left.position;
 		oX += Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
 		return oX;
 	}
@@ -75,7 +75,7 @@ class Element {
 		if (itemToFill == null)
 			oY = Math.isNaN(anchors.top.position) ? 0. : anchors.top.position;
 		else
-			oY = itemToFill.offsetY;
+			oY = Math.isNaN(anchors.top.position) ? itemToFill.offsetY : anchors.top.position;
 		oY += Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
 		return oY;
 	}
@@ -86,7 +86,7 @@ class Element {
 		if (itemToFill == null)
 			fW = Math.isNaN(anchors.right.position) ? width : anchors.right.position;
 		else
-			fW = itemToFill.finalW;
+			fW = Math.isNaN(anchors.right.position) ? itemToFill.finalW : anchors.right.position;
 		fW -= Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
 		fW -= Math.isNaN(anchors.right.margin) ? anchors.margins : anchors.right.margin;
 		return fW;
@@ -98,7 +98,7 @@ class Element {
 		if (itemToFill == null)
 			fH = Math.isNaN(anchors.bottom.position) ? width : anchors.bottom.position;
 		else
-			fH = itemToFill.finalH;
+			fH = Math.isNaN(anchors.bottom.position) ? itemToFill.finalH : anchors.bottom.position;
 		fH -= Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
 		fH -= Math.isNaN(anchors.bottom.margin) ? anchors.margins : anchors.bottom.margin;
 		return fH;

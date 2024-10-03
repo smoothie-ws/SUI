@@ -22,6 +22,7 @@ class SUI {
 		if (options == null)
 			options = {};
 		System.start({
+			title: options.title,
 			width: options.width,
 			height: options.height,
 			framebuffer: {samplesPerPixel: options.samplesPerPixel}
