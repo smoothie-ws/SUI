@@ -34,7 +34,7 @@ class SUI {
 	}
 
 	static inline function init(window:Window) {
-		Scheduler.addTimeTask(root.update, 0, 1 / Display.primary.frequency);
+		Scheduler.addTimeTask(root.update, 0, 1 / 60);
 		System.notifyOnFrames(render);
 
 		window.notifyOnResize(root.resize);

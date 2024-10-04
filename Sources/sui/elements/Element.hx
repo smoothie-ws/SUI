@@ -125,27 +125,29 @@ class Element {
 		final centerX = oX + finalW / 2;
 		final centerY = oY + finalH / 2;
 
+		// color
 		SUI.graphics.color = kha.Color.fromValue(color);
+		// opacity
 		SUI.graphics.opacity = finalOpacity;
-
+		// translation
 		SUI.graphics.pushTranslation(oX, oY);
-
+		// scale
 		var cXS = Math.isNaN(transform.scale.origin.x) ? centerX : oX + transform.scale.origin.x;
 		var cYS = Math.isNaN(transform.scale.origin.y) ? centerY : oY + transform.scale.origin.y;
 		SUI.graphics.pushTranslation(-cXS, -cYS);
 		SUI.graphics.pushScale(finalScaleX, finalScaleY);
 		SUI.graphics.pushTranslation(cXS, cYS);
-
+		// rotation
 		var cXR = Math.isNaN(transform.rotation.origin.x) ? centerX : oX + transform.scale.origin.x;
 		var cYR = Math.isNaN(transform.rotation.origin.y) ? centerY : oY + transform.scale.origin.y;
 		SUI.graphics.pushRotation((rotation + transform.rotation.angle) * Math.PI / 180, cXR, cYR);
-
 		draw();
+		// revert translation
 		SUI.graphics.pushTranslation(-oX, -oY);
-
+		// draw children
 		for (child in children)
 			child.drawTree();
-
+		// revert transformations
 		SUI.graphics.popTransformation();
 		SUI.graphics.popTransformation();
 		SUI.graphics.popTransformation();
