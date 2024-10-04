@@ -191,7 +191,7 @@ enum abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	inline function set_RGBA(value:Array<Int>):Array<Int> {
-		if (value.length != 3)
+		if (value.length != 4)
 			throw "Array length must be 4. Got: " + value.length;
 		R = value[0];
 		G = value[1];
@@ -251,7 +251,7 @@ enum abstract Color(Int) from Int from UInt to Int to UInt {
 	}
 
 	inline function set_HSVA(value:Array<Int>):Array<Int> {
-		if (value.length != 3)
+		if (value.length != 4)
 			throw "Array length must be 4. Got: " + value.length;
 		H = value[0];
 		S = value[1];
