@@ -15,3 +15,7 @@ inline function arrMin(arr:Array<Dynamic>) {
 			min = arr[i];
 	return min;
 }
+
+inline function clamp(x:Dynamic, xmin:Dynamic, xmax:Dynamic) {
+	return Math.max(Math.min(x, xmax), xmin);
+}

@@ -4,6 +4,7 @@ import kha.FastFloat;
 // sui
 import sui.Color;
 import sui.transform.Transform;
+import sui.utils.Math.clamp;
 
 @:structInit
 class Element {
@@ -13,6 +14,10 @@ class Element {
 	// dimensions
 	public var width:FastFloat = 0.;
 	public var height:FastFloat = 0.;
+	public var minWidth:FastFloat = Math.NEGATIVE_INFINITY;
+	public var maxWidth:FastFloat = Math.POSITIVE_INFINITY;
+	public var minHeight:FastFloat = Math.NEGATIVE_INFINITY;
+	public var maxHeight:FastFloat = Math.POSITIVE_INFINITY;
 	// scale
 	public var scale:FastFloat = 1.;
 	public var scaleX:FastFloat = Math.NaN;
@@ -94,7 +99,7 @@ class Element {
 			fW = Math.isNaN(anchors.right.position) ? itemToFill.finalW : anchors.right.position;
 		fW -= Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
 		fW -= Math.isNaN(anchors.right.margin) ? anchors.margins : anchors.right.margin;
-		return fW;
+		return clamp(fW, minWidth, maxWidth);
 	}
 
 	inline function get_finalH():FastFloat {
@@ -106,7 +111,7 @@ class Element {
 			fH = Math.isNaN(anchors.bottom.position) ? itemToFill.finalH : anchors.bottom.position;
 		fH -= Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
 		fH -= Math.isNaN(anchors.bottom.margin) ? anchors.margins : anchors.bottom.margin;
-		return fH;
+		return clamp(fH, minHeight, maxHeight);
 	}
 
 	public function draw() {}
@@ -114,7 +119,6 @@ class Element {
 	public function drawTree() {
 		if (!visible)
 			return;
-
 		final oX = offsetX;
 		final oY = offsetY;
 
