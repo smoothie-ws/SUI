@@ -114,9 +114,17 @@ class Element {
 		return clamp(fH, minHeight, maxHeight);
 	}
 
+	function construct() {}
+
+	public inline final function constructTree() {
+		construct();
+		for (child in children)
+			child.constructTree();
+	}
+
 	public function draw() {}
 
-	public function drawTree() {
+	public inline function drawTree() {
 		if (!visible)
 			return;
 		final oX = offsetX;

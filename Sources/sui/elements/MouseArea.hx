@@ -18,8 +18,8 @@ class MouseArea extends Element {
 	var focused(get, never):Bool;
 
 	function get_focused():Bool {
-		final xBounded = mouseX >= finalX && mouseX <= finalX + finalW;
-		final yBounded = mouseY >= finalY && mouseY <= finalY + finalH;
+		final xBounded = mouseX >= offsetX && mouseX <= offsetX + finalW;
+		final yBounded = mouseY >= offsetY && mouseY <= offsetY + finalH;
 		return xBounded && yBounded;
 	}
 

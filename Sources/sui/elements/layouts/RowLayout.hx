@@ -1,8 +1,6 @@
-package sui.layouts;
+package sui.elements.layouts;
 
 import kha.FastFloat;
-// sui
-import sui.elements.Element;
 
 @:structInit
 class RowLayout extends Element {
@@ -10,7 +8,7 @@ class RowLayout extends Element {
 	public var alignment:Alignment = Alignment.Default;
 	public var spacing:FastFloat = 0.;
 
-	override public function renderTree() {
+	override public function drawTree() {
 		if (visible) {
 			final yDelta = finalH / children.length;
 			var yOffset = 0.;
@@ -22,7 +20,7 @@ class RowLayout extends Element {
 
 			for (child in children) {
 				child.y = yOffset;
-				child.renderTree();
+				child.drawTree();
 				yOffset += yDelta;
 			}
 		}

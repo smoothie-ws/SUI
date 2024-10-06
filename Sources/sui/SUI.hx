@@ -1,7 +1,7 @@
 package sui;
 
+import kha.Assets;
 import kha.Window;
-import kha.Display;
 import kha.Scheduler;
 import kha.System;
 import kha.Framebuffer;
@@ -10,6 +10,7 @@ import kha.graphics2.Graphics;
 import sui.elements.Root;
 
 class SUI {
+	static var _options:SUIOptions = {};
 	public static var graphics:Graphics;
 	public static var root:Root = {
 		anchors: {
@@ -21,11 +22,13 @@ class SUI {
 	public static inline function start(?options:SUIOptions) {
 		if (options == null)
 			options = {};
+		_options = options;
+
 		System.start({
-			title: options.title,
-			width: options.width,
-			height: options.height,
-			framebuffer: {samplesPerPixel: options.samplesPerPixel}
+			title: _options.title,
+			width: _options.width,
+			height: _options.height,
+			framebuffer: {samplesPerPixel: _options.samplesPerPixel}
 		}, init);
 	}
 
@@ -34,10 +37,14 @@ class SUI {
 	}
 
 	static inline function init(window:Window) {
-		Scheduler.addTimeTask(root.update, 0, 1 / 60);
-		System.notifyOnFrames(render);
+		Assets.loadEverything(function() {
+			window.notifyOnResize(root.resize);
+			window.resize(_options.width, _options.height);
+			root.constructTree();
 
-		window.notifyOnResize(root.resize);
+			Scheduler.addTimeTask(root.update, 0, 1 / 60);
+			System.notifyOnFrames(render);
+		});
 	}
 
 	static inline function render(frames:Array<kha.Framebuffer>) {
