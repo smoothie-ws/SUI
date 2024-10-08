@@ -2,16 +2,19 @@ package sui.effects.shaders;
 
 import kha.Image;
 import kha.Shaders;
+import kha.math.FastVector2;
 import kha.graphics4.Graphics;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
 import kha.graphics4.PipelineState;
 import kha.graphics4.BlendingFactor;
 import kha.graphics4.FragmentShader;
+import kha.graphics4.ConstantLocation;
 
 class Shader {
 	public var shader:FragmentShader;
 	public var pipeline:PipelineState;
+	public var resolutionID:ConstantLocation;
 
 	public function getUniforms() {}
 
@@ -35,6 +38,7 @@ class Shader {
 		pipeline.compile();
 
 		getUniforms();
+		resolutionID = pipeline.getConstantLocation("resolution");
 	}
 
 	public function apply(buffer:Image, args:Dynamic) {
@@ -42,5 +46,6 @@ class Shader {
 		buffer.g4.setPipeline(pipeline);
 
 		setUniforms(buffer.g4, args);
+		buffer.g4.setVector2(resolutionID, new FastVector2(SUI.options.width, SUI.options.height));
 	}
 }

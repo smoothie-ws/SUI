@@ -1,8 +1,6 @@
 package sui;
 
-import sui.effects.shaders.BlurShader;
 import kha.Shaders;
-import sui.effects.Blur;
 import kha.Scaler;
 import kha.Assets;
 import kha.Window;
@@ -56,7 +54,7 @@ class SUI {
 
 			Scheduler.addTimeTask(root.update, 0, 1 / 60);
 			System.notifyOnFrames(render);
-			
+
 			compileShaders();
 		});
 	}
