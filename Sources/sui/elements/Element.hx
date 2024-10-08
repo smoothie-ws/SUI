@@ -1,5 +1,15 @@
 package sui.elements;
 
+import kha.math.FastVector2;
+import kha.graphics4.BlendingFactor;
+import kha.Shaders;
+import kha.graphics4.VertexData;
+import kha.graphics4.VertexStructure;
+import kha.graphics4.ConstantLocation;
+import kha.graphics4.PipelineState;
+import kha.Scaler;
+import kha.System;
+import kha.Image;
 import kha.FastFloat;
 // sui
 import sui.Color;
@@ -8,6 +18,13 @@ import sui.utils.Math.clamp;
 
 @:structInit
 class Element {
+	public var backbuffer:Image = null;
+
+	static var pipeline:PipelineState = null;
+	static var qualityID:ConstantLocation = null;
+	static var sizeID:ConstantLocation = null;
+	static var resolutionID:ConstantLocation = null;
+
 	// position
 	public var x:FastFloat = 0.;
 	public var y:FastFloat = 0.;
@@ -117,6 +134,22 @@ class Element {
 	function construct() {}
 
 	public inline final function constructTree() {
+		var structure = new VertexStructure();
+		structure.add("vertexPosition", VertexData.Float32_3X);
+		structure.add("vertexUV", VertexData.Float32_2X);
+		structure.add("vertexColor", VertexData.UInt8_4X_Normalized);
+
+		pipeline = new PipelineState();
+		pipeline.inputLayout = [structure];
+		pipeline.vertexShader = Shaders.painter_image_vert;
+		pipeline.fragmentShader = Shaders.blur_frag;
+
+		pipeline.blendDestination = BlendingFactor.InverseSourceAlpha;
+		pipeline.compile();
+		sizeID = pipeline.getConstantLocation("size");
+		qualityID = pipeline.getConstantLocation("quality");
+		resolutionID = pipeline.getConstantLocation("resolution");
+
 		construct();
 		for (child in children)
 			child.constructTree();
@@ -124,44 +157,55 @@ class Element {
 
 	public function draw() {}
 
-	public inline function drawTree() {
+	public inline function drawTree():Image {
+		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 		if (!visible)
-			return;
+			return backbuffer;
+
 		final oX = offsetX;
 		final oY = offsetY;
 
 		final centerX = oX + finalW / 2;
 		final centerY = oY + finalH / 2;
 
-		// color
-		SUI.graphics.color = kha.Color.fromValue(color);
-		// opacity
-		SUI.graphics.opacity = finalOpacity;
-		// translation
-		SUI.graphics.pushTranslation(oX, oY);
-		// scale
 		var cXS = Math.isNaN(transform.scale.origin.x) ? centerX : oX + transform.scale.origin.x;
 		var cYS = Math.isNaN(transform.scale.origin.y) ? centerY : oY + transform.scale.origin.y;
-		SUI.graphics.pushTranslation(-cXS, -cYS);
-		SUI.graphics.pushScale(finalScaleX, finalScaleY);
-		SUI.graphics.pushTranslation(cXS, cYS);
-		// rotation
 		var cXR = Math.isNaN(transform.rotation.origin.x) ? centerX : oX + transform.scale.origin.x;
 		var cYR = Math.isNaN(transform.rotation.origin.y) ? centerY : oY + transform.scale.origin.y;
-		SUI.graphics.pushRotation((rotation + transform.rotation.angle) * Math.PI / 180, cXR, cYR);
+
+		backbuffer.g2.begin(true, kha.Color.Transparent);
+		backbuffer.g2.color = kha.Color.fromValue(color);
+		backbuffer.g2.opacity = finalOpacity;
+		backbuffer.g2.pushTranslation(oX, oY);
+		backbuffer.g2.pushTranslation(-cXS, -cYS);
+		backbuffer.g2.pushScale(finalScaleX, finalScaleY);
+		backbuffer.g2.pushTranslation(cXS, cYS);
+		backbuffer.g2.pushRotation((rotation + transform.rotation.angle) * Math.PI / 180, cXR, cYR);
 		draw();
-		// revert translation
-		SUI.graphics.pushTranslation(-oX, -oY);
-		// draw children
-		for (child in children)
-			child.drawTree();
-		// revert transformations
-		SUI.graphics.popTransformation();
-		SUI.graphics.popTransformation();
-		SUI.graphics.popTransformation();
-		SUI.graphics.popTransformation();
-		SUI.graphics.popTransformation();
-		SUI.graphics.popTransformation();
+		backbuffer.g2.pushTranslation(-oX, -oY);
+		backbuffer.g2.end();
+
+		for (child in children) {
+			var childBuffer = child.drawTree();
+
+			backbuffer.g2.pipeline = pipeline;
+			backbuffer.g4.setPipeline(pipeline);
+			backbuffer.g4.setFloat(sizeID, 16.);
+			backbuffer.g4.setInt(qualityID, 8);
+			backbuffer.g4.setFloat2(resolutionID, backbuffer.width, backbuffer.height);
+			backbuffer.g2.begin(false);
+			Scaler.scale(childBuffer, backbuffer, System.screenRotation);
+			backbuffer.g2.end();
+		}
+
+		backbuffer.g2.popTransformation();
+		backbuffer.g2.popTransformation();
+		backbuffer.g2.popTransformation();
+		backbuffer.g2.popTransformation();
+		backbuffer.g2.popTransformation();
+		backbuffer.g2.popTransformation();
+
+		return backbuffer;
 	}
 
 	public inline final function addChild(child:Element) {
