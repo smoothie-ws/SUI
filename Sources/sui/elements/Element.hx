@@ -1,12 +1,6 @@
 package sui.elements;
 
-import kha.math.FastVector2;
-import kha.graphics4.BlendingFactor;
-import kha.Shaders;
-import kha.graphics4.VertexData;
-import kha.graphics4.VertexStructure;
-import kha.graphics4.ConstantLocation;
-import kha.graphics4.PipelineState;
+import sui.effects.Effect;
 import kha.Scaler;
 import kha.System;
 import kha.Image;
@@ -19,11 +13,7 @@ import sui.utils.Math.clamp;
 @:structInit
 class Element {
 	public var backbuffer:Image = null;
-
-	static var pipeline:PipelineState = null;
-	static var qualityID:ConstantLocation = null;
-	static var sizeID:ConstantLocation = null;
-	static var resolutionID:ConstantLocation = null;
+	public var effects:Array<Effect> = [];
 
 	// position
 	public var x:FastFloat = 0.;
@@ -134,23 +124,9 @@ class Element {
 	function construct() {}
 
 	public inline final function constructTree() {
-		var structure = new VertexStructure();
-		structure.add("vertexPosition", VertexData.Float32_3X);
-		structure.add("vertexUV", VertexData.Float32_2X);
-		structure.add("vertexColor", VertexData.UInt8_4X_Normalized);
-
-		pipeline = new PipelineState();
-		pipeline.inputLayout = [structure];
-		pipeline.vertexShader = Shaders.painter_image_vert;
-		pipeline.fragmentShader = Shaders.blur_frag;
-
-		pipeline.blendDestination = BlendingFactor.InverseSourceAlpha;
-		pipeline.compile();
-		sizeID = pipeline.getConstantLocation("size");
-		qualityID = pipeline.getConstantLocation("quality");
-		resolutionID = pipeline.getConstantLocation("resolution");
-
 		construct();
+		for (effect in effects)
+			effect.compile();
 		for (child in children)
 			child.constructTree();
 	}
@@ -187,12 +163,9 @@ class Element {
 
 		for (child in children) {
 			var childBuffer = child.drawTree();
+			for (effect in child.effects)
+				effect.apply(backbuffer);
 
-			backbuffer.g2.pipeline = pipeline;
-			backbuffer.g4.setPipeline(pipeline);
-			backbuffer.g4.setFloat(sizeID, 16.);
-			backbuffer.g4.setInt(qualityID, 8);
-			backbuffer.g4.setFloat2(resolutionID, backbuffer.width, backbuffer.height);
 			backbuffer.g2.begin(false);
 			Scaler.scale(childBuffer, backbuffer, System.screenRotation);
 			backbuffer.g2.end();
