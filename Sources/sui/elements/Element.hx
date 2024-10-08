@@ -1,6 +1,6 @@
 package sui.elements;
 
-import sui.effects.Effect;
+// import sui.effects.Effect;
 import kha.Scaler;
 import kha.System;
 import kha.Image;
@@ -9,6 +9,7 @@ import kha.FastFloat;
 import sui.Color;
 import sui.transform.Transform;
 import sui.utils.Math.clamp;
+import sui.effects.Effect;
 
 @:structInit
 class Element {
@@ -125,8 +126,6 @@ class Element {
 
 	public inline final function constructTree() {
 		construct();
-		for (effect in effects)
-			effect.compile();
 		for (child in children)
 			child.constructTree();
 	}

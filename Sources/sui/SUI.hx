@@ -1,15 +1,17 @@
 package sui;
 
+import sui.effects.shaders.BlurShader;
+import kha.Shaders;
+import sui.effects.Blur;
 import kha.Scaler;
-import kha.Image;
 import kha.Assets;
 import kha.Window;
 import kha.Scheduler;
 import kha.System;
 import kha.Framebuffer;
-import kha.graphics2.Graphics;
 // sui
 import sui.elements.Root;
+import sui.effects.shaders.EffectShaders;
 
 class SUI {
 	public static var root:Root = {
@@ -54,7 +56,13 @@ class SUI {
 
 			Scheduler.addTimeTask(root.update, 0, 1 / 60);
 			System.notifyOnFrames(render);
+			
+			compileShaders();
 		});
+	}
+
+	static inline function compileShaders() {
+		EffectShaders.Blur.compile(Shaders.blur_frag);
 	}
 
 	static inline function render(frames:Array<kha.Framebuffer>) {
