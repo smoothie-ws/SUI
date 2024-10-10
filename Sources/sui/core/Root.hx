@@ -1,4 +1,4 @@
-package sui.elements;
+package sui.core;
 
 @:structInit
 class Root extends Element {

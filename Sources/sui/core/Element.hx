@@ -1,4 +1,4 @@
-package sui.elements;
+package sui.core;
 
 // import sui.effects.Effect;
 import kha.Scaler;
@@ -8,7 +8,7 @@ import kha.FastFloat;
 // sui
 import sui.Color;
 import sui.transform.Transform;
-import sui.utils.Math.clamp;
+import sui.core.utils.Math.clamp;
 import sui.effects.Effect;
 
 @:structInit

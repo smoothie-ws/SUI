@@ -1,8 +1,8 @@
-package sui;
+package sui.core.layouts;
 
 import kha.FastFloat;
 // sui
-import sui.elements.Element;
+import sui.core.Element;
 
 @:structInit
 class Anchors {

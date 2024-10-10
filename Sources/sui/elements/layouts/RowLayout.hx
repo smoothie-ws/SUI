@@ -1,6 +1,8 @@
 package sui.elements.layouts;
 
 import kha.FastFloat;
+// sui
+import sui.core.Element;
 
 @:structInit
 class RowLayout extends Element {

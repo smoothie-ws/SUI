@@ -1,6 +1,8 @@
 package sui.elements;
 
 import kha.input.Mouse;
+// sui
+import sui.core.Element;
 
 @:structInit
 class MouseArea extends Element {

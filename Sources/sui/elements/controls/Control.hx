@@ -1,6 +1,8 @@
 package sui.elements.controls;
 
 import kha.FastFloat;
+// sui
+import sui.core.Element;
 
 @:structInit
 class Control extends Element {
@@ -11,7 +13,7 @@ class Control extends Element {
 	override function construct() {
 		addChild(background);
 		addChild(content);
-		
+
 		background.anchors.fill = this;
 		content.anchors.fill = this;
 		content.anchors.margins = padding;

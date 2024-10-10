@@ -1,7 +1,7 @@
 package sui;
 
-import sui.utils.Math.arrMin;
-import sui.utils.Math.arrMax;
+import sui.core.utils.Math.arrMin;
+import sui.core.utils.Math.arrMax;
 
 enum abstract Color(Int) from Int from UInt to Int to UInt {
 	var aliceblue = 0xfff0f8ff;

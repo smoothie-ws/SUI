@@ -8,8 +8,8 @@ import kha.Scheduler;
 import kha.System;
 import kha.Framebuffer;
 // sui
-import sui.elements.Root;
-import sui.effects.shaders.EffectShaders;
+import sui.core.Root;
+import sui.core.shaders.EffectShaders;
 
 class SUI {
 	public static var root:Root = {

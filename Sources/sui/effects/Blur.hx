@@ -3,7 +3,7 @@ package sui.effects;
 import kha.Image;
 import kha.FastFloat;
 // sui
-import sui.effects.shaders.EffectShaders;
+import sui.core.shaders.EffectShaders;
 
 class Blur extends Effect {
 	public var size:FastFloat;

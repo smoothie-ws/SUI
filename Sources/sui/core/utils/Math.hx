@@ -1,4 +1,4 @@
-package sui.utils;
+package sui.core.utils;
 
 inline function arrMax(arr:Array<Dynamic>) {
 	var max:Dynamic = arr[0];

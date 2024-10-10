@@ -1,4 +1,4 @@
-package sui.effects.shaders;
+package sui.core.shaders;
 
 import kha.math.FastVector2;
 import kha.graphics4.Graphics;

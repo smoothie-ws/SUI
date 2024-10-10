@@ -3,7 +3,8 @@ package sui.elements;
 import kha.Assets;
 import kha.FastFloat;
 // sui
-import sui.utils.String.capitalizeWords;
+import sui.core.Element;
+import sui.core.utils.String.capitalizeWords;
 
 @:structInit
 class Text extends Element {

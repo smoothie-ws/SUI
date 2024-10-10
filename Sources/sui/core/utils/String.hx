@@ -1,4 +1,4 @@
-package sui.utils;
+package sui.core.utils;
 
 inline function capitalizeWords(str:String):String {
 	return str.split(" ").map(function(word) {

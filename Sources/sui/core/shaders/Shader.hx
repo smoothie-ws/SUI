@@ -1,4 +1,4 @@
-package sui.effects.shaders;
+package sui.core.shaders;
 
 import kha.Image;
 import kha.Shaders;
