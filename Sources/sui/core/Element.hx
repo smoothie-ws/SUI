@@ -1,6 +1,7 @@
 package sui.core;
 
 // import sui.effects.Effect;
+import sui.core.layouts.Anchors;
 import kha.Scaler;
 import kha.System;
 import kha.Image;
@@ -132,7 +133,7 @@ class Element {
 
 	public function draw() {}
 
-	public inline function drawTree():Image {
+	public function drawTree():Image {
 		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 		if (!visible)
 			return backbuffer;

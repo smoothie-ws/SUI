@@ -8,6 +8,4 @@ enum abstract Direction(Int) from Int to Int {
 	// vertical
 	public inline static var TopToBottom:Int = 4;
 	public inline static var BottomToTop:Int = 8;
-
-	public inline static var Default:Int = 5;
 }

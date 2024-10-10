@@ -4,6 +4,7 @@ import kha.Assets;
 import kha.FastFloat;
 // sui
 import sui.core.Element;
+import sui.core.layouts.Alignment;
 import sui.core.utils.String.capitalizeWords;
 
 @:structInit

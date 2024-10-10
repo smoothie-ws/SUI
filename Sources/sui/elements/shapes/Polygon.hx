@@ -2,7 +2,7 @@ package sui.elements.shapes;
 
 import kha.math.Vector2;
 // sui
-import sui.SUI;
+import sui.core.Element;
 
 @:structInit
 class Polygon extends Element {
@@ -21,7 +21,7 @@ class Polygon extends Element {
 
 		while (iterator.hasNext()) {
 			var v2 = iterator.next();
-			SUI.graphics.fillTriangle(v0.x + x, v0.y + y, v1.x + x, v1.y + y, v2.x + x, v2.y + y);
+			backbuffer.g2.fillTriangle(v0.x + x, v0.y + y, v1.x + x, v1.y + y, v2.x + x, v2.y + y);
 			v1 = v2;
 		}
 	}
