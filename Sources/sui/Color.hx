@@ -1,5 +1,6 @@
 package sui;
 
+import Reflect;
 import sui.core.utils.Math.arrMin;
 import sui.core.utils.Math.arrMax;
 
@@ -366,6 +367,317 @@ enum abstract Color(Int) from Int from UInt to Int to UInt {
 		return rgba(Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255), a);
 	}
 
+	@:from
+	public static function fromString(color:String):Color {
+		switch (color.toLowerCase()) {
+			case "aliceblue":
+				return Color.aliceblue;
+			case "antiquewhite":
+				return Color.antiquewhite;
+			case "aqua":
+				return Color.aqua;
+			case "aquamarine":
+				return Color.aquamarine;
+			case "azure":
+				return Color.azure;
+			case "beige":
+				return Color.beige;
+			case "bisque":
+				return Color.bisque;
+			case "black":
+				return Color.black;
+			case "blanchedalmond":
+				return Color.blanchedalmond;
+			case "blue":
+				return Color.blue;
+			case "blueviolet":
+				return Color.blueviolet;
+			case "brown":
+				return Color.brown;
+			case "burlywood":
+				return Color.burlywood;
+			case "cadetblue":
+				return Color.cadetblue;
+			case "chartreuse":
+				return Color.chartreuse;
+			case "chocolate":
+				return Color.chocolate;
+			case "coral":
+				return Color.coral;
+			case "cornflowerblue":
+				return Color.cornflowerblue;
+			case "cornsilk":
+				return Color.cornsilk;
+			case "crimson":
+				return Color.crimson;
+			case "cyan":
+				return Color.cyan;
+			case "darkblue":
+				return Color.darkblue;
+			case "darkcyan":
+				return Color.darkcyan;
+			case "darkgoldenrod":
+				return Color.darkgoldenrod;
+			case "darkgray", "darkgrey":
+				return Color.darkgray;
+			case "darkgreen":
+				return Color.darkgreen;
+			case "darkkhaki":
+				return Color.darkkhaki;
+			case "darkmagenta":
+				return Color.darkmagenta;
+			case "darkolivegreen":
+				return Color.darkolivegreen;
+			case "darkorange":
+				return Color.darkorange;
+			case "darkorchid":
+				return Color.darkorchid;
+			case "darkred":
+				return Color.darkred;
+			case "darksalmon":
+				return Color.darksalmon;
+			case "darkseagreen":
+				return Color.darkseagreen;
+			case "darkslateblue":
+				return Color.darkslateblue;
+			case "darkslategray", "darkslategrey":
+				return Color.darkslategray;
+			case "darkturquoise":
+				return Color.darkturquoise;
+			case "darkviolet":
+				return Color.darkviolet;
+			case "deeppink":
+				return Color.deeppink;
+			case "deepskyblue":
+				return Color.deepskyblue;
+			case "dimgray", "dimgrey":
+				return Color.dimgray;
+			case "dodgerblue":
+				return Color.dodgerblue;
+			case "firebrick":
+				return Color.firebrick;
+			case "floralwhite":
+				return Color.floralwhite;
+			case "forestgreen":
+				return Color.forestgreen;
+			case "fuchsia":
+				return Color.fuchsia;
+			case "gainsboro":
+				return Color.gainsboro;
+			case "ghostwhite":
+				return Color.ghostwhite;
+			case "gold":
+				return Color.gold;
+			case "goldenrod":
+				return Color.goldenrod;
+			case "gray", "grey":
+				return Color.gray;
+			case "green":
+				return Color.green;
+			case "greenyellow":
+				return Color.greenyellow;
+			case "honeydew":
+				return Color.honeydew;
+			case "hotpink":
+				return Color.hotpink;
+			case "indianred":
+				return Color.indianred;
+			case "indigo":
+				return Color.indigo;
+			case "ivory":
+				return Color.ivory;
+			case "khaki":
+				return Color.khaki;
+			case "lavender":
+				return Color.lavender;
+			case "lavenderblush":
+				return Color.lavenderblush;
+			case "lawngreen":
+				return Color.lawngreen;
+			case "lemonchiffon":
+				return Color.lemonchiffon;
+			case "lightblue":
+				return Color.lightblue;
+			case "lightcoral":
+				return Color.lightcoral;
+			case "lightcyan":
+				return Color.lightcyan;
+			case "lightgoldenrodyellow":
+				return Color.lightgoldenrodyellow;
+			case "lightgray", "lightgrey":
+				return Color.lightgray;
+			case "lightgreen":
+				return Color.lightgreen;
+			case "lightpink":
+				return Color.lightpink;
+			case "lightsalmon":
+				return Color.lightsalmon;
+			case "lightseagreen":
+				return Color.lightseagreen;
+			case "lightskyblue":
+				return Color.lightskyblue;
+			case "lightslategray", "lightslategrey":
+				return Color.lightslategray;
+			case "lightsteelblue":
+				return Color.lightsteelblue;
+			case "lightyellow":
+				return Color.lightyellow;
+			case "lime":
+				return Color.lime;
+			case "limegreen":
+				return Color.limegreen;
+			case "linen":
+				return Color.linen;
+			case "magenta":
+				return Color.magenta;
+			case "maroon":
+				return Color.maroon;
+			case "mediumaquamarine":
+				return Color.mediumaquamarine;
+			case "mediumblue":
+				return Color.mediumblue;
+			case "mediumorchid":
+				return Color.mediumorchid;
+			case "mediumpurple":
+				return Color.mediumpurple;
+			case "mediumseagreen":
+				return Color.mediumseagreen;
+			case "mediumslateblue":
+				return Color.mediumslateblue;
+			case "mediumspringgreen":
+				return Color.mediumspringgreen;
+			case "mediumturquoise":
+				return Color.mediumturquoise;
+			case "mediumvioletred":
+				return Color.mediumvioletred;
+			case "midnightblue":
+				return Color.midnightblue;
+			case "mintcream":
+				return Color.mintcream;
+			case "mistyrose":
+				return Color.mistyrose;
+			case "moccasin":
+				return Color.moccasin;
+			case "navajowhite":
+				return Color.navajowhite;
+			case "navy":
+				return Color.navy;
+			case "oldlace":
+				return Color.oldlace;
+			case "olive":
+				return Color.olive;
+			case "olivedrab":
+				return Color.olivedrab;
+			case "orange":
+				return Color.orange;
+			case "orangered":
+				return Color.orangered;
+			case "orchid":
+				return Color.orchid;
+			case "palegoldenrod":
+				return Color.palegoldenrod;
+			case "palegreen":
+				return Color.palegreen;
+			case "paleturquoise":
+				return Color.paleturquoise;
+			case "palevioletred":
+				return Color.palevioletred;
+			case "papayawhip":
+				return Color.papayawhip;
+			case "peachpuff":
+				return Color.peachpuff;
+			case "peru":
+				return Color.peru;
+			case "pink":
+				return Color.pink;
+			case "plum":
+				return Color.plum;
+			case "powderblue":
+				return Color.powderblue;
+			case "purple":
+				return Color.purple;
+			case "red":
+				return Color.red;
+			case "rosybrown":
+				return Color.rosybrown;
+			case "royalblue":
+				return Color.royalblue;
+			case "saddlebrown":
+				return Color.saddlebrown;
+			case "salmon":
+				return Color.salmon;
+			case "sandybrown":
+				return Color.sandybrown;
+			case "seagreen":
+				return Color.seagreen;
+			case "seashell":
+				return Color.seashell;
+			case "sienna":
+				return Color.sienna;
+			case "silver":
+				return Color.silver;
+			case "skyblue":
+				return Color.skyblue;
+			case "slateblue":
+				return Color.slateblue;
+			case "slategray", "slategrey":
+				return Color.slategray;
+			case "snow":
+				return Color.snow;
+			case "springgreen":
+				return Color.springgreen;
+			case "steelblue":
+				return Color.steelblue;
+			case "tan":
+				return Color.tan;
+			case "teal":
+				return Color.teal;
+			case "thistle":
+				return Color.thistle;
+			case "tomato":
+				return Color.tomato;
+			case "turquoise":
+				return Color.turquoise;
+			case "violet":
+				return Color.violet;
+			case "wheat":
+				return Color.wheat;
+			case "white":
+				return Color.white;
+			case "whitesmoke":
+				return Color.whitesmoke;
+			case "yellow":
+				return Color.yellow;
+			case "yellowgreen":
+				return Color.yellowgreen;
+			case "transparent":
+				return Color.transparent;
+			default:
+				if (color.charAt(0) == "#") {
+					color = color.substr(1);
+				}
+
+				var len = color.length;
+				var r:Int, g:Int, b:Int, a:Int = 255;
+
+				switch (len) {
+					case 6:
+						r = Std.parseInt("0x" + color.substr(0, 2));
+						g = Std.parseInt("0x" + color.substr(2, 2));
+						b = Std.parseInt("0x" + color.substr(4, 2));
+					case 8:
+						a = Std.parseInt("0x" + color.substr(0, 2));
+						r = Std.parseInt("0x" + color.substr(2, 2));
+						g = Std.parseInt("0x" + color.substr(4, 2));
+						b = Std.parseInt("0x" + color.substr(6, 2));
+					default:
+						throw "Invalid color " + color;
+				}
+				return rgba(r, g, b, a);
+		}
+	}
+
+	@:to
 	public function toString():String {
 		var r:Int = (this >> 16) & 0xFF;
 		var g:Int = (this >> 8) & 0xFF;
@@ -377,30 +689,5 @@ enum abstract Color(Int) from Int from UInt to Int to UInt {
 			hexString = StringTools.hex(a, 2) + hexString;
 
 		return hexString;
-	}
-
-	public static function fromString(color:String):Color {
-		if (color.charAt(0) == "#") {
-			color = color.substr(1);
-		}
-
-		var len = color.length;
-		var r:Int, g:Int, b:Int, a:Int = 255;
-
-		switch (len) {
-			case 6:
-				r = Std.parseInt("0x" + color.substr(0, 2));
-				g = Std.parseInt("0x" + color.substr(2, 2));
-				b = Std.parseInt("0x" + color.substr(4, 2));
-			case 8:
-				a = Std.parseInt("0x" + color.substr(0, 2));
-				r = Std.parseInt("0x" + color.substr(2, 2));
-				g = Std.parseInt("0x" + color.substr(4, 2));
-				b = Std.parseInt("0x" + color.substr(6, 2));
-			default:
-				throw "Invalid color string format.";
-		}
-
-		return rgba(r, g, b, a);
 	}
 }
