@@ -1,7 +1,6 @@
 package sui;
 
 import kha.Shaders;
-import kha.Scaler;
 import kha.Assets;
 import kha.Window;
 import kha.Scheduler;
@@ -41,7 +40,7 @@ class SUI {
 	public static inline function resize(w:Int, h:Int) {
 		options.width = w;
 		options.height = h;
-		root.resize(w, h);
+		root.resizeTree(w, h);
 	}
 
 	static inline function init(window:Window) {
@@ -60,13 +59,14 @@ class SUI {
 	}
 
 	static inline function compileShaders() {
+		EffectShaders.Painter.compile(Shaders.painter_image_frag);
 		EffectShaders.Blur.compile(Shaders.blur_frag);
 	}
 
 	static inline function render(frames:Array<kha.Framebuffer>) {
 		var rootBuffer = root.drawTree();
 		frames[0].g2.begin(true, kha.Color.fromValue(root.color));
-		Scaler.scale(rootBuffer, frames[0], System.screenRotation);
+		frames[0].g2.drawImage(rootBuffer, 0., 0.);
 		frames[0].g2.end();
 	}
 }

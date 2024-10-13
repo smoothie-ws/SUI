@@ -6,12 +6,12 @@ import kha.graphics4.Graphics;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
 import kha.graphics4.PipelineState;
-import kha.graphics4.BlendingFactor;
 import kha.graphics4.FragmentShader;
 
 class Shader {
-	public var shader:FragmentShader;
 	public var pipeline:PipelineState;
+
+	public function new() {}
 
 	public function getUniforms() {}
 
@@ -26,11 +26,12 @@ class Shader {
 		pipeline = new PipelineState();
 		pipeline.inputLayout = [structure];
 		pipeline.vertexShader = Shaders.painter_image_vert;
-		pipeline.fragmentShader = Shaders.blur_frag;
-		pipeline.blendSource = BlendingFactor.SourceAlpha;
-		pipeline.blendDestination = BlendingFactor.InverseSourceAlpha;
-		pipeline.alphaBlendSource = BlendingFactor.SourceAlpha;
-		pipeline.alphaBlendDestination = BlendingFactor.InverseSourceAlpha;
+		pipeline.fragmentShader = shader;
+
+		pipeline.alphaBlendSource = SourceAlpha;
+		pipeline.alphaBlendDestination = InverseSourceAlpha;
+		pipeline.blendSource = SourceAlpha;
+		pipeline.blendDestination = InverseSourceAlpha;
 
 		pipeline.compile();
 

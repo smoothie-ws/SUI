@@ -4,7 +4,7 @@ package sui.core;
 class Root extends Element {
 	public inline function update() {}
 
-	public inline function resize(w:Int, h:Int) {
+	override public inline function resize(w:Int, h:Int) {
 		anchors.right.position = w;
 		anchors.bottom.position = h;
 	}

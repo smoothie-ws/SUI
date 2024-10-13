@@ -1,6 +1,7 @@
 package sui.core;
 
 // import sui.effects.Effect;
+import sui.core.shaders.EffectShaders;
 import sui.core.layouts.Anchors;
 import kha.Scaler;
 import kha.System;
@@ -16,6 +17,8 @@ import sui.effects.Effect;
 class Element {
 	public var backbuffer:Image = null;
 	public var effects:Array<Effect> = [];
+
+	var needsUpdate:Bool = true;
 
 	// position
 	public var x:FastFloat = 0.;
@@ -127,15 +130,29 @@ class Element {
 
 	public inline final function constructTree() {
 		construct();
+		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 		for (child in children)
 			child.constructTree();
+	}
+
+	function resize(w:Int, h:Int) {}
+
+	public inline final function resizeTree(w:Int, h:Int) {
+		resize(w, h);
+		for (child in children)
+			child.resizeTree(w, h);
+
+		needsUpdate = true;
+		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 	}
 
 	public function draw() {}
 
 	public function drawTree():Image {
-		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 		if (!visible)
+			return null;
+
+		if (!needsUpdate)
 			return backbuffer;
 
 		final oX = offsetX;
@@ -167,8 +184,10 @@ class Element {
 				effect.apply(backbuffer);
 
 			backbuffer.g2.begin(false);
-			Scaler.scale(childBuffer, backbuffer, System.screenRotation);
+			backbuffer.g2.drawImage(childBuffer, 0., 0.);
 			backbuffer.g2.end();
+
+			EffectShaders.clearEffects(backbuffer);
 		}
 
 		backbuffer.g2.popTransformation();
@@ -178,6 +197,7 @@ class Element {
 		backbuffer.g2.popTransformation();
 		backbuffer.g2.popTransformation();
 
+		needsUpdate = false;
 		return backbuffer;
 	}
 

@@ -9,7 +9,9 @@ class BlurShader extends Shader {
 	public var qualityID:ConstantLocation;
 	public var resolutionID:ConstantLocation;
 
-	public function new() {}
+	public function new() {
+		super();
+	}
 
 	override function getUniforms() {
 		sizeID = pipeline.getConstantLocation("size");
