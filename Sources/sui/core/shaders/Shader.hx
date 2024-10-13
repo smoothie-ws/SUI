@@ -33,8 +33,10 @@ class Shader {
 		pipeline.fragmentShader = frag;
 
 		pipeline.alphaBlendSource = SourceAlpha;
+		pipeline.alphaBlendOperation = Max;
 		pipeline.alphaBlendDestination = InverseSourceAlpha;
-		pipeline.blendSource = BlendOne;
+		pipeline.blendSource = SourceAlpha;
+		pipeline.blendOperation = Add;
 		pipeline.blendDestination = InverseSourceAlpha;
 
 		pipeline.compile();
