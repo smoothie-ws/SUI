@@ -51,6 +51,8 @@ class Element {
 	public var color:Color = Color.white;
 	// transform
 	public var transform:Transform = {};
+	// border
+	public var border:Border = {};
 
 	// final transform
 	var finalOpacity(get, never):FastFloat;
@@ -167,13 +169,13 @@ class Element {
 		var cYR = Math.isNaN(transform.rotation.origin.y) ? centerY : oY + transform.scale.origin.y;
 
 		backbuffer.g2.begin(true, kha.Color.Transparent);
-		backbuffer.g2.color = kha.Color.fromValue(color);
-		backbuffer.g2.opacity = finalOpacity;
 		backbuffer.g2.pushTranslation(oX, oY);
 		backbuffer.g2.pushTranslation(-cXS, -cYS);
 		backbuffer.g2.pushScale(finalScaleX, finalScaleY);
 		backbuffer.g2.pushTranslation(cXS, cYS);
 		backbuffer.g2.pushRotation((rotation + transform.rotation.angle) * Math.PI / 180, cXR, cYR);
+		backbuffer.g2.color = kha.Color.fromValue(color);
+		backbuffer.g2.opacity = finalOpacity;
 		draw();
 		backbuffer.g2.pushTranslation(-oX, -oY);
 		backbuffer.g2.end();
@@ -228,4 +230,11 @@ class Element {
 	public inline final function removeParent() {
 		parent.removeChild(this);
 	}
+}
+
+@:structInit
+class Border {
+	public var width:Int = 0;
+	public var color:Color = "black";
+	public var opacity:Float = 1.0;
 }

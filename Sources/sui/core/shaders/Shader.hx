@@ -34,7 +34,7 @@ class Shader {
 
 		pipeline.alphaBlendSource = SourceAlpha;
 		pipeline.alphaBlendDestination = InverseSourceAlpha;
-		pipeline.blendSource = SourceAlpha;
+		pipeline.blendSource = BlendOne;
 		pipeline.blendDestination = InverseSourceAlpha;
 
 		pipeline.compile();
