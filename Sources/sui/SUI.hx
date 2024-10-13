@@ -65,7 +65,7 @@ class SUI {
 
 	static inline function render(frames:Array<kha.Framebuffer>) {
 		var rootBuffer = root.drawTree();
-		frames[0].g2.begin(true, kha.Color.fromValue(root.color));
+		frames[0].g2.begin(true, kha.Color.Cyan);
 		frames[0].g2.drawImage(rootBuffer, 0., 0.);
 		frames[0].g2.end();
 	}
