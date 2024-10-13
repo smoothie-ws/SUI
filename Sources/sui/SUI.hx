@@ -59,7 +59,7 @@ class SUI {
 	}
 
 	static inline function compileShaders() {
-		EffectShaders.Painter.compile(Shaders.painter_image_frag);
+		EffectShaders.Painter.compile();
 		EffectShaders.Blur.compile(Shaders.blur_frag);
 	}
 
