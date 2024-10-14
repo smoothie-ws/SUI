@@ -3,15 +3,15 @@
 in vec2 coord;
 out vec4 FragColor;
 
-uniform vec4 dims;
-uniform vec3 color;
 uniform float radius;
 uniform float smoothness;
 uniform vec2 resolution;
+uniform vec3 color;
+uniform vec4 dims;
 
 void main() {
     vec2 uv = coord * resolution;
-    
+
     float x = dims[0];
     float y = dims[1];
     float w = dims[2];
