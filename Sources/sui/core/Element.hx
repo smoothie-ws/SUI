@@ -1,8 +1,5 @@
 package sui.core;
 
-// import sui.effects.Effect;
-import sui.core.shaders.EffectShaders;
-import sui.core.layouts.Anchors;
 import kha.Scaler;
 import kha.System;
 import kha.Image;
@@ -12,6 +9,8 @@ import sui.Color;
 import sui.transform.Transform;
 import sui.core.utils.Math.clamp;
 import sui.effects.Effect;
+import sui.core.shaders.EffectShaders;
+import sui.core.layouts.Anchors;
 
 @:structInit
 class Element {
@@ -186,10 +185,10 @@ class Element {
 				effect.apply(backbuffer);
 
 			backbuffer.g2.begin(false);
-			backbuffer.g2.drawImage(childBuffer, 0., 0.);
+			Scaler.scale(childBuffer, backbuffer, System.screenRotation);
 			backbuffer.g2.end();
 
-			EffectShaders.clearEffects(backbuffer);
+			// EffectShaders.clearEffects(backbuffer);
 		}
 
 		backbuffer.g2.popTransformation();

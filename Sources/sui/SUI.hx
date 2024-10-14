@@ -1,5 +1,7 @@
 package sui;
 
+import sui.core.graphics.Painters;
+import kha.Scaler;
 import kha.Shaders;
 import kha.Assets;
 import kha.Window;
@@ -59,14 +61,17 @@ class SUI {
 	}
 
 	static inline function compileShaders() {
-		EffectShaders.Painter.compile();
+		// effects
+		// EffectShaders.Painter.compile();
 		EffectShaders.Blur.compile(Shaders.blur_frag);
+		// painters
+		Painters.Rect.compile();
 	}
 
 	static inline function render(frames:Array<kha.Framebuffer>) {
 		var rootBuffer = root.drawTree();
-		frames[0].g2.begin(true, kha.Color.Cyan);
-		frames[0].g2.drawImage(rootBuffer, 0., 0.);
+		frames[0].g2.begin(true, kha.Color.fromValue(root.color));
+		Scaler.scale(rootBuffer, frames[0], System.screenRotation);
 		frames[0].g2.end();
 	}
 }
