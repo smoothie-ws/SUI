@@ -131,7 +131,7 @@ class Element {
 
 	public inline final function constructTree() {
 		construct();
-		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
+		backbuffer = Image.createRenderTarget(Std.int(finalW), Std.int(finalH));
 		for (child in children)
 			child.constructTree();
 	}
@@ -144,7 +144,7 @@ class Element {
 			child.resizeTree(w, h);
 
 		needsUpdate = true;
-		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
+		backbuffer = Image.createRenderTarget(Std.int(finalW), Std.int(finalH));
 	}
 
 	public function draw() {}
@@ -156,47 +156,51 @@ class Element {
 		if (!needsUpdate)
 			return backbuffer;
 
-		final oX = offsetX;
-		final oY = offsetY;
-
-		final centerX = oX + finalW / 2;
-		final centerY = oY + finalH / 2;
-
-		var cXS = Math.isNaN(transform.scale.origin.x) ? centerX : oX + transform.scale.origin.x;
-		var cYS = Math.isNaN(transform.scale.origin.y) ? centerY : oY + transform.scale.origin.y;
-		var cXR = Math.isNaN(transform.rotation.origin.x) ? centerX : oX + transform.scale.origin.x;
-		var cYR = Math.isNaN(transform.rotation.origin.y) ? centerY : oY + transform.scale.origin.y;
-
 		backbuffer.g2.begin(true, kha.Color.Transparent);
-		backbuffer.g2.pushTranslation(oX, oY);
-		backbuffer.g2.pushTranslation(-cXS, -cYS);
-		backbuffer.g2.pushScale(finalScaleX, finalScaleY);
-		backbuffer.g2.pushTranslation(cXS, cYS);
-		backbuffer.g2.pushRotation((rotation + transform.rotation.angle) * Math.PI / 180, cXR, cYR);
-		backbuffer.g2.color = kha.Color.fromValue(color);
-		backbuffer.g2.opacity = finalOpacity;
 		draw();
-		backbuffer.g2.pushTranslation(-oX, -oY);
 		backbuffer.g2.end();
 
-		for (child in children) {
-			var childBuffer = child.drawTree();
-			for (effect in child.effects)
+		for (c in children) {
+			c.drawTree();
+			for (effect in c.effects)
 				effect.apply(backbuffer);
 
+			var oX = c.offsetX;
+			var oY = c.offsetY;
+
+			var centerX = oX + c.finalW / 2;
+			var centerY = oY + c.finalH / 2;
+
+			var sOX = c.transform.scale.origin.x;
+			var sOY = c.transform.scale.origin.y;
+			var rOX = c.transform.scale.origin.x;
+			var rOY = c.transform.scale.origin.y;
+			var rA = c.transform.rotation.angle;
+
+			var cXS = Math.isNaN(sOX) ? centerX : oX + sOX;
+			var cYS = Math.isNaN(sOY) ? centerY : oY + sOY;
+			var cXR = Math.isNaN(rOX) ? centerX : oX + rOX;
+			var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
+			var fR = (c.rotation + rA) * Math.PI / 180;
+
 			backbuffer.g2.begin(false);
-			Scaler.scale(childBuffer, backbuffer, System.screenRotation);
+			backbuffer.g2.pushTranslation(oX, oY);
+			backbuffer.g2.pushTranslation(-cXS, -cYS);
+			backbuffer.g2.pushScale(c.finalScaleX, c.finalScaleY);
+			backbuffer.g2.pushTranslation(cXS, cYS);
+			backbuffer.g2.pushRotation(fR, cXR, cYR);
+			backbuffer.g2.opacity = c.finalOpacity;
+			backbuffer.g2.drawScaledImage(c.backbuffer, 0., 0., c.finalW, c.finalH);
 			backbuffer.g2.end();
 
-			// EffectShaders.clearEffects(backbuffer);
-		}
+			backbuffer.g2.popTransformation(); // rotation
+			backbuffer.g2.popTransformation(); // translation
+			backbuffer.g2.popTransformation(); // scale
+			backbuffer.g2.popTransformation(); // translation
+			backbuffer.g2.popTransformation(); // translation
 
-		backbuffer.g2.popTransformation();
-		backbuffer.g2.popTransformation();
-		backbuffer.g2.popTransformation();
-		backbuffer.g2.popTransformation();
-		backbuffer.g2.popTransformation();
-		backbuffer.g2.popTransformation();
+			EffectShaders.clearEffects(backbuffer);
+		}
 
 		needsUpdate = false;
 		return backbuffer;
