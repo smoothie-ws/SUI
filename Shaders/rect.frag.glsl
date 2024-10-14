@@ -3,10 +3,7 @@
 in vec2 coord;
 out vec4 FragColor;
 
-uniform float x;
-uniform float y;
-uniform float width;
-uniform float height;
+uniform vec4 dims;
 uniform vec3 color;
 uniform float radius;
 uniform float smoothness;
@@ -14,9 +11,15 @@ uniform vec2 resolution;
 
 void main() {
     vec2 uv = coord * resolution;
-    vec2 rectCenter = vec2(x + width / 2.0, y + height / 2.0);
+    
+    float x = dims[0];
+    float y = dims[1];
+    float w = dims[2];
+    float h = dims[3];
 
-    vec2 rectSize = vec2(width, height) / 2.0 - vec2(radius);
+    vec2 rectCenter = vec2(x + w / 2.0, y + h / 2.0);
+
+    vec2 rectSize = vec2(w, h) / 2.0 - vec2(radius);
     vec2 dist = abs(uv - rectCenter) - rectSize;
 
     float outside = length(max(dist, 0.0));
