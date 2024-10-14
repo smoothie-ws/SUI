@@ -1,7 +1,5 @@
 package sui;
 
-import sui.core.graphics.Painters;
-import kha.Scaler;
 import kha.Shaders;
 import kha.Assets;
 import kha.Window;
@@ -11,6 +9,7 @@ import kha.Framebuffer;
 // sui
 import sui.core.Root;
 import sui.core.shaders.EffectShaders;
+import sui.core.graphics.Painters;
 
 class SUI {
 	public static var root:Root = {
@@ -69,10 +68,11 @@ class SUI {
 	}
 
 	static inline function render(frames:Array<kha.Framebuffer>) {
+		var g2 = frames[0].g2;
 		var rootBuffer = root.drawTree();
-		frames[0].g2.begin(true, kha.Color.fromValue(root.color));
-		Scaler.scale(rootBuffer, frames[0], System.screenRotation);
-		frames[0].g2.end();
+		g2.begin(true, kha.Color.fromValue(root.color));
+		g2.drawScaledImage(rootBuffer, 0., 0., options.width, options.height);
+		g2.end();
 	}
 }
 

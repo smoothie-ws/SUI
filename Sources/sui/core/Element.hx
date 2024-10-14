@@ -1,7 +1,5 @@
 package sui.core;
 
-import kha.Scaler;
-import kha.System;
 import kha.Image;
 import kha.FastFloat;
 // sui
