@@ -33,9 +33,9 @@ class Shader {
 		pipeline.fragmentShader = frag;
 
 		pipeline.alphaBlendSource = SourceAlpha;
-		pipeline.alphaBlendDestination = DestinationAlpha;
+		pipeline.alphaBlendDestination = InverseSourceAlpha;
 		pipeline.blendSource = SourceAlpha;
-		pipeline.blendDestination = DestinationAlpha;
+		pipeline.blendDestination = InverseSourceAlpha;
 
 		pipeline.compile();
 

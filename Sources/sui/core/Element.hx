@@ -1,5 +1,7 @@
 package sui.core;
 
+import kha.System;
+import kha.Scaler;
 import kha.Canvas;
 import kha.Image;
 import kha.FastFloat;
@@ -148,7 +150,7 @@ class Element {
 
 	public function draw() {}
 
-	public function renderToTarget(target:Canvas, ?clear:Bool = false) {
+	public function renderToTarget(target:Canvas, ?clear:Bool = false, ?clearColor:Color = Color.white) {
 		drawTree();
 
 		for (effect in effects)
@@ -172,15 +174,14 @@ class Element {
 		var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
 		var fR = (rotation + rA) * Math.PI / 180;
 
-		target.g2.begin(clear);
+		target.g2.begin(clear, kha.Color.fromValue(clearColor));
 		target.g2.pushTranslation(oX, oY);
 		target.g2.pushTranslation(-cXS, -cYS);
 		target.g2.pushScale(finalScaleX, finalScaleY);
 		target.g2.pushTranslation(cXS, cYS);
 		target.g2.pushRotation(fR, cXR, cYR);
-		// target.g2.opacity = finalOpacity;
-		target.g2.pushOpacity(opacity);
-		target.g2.drawScaledImage(backbuffer, 0., 0., finalW, finalH);
+		target.g2.opacity = opacity;
+		target.g2.drawScaledSubImage(backbuffer, 0, 0, backbuffer.width, backbuffer.height, 0, 0, finalW, finalH);
 		target.g2.end();
 
 		target.g2.popTransformation(); // rotation
@@ -188,14 +189,15 @@ class Element {
 		target.g2.popTransformation(); // scale
 		target.g2.popTransformation(); // translation
 		target.g2.popTransformation(); // translation
-		target.g2.popOpacity(); // opacity
 
 		EffectShaders.clearEffects(target);
 	}
 
 	public function drawTree():Void {
-		if (!visible)
+		if (!visible) {
+			backbuffer.g2.clear(kha.Color.Transparent);
 			return;
+		}
 
 		if (needsUpdate) {
 			backbuffer.g2.begin(true, kha.Color.Transparent);
