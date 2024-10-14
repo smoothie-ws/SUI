@@ -201,10 +201,10 @@ class Element {
 			backbuffer.g2.begin(true, kha.Color.Transparent);
 			draw();
 			backbuffer.g2.end();
-		}
 
-		for (child in children)
-			child.renderToTarget(backbuffer);
+			for (child in children)
+				child.renderToTarget(backbuffer);
+		}
 
 		needsUpdate = false;
 	}
