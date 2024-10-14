@@ -1,6 +1,6 @@
 package sui.core.shaders;
 
-import kha.Image;
+import kha.Canvas;
 import kha.Shaders;
 import kha.graphics4.Graphics;
 import kha.graphics4.VertexData;
@@ -42,7 +42,7 @@ class Shader {
 		getUniforms();
 	}
 
-	public function apply(buffer:Image, args:Dynamic) {
+	public function apply(buffer:Canvas, args:Dynamic) {
 		buffer.g2.pipeline = pipeline;
 		buffer.g4.setPipeline(pipeline);
 

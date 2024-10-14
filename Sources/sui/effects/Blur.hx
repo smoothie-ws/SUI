@@ -1,6 +1,6 @@
 package sui.effects;
 
-import kha.Image;
+import kha.Canvas;
 import kha.FastFloat;
 // sui
 import sui.core.shaders.EffectShaders;
@@ -14,7 +14,7 @@ class Blur extends Effect {
 		this.quality = quality;
 	}
 
-	override public inline function apply(buffer:Image) {
+	override public inline function apply(buffer:Canvas) {
 		EffectShaders.Blur.apply(buffer, [size, quality]);
 	}
 }

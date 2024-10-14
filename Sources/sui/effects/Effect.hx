@@ -1,7 +1,7 @@
 package sui.effects;
 
-import kha.Image;
+import kha.Canvas;
 
 class Effect {
-	public function apply(buffer:Image) {}
+	public function apply(buffer:Canvas) {}
 }

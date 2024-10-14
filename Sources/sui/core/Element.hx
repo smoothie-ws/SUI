@@ -1,5 +1,6 @@
 package sui.core;
 
+import kha.Canvas;
 import kha.Image;
 import kha.FastFloat;
 // sui
@@ -147,61 +148,65 @@ class Element {
 
 	public function draw() {}
 
-	public function drawTree():Image {
+	public function renderToTarget(target:Canvas, ?clear:Bool = false) {
+		drawTree();
+
+		for (effect in effects)
+			effect.apply(target);
+
+		var oX = offsetX;
+		var oY = offsetY;
+
+		var centerX = oX + finalW / 2;
+		var centerY = oY + finalH / 2;
+
+		var sOX = transform.scale.origin.x;
+		var sOY = transform.scale.origin.y;
+		var rOX = transform.scale.origin.x;
+		var rOY = transform.scale.origin.y;
+		var rA = transform.rotation.angle;
+
+		var cXS = Math.isNaN(sOX) ? centerX : oX + sOX;
+		var cYS = Math.isNaN(sOY) ? centerY : oY + sOY;
+		var cXR = Math.isNaN(rOX) ? centerX : oX + rOX;
+		var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
+		var fR = (rotation + rA) * Math.PI / 180;
+
+		target.g2.begin(clear);
+		target.g2.pushTranslation(oX, oY);
+		target.g2.pushTranslation(-cXS, -cYS);
+		target.g2.pushScale(finalScaleX, finalScaleY);
+		target.g2.pushTranslation(cXS, cYS);
+		target.g2.pushRotation(fR, cXR, cYR);
+		// target.g2.opacity = finalOpacity;
+		target.g2.pushOpacity(opacity);
+		target.g2.drawScaledImage(backbuffer, 0., 0., finalW, finalH);
+		target.g2.end();
+
+		target.g2.popTransformation(); // rotation
+		target.g2.popTransformation(); // translation
+		target.g2.popTransformation(); // scale
+		target.g2.popTransformation(); // translation
+		target.g2.popTransformation(); // translation
+		target.g2.popOpacity(); // opacity
+
+		EffectShaders.clearEffects(target);
+	}
+
+	public function drawTree():Void {
 		if (!visible)
-			return null;
+			return;
 
-		if (!needsUpdate)
-			return backbuffer;
-
-		backbuffer.g2.begin(true, kha.Color.Transparent);
-		draw();
-		backbuffer.g2.end();
-
-		for (c in children) {
-			c.drawTree();
-			for (effect in c.effects)
-				effect.apply(backbuffer);
-
-			var oX = c.offsetX;
-			var oY = c.offsetY;
-
-			var centerX = oX + c.finalW / 2;
-			var centerY = oY + c.finalH / 2;
-
-			var sOX = c.transform.scale.origin.x;
-			var sOY = c.transform.scale.origin.y;
-			var rOX = c.transform.scale.origin.x;
-			var rOY = c.transform.scale.origin.y;
-			var rA = c.transform.rotation.angle;
-
-			var cXS = Math.isNaN(sOX) ? centerX : oX + sOX;
-			var cYS = Math.isNaN(sOY) ? centerY : oY + sOY;
-			var cXR = Math.isNaN(rOX) ? centerX : oX + rOX;
-			var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
-			var fR = (c.rotation + rA) * Math.PI / 180;
-
-			backbuffer.g2.begin(false);
-			backbuffer.g2.pushTranslation(oX, oY);
-			backbuffer.g2.pushTranslation(-cXS, -cYS);
-			backbuffer.g2.pushScale(c.finalScaleX, c.finalScaleY);
-			backbuffer.g2.pushTranslation(cXS, cYS);
-			backbuffer.g2.pushRotation(fR, cXR, cYR);
-			backbuffer.g2.opacity = c.finalOpacity;
-			backbuffer.g2.drawScaledImage(c.backbuffer, 0., 0., c.finalW, c.finalH);
+		if (needsUpdate) {
+			backbuffer.g2.begin(true, kha.Color.Transparent);
+			draw();
 			backbuffer.g2.end();
-
-			backbuffer.g2.popTransformation(); // rotation
-			backbuffer.g2.popTransformation(); // translation
-			backbuffer.g2.popTransformation(); // scale
-			backbuffer.g2.popTransformation(); // translation
-			backbuffer.g2.popTransformation(); // translation
-
-			EffectShaders.clearEffects(backbuffer);
 		}
 
+		for (child in children)
+			child.renderToTarget(backbuffer);
+
 		needsUpdate = false;
-		return backbuffer;
 	}
 
 	public inline final function addChild(child:Element) {

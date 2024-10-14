@@ -53,7 +53,9 @@ class SUI {
 			root.constructTree();
 
 			Scheduler.addTimeTask(root.update, 0, 1 / 60);
-			System.notifyOnFrames(render);
+			System.notifyOnFrames(function(frames:Array<kha.Framebuffer>) {
+				root.renderToTarget(frames[0], true);
+			});
 
 			compileShaders();
 		});
@@ -65,14 +67,6 @@ class SUI {
 		EffectShaders.Blur.compile(Shaders.blur_frag);
 		// painters
 		Painters.Rect.compile();
-	}
-
-	static inline function render(frames:Array<kha.Framebuffer>) {
-		var g2 = frames[0].g2;
-		var rootBuffer = root.drawTree();
-		g2.begin(true, kha.Color.fromValue(root.color));
-		g2.drawScaledImage(rootBuffer, 0., 0., options.width, options.height);
-		g2.end();
 	}
 }
 
