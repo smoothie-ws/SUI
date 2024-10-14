@@ -10,9 +10,9 @@ using sui.core.graphics.GraphicsExtension;
 @:structInit
 class Rectangle extends Element {
 	public var radius:FastFloat = 0.;
-	public var smoothness:FastFloat = 1.;
+	public var smoothness:FastFloat = 2.;
 
 	override function draw() {
-		Painters.Rect.fillRect(backbuffer, 0., 0., finalW, finalH, color, radius, smoothness);
+		Painters.Rect.fillRect(backbuffer, color, radius, smoothness);
 	}
 }

@@ -18,7 +18,6 @@ class RectPainter {
 	static var vertices:VertexBuffer;
 	static var indices:IndexBuffer;
 
-	static var dimsID:ConstantLocation;
 	static var colorID:ConstantLocation;
 	static var radiusID:ConstantLocation;
 	static var resolutionID:ConstantLocation;
@@ -41,7 +40,6 @@ class RectPainter {
 		pipeline.blendSource = SourceAlpha;
 		pipeline.blendDestination = InverseSourceAlpha;
 
-		dimsID = pipeline.getConstantLocation("dims");
 		colorID = pipeline.getConstantLocation("color");
 		radiusID = pipeline.getConstantLocation("radius");
 		resolutionID = pipeline.getConstantLocation("resolution");
@@ -75,17 +73,15 @@ class RectPainter {
 		indices.unlock();
 	}
 
-	public function fillRect(target:Image, x:FastFloat, y:FastFloat, width:FastFloat, height:FastFloat, color:Color, ?radius:FastFloat = 10.,
-			?smoothness:FastFloat = 2.):Void {
+	public function fillRect(target:Image, color:Color, ?radius:FastFloat = 10., ?smoothness:FastFloat = 2.):Void {
 		target.g4.setPipeline(pipeline);
 		target.g4.setVertexBuffer(vertices);
 		target.g4.setIndexBuffer(indices);
 
-		target.g4.setFloat(smoothnessID, 4.);
+		target.g4.setFloat(smoothnessID, smoothness);
 		target.g4.setFloat(radiusID, radius);
 		target.g4.setFloat2(resolutionID, SUI.options.width, SUI.options.height);
 		target.g4.setFloat3(colorID, color.R / 255, color.G / 255, color.B / 255);
-		target.g4.setFloat4(dimsID, x, y, width, height);
 
 		target.g4.drawIndexedVertices();
 	}

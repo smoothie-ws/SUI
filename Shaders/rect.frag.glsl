@@ -7,26 +7,18 @@ uniform float radius;
 uniform float smoothness;
 uniform vec2 resolution;
 uniform vec3 color;
-uniform vec4 dims;
 
 void main() {
-    vec2 uv = coord * resolution;
+    float pSize = length(resolution);
+    float cornerRadius = radius / pSize;
 
-    float x = dims[0];
-    float y = dims[1];
-    float w = dims[2];
-    float h = dims[3];
-
-    vec2 rectCenter = vec2(x + w / 2.0, y + h / 2.0);
-
-    vec2 rectSize = vec2(w, h) / 2.0 - vec2(radius);
-    vec2 dist = abs(uv - rectCenter) - rectSize;
+    vec2 dist = abs(coord - 0.5) + (vec2(radius) / resolution - 0.5);
 
     float outside = length(max(dist, 0.0));
     float inside = min(max(dist.x, dist.y), 0.0);
 
     float edge = inside + outside;
-    float mask = smoothstep(edge, edge + smoothness, radius);
+    float mask = smoothstep(edge, edge + smoothness / pSize, cornerRadius);
 
     FragColor = vec4(color.x, color.y, color.z, 1.0) * mask;
 }
