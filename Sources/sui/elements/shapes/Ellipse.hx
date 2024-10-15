@@ -6,11 +6,10 @@ import sui.core.Element;
 import sui.core.graphics.Painters;
 
 @:structInit
-class Rectangle extends Element {
-	public var radius:FastFloat = 0.;
+class Ellipse extends Element {
 	public var smoothness:FastFloat = 2.;
 
 	override function draw() {
-		Painters.Rect.fillRect(backbuffer, offsetX, offsetY, finalW, finalH, color, radius, smoothness);
+		Painters.Ellipse.fillEllipse(backbuffer, offsetX, offsetY, finalW, finalH, color, smoothness);
 	}
 }

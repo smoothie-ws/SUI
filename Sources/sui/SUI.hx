@@ -67,6 +67,7 @@ class SUI {
 		EffectShaders.Blur.compile(Shaders.blur_frag);
 		// painters
 		Painters.Rect.compile();
+		Painters.Ellipse.compile();
 	}
 }
 

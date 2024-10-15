@@ -12,13 +12,12 @@ import kha.graphics4.ConstantLocation;
 // sui
 import sui.Color;
 
-class RectPainter {
+class EllipsePainter {
 	static var pipeline:PipelineState;
 	static var vertices:VertexBuffer;
 	static var indices:IndexBuffer;
 
 	static var colorID:ConstantLocation;
-	static var radiusID:ConstantLocation;
 	static var resolutionID:ConstantLocation;
 	static var smoothnessID:ConstantLocation;
 
@@ -32,7 +31,7 @@ class RectPainter {
 		pipeline = new PipelineState();
 		pipeline.inputLayout = [structure];
 		pipeline.vertexShader = Shaders.rect_vert;
-		pipeline.fragmentShader = Shaders.rect_frag;
+		pipeline.fragmentShader = Shaders.ellipse_frag;
 		pipeline.compile();
 
 		pipeline.alphaBlendSource = SourceAlpha;
@@ -41,7 +40,6 @@ class RectPainter {
 		pipeline.blendDestination = InverseSourceAlpha;
 
 		colorID = pipeline.getConstantLocation("color");
-		radiusID = pipeline.getConstantLocation("radius");
 		resolutionID = pipeline.getConstantLocation("resolution");
 		smoothnessID = pipeline.getConstantLocation("smoothness");
 
@@ -67,8 +65,8 @@ class RectPainter {
 				vert.set(i * vPos[i].length + j, vPos[i][j]);
 		vertices.unlock();
 	}
-
-	public function fillRect(target:Canvas, x:Float, y:Float, w:Float, h:Float, color:Color, ?radius:Float = 10., ?smoothness:Float = 2.):Void {
+    
+	public function fillEllipse(target:Canvas, x:Float, y:Float, w:Float, h:Float, color:Color, ?smoothness:Float = 2.):Void {
 		var tW = target.width;
 		var tH = target.height;
 
@@ -84,7 +82,6 @@ class RectPainter {
 		target.g4.setIndexBuffer(indices);
 
 		target.g4.setFloat(smoothnessID, smoothness);
-		target.g4.setFloat(radiusID, radius);
 		target.g4.setFloat2(resolutionID, SUI.options.width, SUI.options.height);
 		target.g4.setFloat4(colorID, color.R / 255, color.G / 255, color.B / 255, color.A / 255);
 

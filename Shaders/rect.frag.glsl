@@ -3,7 +3,7 @@
 in vec2 fragCoord;
 out vec4 FragColor;
 
-uniform vec3 color;
+uniform vec4 color;
 uniform float radius;
 uniform float smoothness;
 uniform vec2 resolution;
@@ -18,7 +18,8 @@ void main() {
     float inside = min(max(dist.x, dist.y), 0.0);
 
     float edge = inside + outside;
-    float mask = smoothstep(edge, edge + smoothness / pSize, cornerRadius);
+    float threshold = smoothness / pSize;
+    float mask = smoothstep(edge - threshold, edge + threshold, cornerRadius);
 
-    FragColor = vec4(color.x, color.y, color.z, 1.0) * mask;
+    FragColor = vec4(color.x, color.y, color.z, color.w * mask);
 }
