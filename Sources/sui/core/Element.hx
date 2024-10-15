@@ -150,7 +150,26 @@ class Element {
 
 	public function draw() {}
 
-	public function renderToTarget(target:Canvas, ?clear:Bool = false, ?clearColor:Color = Color.white) {
+	public function drawTree():Void {
+		if (!visible) {
+			backbuffer.g2.clear(kha.Color.Transparent);
+			return;
+		}
+
+		if (needsUpdate) {
+			backbuffer.g2.begin(false);
+			backbuffer.g2.clear(kha.Color.Transparent);
+			draw();
+			backbuffer.g2.end();
+
+			for (child in children)
+				child.renderToTarget(backbuffer);
+		}
+
+		needsUpdate = false;
+	}
+
+	public function renderToTarget(target:Canvas, ?clear:Bool = false, ?clearColor:Color = Color.transparent) {
 		drawTree();
 
 		for (effect in effects)
@@ -175,39 +194,24 @@ class Element {
 		var fR = (rotation + rA) * Math.PI / 180;
 
 		target.g2.begin(clear, kha.Color.fromValue(clearColor));
+
 		target.g2.pushTranslation(-cXS, -cYS);
 		target.g2.pushScale(finalScaleX, finalScaleY);
 		target.g2.pushTranslation(cXS, cYS);
 		target.g2.pushRotation(fR, cXR, cYR);
-		target.g2.opacity = opacity;
-		target.g2.drawImage(backbuffer, 0, 0);
-		target.g2.end();
+		target.g2.pushOpacity(finalOpacity);
 
+		target.g2.drawImage(backbuffer, 0, 0);
+
+		target.g2.popOpacity(); // opacity
 		target.g2.popTransformation(); // rotation
 		target.g2.popTransformation(); // translation
 		target.g2.popTransformation(); // scale
 		target.g2.popTransformation(); // translation
 
+		target.g2.end();
+
 		EffectShaders.clearEffects(target);
-	}
-
-	public function drawTree():Void {
-		if (!visible) {
-			backbuffer.g2.clear(kha.Color.Transparent);
-			return;
-		}
-
-		if (needsUpdate) {
-			backbuffer.g2.begin(false);
-			backbuffer.g2.clear(kha.Color.Transparent);
-			draw();
-			backbuffer.g2.end();
-
-			for (child in children)
-				child.renderToTarget(backbuffer);
-		}
-
-		needsUpdate = false;
 	}
 
 	public inline final function addChild(child:Element) {

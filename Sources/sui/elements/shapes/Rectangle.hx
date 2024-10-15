@@ -1,9 +1,9 @@
 package sui.elements.shapes;
 
-import sui.core.graphics.Painters;
 import kha.FastFloat;
 // sui
 import sui.core.Element;
+import sui.core.graphics.Painters;
 
 using sui.core.graphics.GraphicsExtension;
 

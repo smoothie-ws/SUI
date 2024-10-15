@@ -151,7 +151,7 @@ enum abstract Color(Int) from Int from UInt to Int to UInt {
 	var whitesmoke = 0xfff5f5f5;
 	var yellow = 0xffffff00;
 	var yellowgreen = 0xff9acd32;
-	var transparent = 0x00000000;
+	var transparent = 0x00FFFFFF;
 
 	// channels
 	public var RGB(get, set):Array<Int>;
