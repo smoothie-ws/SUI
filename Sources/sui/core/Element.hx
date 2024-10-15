@@ -132,7 +132,7 @@ class Element {
 
 	public inline final function constructTree() {
 		construct();
-		backbuffer = Image.createRenderTarget(Std.int(finalW), Std.int(finalH));
+		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 		for (child in children)
 			child.constructTree();
 	}
@@ -145,7 +145,7 @@ class Element {
 			child.resizeTree(w, h);
 
 		needsUpdate = true;
-		backbuffer = Image.createRenderTarget(Std.int(finalW), Std.int(finalH));
+		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 	}
 
 	public function draw() {}
@@ -175,19 +175,17 @@ class Element {
 		var fR = (rotation + rA) * Math.PI / 180;
 
 		target.g2.begin(clear, kha.Color.fromValue(clearColor));
-		target.g2.pushTranslation(oX, oY);
 		target.g2.pushTranslation(-cXS, -cYS);
 		target.g2.pushScale(finalScaleX, finalScaleY);
 		target.g2.pushTranslation(cXS, cYS);
 		target.g2.pushRotation(fR, cXR, cYR);
 		target.g2.opacity = opacity;
-		target.g2.drawScaledSubImage(backbuffer, 0, 0, backbuffer.width, backbuffer.height, 0, 0, finalW, finalH);
+		target.g2.drawImage(backbuffer, 0, 0);
 		target.g2.end();
 
 		target.g2.popTransformation(); // rotation
 		target.g2.popTransformation(); // translation
 		target.g2.popTransformation(); // scale
-		target.g2.popTransformation(); // translation
 		target.g2.popTransformation(); // translation
 
 		EffectShaders.clearEffects(target);
@@ -200,7 +198,8 @@ class Element {
 		}
 
 		if (needsUpdate) {
-			backbuffer.g2.begin(true, kha.Color.Transparent);
+			backbuffer.g2.begin(false);
+			backbuffer.g2.clear(kha.Color.Transparent);
 			draw();
 			backbuffer.g2.end();
 

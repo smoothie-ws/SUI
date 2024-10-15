@@ -1,18 +1,18 @@
 #version 450
 
-in vec2 coord;
+in vec2 fragCoord;
 out vec4 FragColor;
 
+uniform vec3 color;
 uniform float radius;
 uniform float smoothness;
 uniform vec2 resolution;
-uniform vec3 color;
 
 void main() {
     float pSize = length(resolution);
     float cornerRadius = radius / pSize;
 
-    vec2 dist = abs(coord - 0.5) + (vec2(radius) / resolution - 0.5);
+    vec2 dist = abs(fragCoord - 0.5) + (vec2(radius) / resolution - 0.5);
 
     float outside = length(max(dist, 0.0));
     float inside = min(max(dist.x, dist.y), 0.0);

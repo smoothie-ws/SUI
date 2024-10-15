@@ -1,9 +1,11 @@
 #version 450
 
-in vec3 pos;
-out vec2 coord;
+in vec2 vertPos;
+in vec2 vertCoord;
+
+out vec2 fragCoord;
 
 void main() {
-	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
-	coord = (pos.xy + 1) / 2;
+	gl_Position = vec4(vertPos.x, vertPos.y, 0.0, 1.0);
+	fragCoord = vertCoord.xy / 2 + 0.5;
 }

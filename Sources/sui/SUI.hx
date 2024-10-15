@@ -54,7 +54,7 @@ class SUI {
 
 			Scheduler.addTimeTask(root.update, 0, 1 / 60);
 			System.notifyOnFrames(function(frames:Array<kha.Framebuffer>) {
-				root.renderToTarget(frames[0], true);
+				root.renderToTarget(frames[0], true, root.color);
 			});
 
 			compileShaders();
@@ -63,7 +63,7 @@ class SUI {
 
 	static inline function compileShaders() {
 		// effects
-		EffectShaders.Painter.compile();
+		EffectShaders.Clear.compile();
 		EffectShaders.Blur.compile(Shaders.blur_frag);
 		// painters
 		Painters.Rect.compile();

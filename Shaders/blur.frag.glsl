@@ -1,12 +1,12 @@
 #version 450
 
+in vec2 texCoord;
+out vec4 FragColor;
+
 uniform sampler2D tex;
 uniform float size;
 uniform int quality;
 uniform vec2 resolution;
-
-in vec2 texCoord;
-out vec4 FragColor;
 
 void main() {
     float Pi2 = 6.28318530718; // Pi * 2

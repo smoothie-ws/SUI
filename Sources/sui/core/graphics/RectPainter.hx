@@ -1,6 +1,8 @@
 package sui.core.graphics;
 
-import kha.Image;
+import kha.math.FastVector2;
+import kha.math.FastMatrix4;
+import kha.Canvas;
 import kha.Shaders;
 import kha.FastFloat;
 import kha.graphics4.Usage;
@@ -27,7 +29,8 @@ class RectPainter {
 
 	public function compile() {
 		var structure = new VertexStructure();
-		structure.add("pos", VertexData.Float3);
+		structure.add("vertPos", VertexData.Float2);
+		structure.add("vcoord", VertexData.Float2);
 
 		pipeline = new PipelineState();
 		pipeline.inputLayout = [structure];
@@ -45,27 +48,14 @@ class RectPainter {
 		resolutionID = pipeline.getConstantLocation("resolution");
 		smoothnessID = pipeline.getConstantLocation("smoothness");
 
-		// vertex pos
-		var V = [[-1, -1, 0], [1, -1, 0], [1, 1, 0], [-1, 1, 0]];
-
 		// init vertices
-		var vertexCount = V.length;
-		vertices = new VertexBuffer(vertexCount, structure, Usage.StaticUsage);
-		var vert = vertices.lock();
-		for (i in 0...vertexCount) {
-			var vdata = V[i];
-			for (j in 0...vdata.length) {
-				vert.set(i * vdata.length + j, vdata[j]);
-			}
-		}
-		vertices.unlock();
+		vertices = new VertexBuffer(4, structure, Usage.StaticUsage);
 
 		// init indices
-		var indexCount = (vertexCount - 2) * 3;
-		indices = new IndexBuffer(indexCount, Usage.StaticUsage);
+		indices = new IndexBuffer(6, Usage.StaticUsage);
 		var ind = indices.lock();
 		var k = 0;
-		for (i in 1...(vertexCount - 1)) {
+		for (i in 1...3) {
 			ind[k++] = 0;
 			ind[k++] = i;
 			ind[k++] = i + 1;
@@ -73,7 +63,30 @@ class RectPainter {
 		indices.unlock();
 	}
 
-	public function fillRect(target:Image, color:Color, ?radius:FastFloat = 10., ?smoothness:FastFloat = 2.):Void {
+	function setVertices(vPos:Array<Array<Float>>):Void {
+		var vert = vertices.lock();
+		for (i in 0...4)
+			for (j in 0...vPos[i].length)
+				vert.set(i * vPos[i].length + j, vPos[i][j]);
+		vertices.unlock();
+	}
+
+	public function fillRect(target:Canvas, x:Float, y:Float, w:Float, h:Float, color:Color, ?radius:Float = 10., ?smoothness:Float = 2.):Void {
+		var tW = target.width;
+		var tH = target.height;
+
+		var xL = (x / tW) * 2 - 1;
+		var xR = (x + w) / tW * 2 - 1;
+		var yT = (y / tH) * 2 - 1;
+		var yB = (y + h) / tH * 2 - 1;
+
+		setVertices([
+			[xL, yT, -1, -1], 
+			[xR, yT,  1, -1], 
+			[xR, yB,  1,  1], 
+			[xL, yB, -1,  1]
+		]);
+
 		target.g4.setPipeline(pipeline);
 		target.g4.setVertexBuffer(vertices);
 		target.g4.setIndexBuffer(indices);
