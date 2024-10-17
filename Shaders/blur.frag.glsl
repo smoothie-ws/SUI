@@ -16,16 +16,19 @@ void main() {
 
     vec2 radius = size / resolution;
     vec4 col = vec4(0.0);
-    float totalWeight = 0.0;
+    float weight = 0.0;
 
     for (float d = 0.0; d < Pi2; d += Pi2 / directions) {
         vec2 offset = vec2(cos(d), sin(d)) * radius;
         for (float i = 1.0 / sampleNum; i <= 1.0; i += 1.0 / sampleNum) {
-            col += texture(tex, texCoord + offset * i) * i;
-            totalWeight += i;
+            vec4 sampleColor = texture(tex, texCoord + offset * i);
+            sampleColor.rgb *= sampleColor.a;
+            col += sampleColor * i;
+            weight += i;
         }
     }
 
-    col /= totalWeight;
+    col /= weight;
+    col.rgb /= col.a;
     FragColor = col;
 }
