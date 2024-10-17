@@ -1,5 +1,6 @@
 package sui.core;
 
+import sui.effects.Blur;
 import kha.System;
 import kha.Scaler;
 import kha.Canvas;
@@ -15,7 +16,6 @@ import sui.core.layouts.Anchors;
 
 @:structInit
 class Element {
-	public var backbuffer:Image = null;
 	public var effects:Array<Effect> = [];
 
 	var needsUpdate:Bool = true;
@@ -132,7 +132,6 @@ class Element {
 
 	public inline final function constructTree() {
 		construct();
-		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 		for (child in children)
 			child.constructTree();
 	}
@@ -145,73 +144,69 @@ class Element {
 			child.resizeTree(w, h);
 
 		needsUpdate = true;
-		backbuffer = Image.createRenderTarget(SUI.options.width, SUI.options.height);
 	}
 
 	public function draw() {}
 
 	public function drawTree():Void {
-		if (!visible) {
-			backbuffer.g2.clear(kha.Color.Transparent);
+		if (!visible)
 			return;
-		}
 
 		if (needsUpdate) {
-			backbuffer.g2.begin(false);
-			backbuffer.g2.clear(kha.Color.Transparent);
+			var oX = offsetX;
+			var oY = offsetY;
+
+			var centerX = oX + finalW / 2;
+			var centerY = oY + finalH / 2;
+
+			var sOX = transform.scale.origin.x;
+			var sOY = transform.scale.origin.y;
+			var rOX = transform.scale.origin.x;
+			var rOY = transform.scale.origin.y;
+			var rA = transform.rotation.angle;
+
+			var cXS = Math.isNaN(sOX) ? centerX : oX + sOX;
+			var cYS = Math.isNaN(sOY) ? centerY : oY + sOY;
+			var cXR = Math.isNaN(rOX) ? centerX : oX + rOX;
+			var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
+			var fR = (rotation + rA) * Math.PI / 180;
+
+			SUI.rawbackbuffer.g2.begin(true, kha.Color.Transparent);
+
+			SUI.rawbackbuffer.g2.pushTranslation(-cXS, -cYS);
+			SUI.rawbackbuffer.g2.pushScale(finalScaleX, finalScaleY);
+			SUI.rawbackbuffer.g2.pushTranslation(cXS, cYS);
+			SUI.rawbackbuffer.g2.pushRotation(fR, cXR, cYR);
+			SUI.rawbackbuffer.g2.pushOpacity(finalOpacity);
+
 			draw();
-			backbuffer.g2.end();
+
+			SUI.rawbackbuffer.g2.popOpacity(); // opacity
+			SUI.rawbackbuffer.g2.popTransformation(); // rotation
+			SUI.rawbackbuffer.g2.popTransformation(); // translation
+			SUI.rawbackbuffer.g2.popTransformation(); // scale
+			SUI.rawbackbuffer.g2.popTransformation(); // translation
+
+			SUI.rawbackbuffer.g2.end();
+
+			for (effect in effects)
+				effect.apply(SUI.backbuffer);
+
+			SUI.backbuffer.g2.begin(false);
+			SUI.backbuffer.g2.drawImage(SUI.rawbackbuffer, 0, 0);
+			SUI.backbuffer.g2.end();
+
+			EffectShaders.clearEffects(SUI.backbuffer);
 
 			for (child in children)
-				child.renderToTarget(backbuffer);
+				child.drawTree();
 		}
 
 		needsUpdate = false;
 	}
 
-	public function renderToTarget(target:Canvas, ?clear:Bool = false, ?clearColor:Color = Color.transparent) {
+	public function renderToTarget(target:Canvas, ?clear:Bool = false) {
 		drawTree();
-
-		for (effect in effects)
-			effect.apply(target);
-
-		var oX = offsetX;
-		var oY = offsetY;
-
-		var centerX = oX + finalW / 2;
-		var centerY = oY + finalH / 2;
-
-		var sOX = transform.scale.origin.x;
-		var sOY = transform.scale.origin.y;
-		var rOX = transform.scale.origin.x;
-		var rOY = transform.scale.origin.y;
-		var rA = transform.rotation.angle;
-
-		var cXS = Math.isNaN(sOX) ? centerX : oX + sOX;
-		var cYS = Math.isNaN(sOY) ? centerY : oY + sOY;
-		var cXR = Math.isNaN(rOX) ? centerX : oX + rOX;
-		var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
-		var fR = (rotation + rA) * Math.PI / 180;
-
-		target.g2.begin(clear, kha.Color.fromValue(clearColor));
-
-		target.g2.pushTranslation(-cXS, -cYS);
-		target.g2.pushScale(finalScaleX, finalScaleY);
-		target.g2.pushTranslation(cXS, cYS);
-		target.g2.pushRotation(fR, cXR, cYR);
-		target.g2.pushOpacity(finalOpacity);
-
-		target.g2.drawImage(backbuffer, 0, 0);
-
-		target.g2.popOpacity(); // opacity
-		target.g2.popTransformation(); // rotation
-		target.g2.popTransformation(); // translation
-		target.g2.popTransformation(); // scale
-		target.g2.popTransformation(); // translation
-
-		target.g2.end();
-
-		EffectShaders.clearEffects(target);
 	}
 
 	public inline final function addChild(child:Element) {
