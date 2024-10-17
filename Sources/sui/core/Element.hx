@@ -55,6 +55,7 @@ class Element {
 	public var border:Border = {};
 
 	// final transform
+	var finalEffects(get, never):Array<Effect>;
 	var finalOpacity(get, never):FastFloat;
 	var finalEnabled(get, never):Bool;
 	var finalScaleX(get, never):FastFloat;
@@ -63,6 +64,10 @@ class Element {
 	var offsetY(get, never):FastFloat;
 	var finalW(get, never):FastFloat;
 	var finalH(get, never):FastFloat;
+
+	inline function get_finalEffects():Array<Effect> {
+		return parent == null ? effects : parent.effects.concat(effects);
+	}
 
 	inline function get_finalOpacity():FastFloat {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
@@ -171,15 +176,15 @@ class Element {
 			var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
 			var fR = (rotation + rA) * Math.PI / 180;
 
-			SUI.rawbackbuffer.g2.begin(true, kha.Color.Transparent);
-
 			SUI.rawbackbuffer.g2.pushTranslation(-cXS, -cYS);
 			SUI.rawbackbuffer.g2.pushScale(finalScaleX, finalScaleY);
 			SUI.rawbackbuffer.g2.pushTranslation(cXS, cYS);
 			SUI.rawbackbuffer.g2.pushRotation(fR, cXR, cYR);
 			SUI.rawbackbuffer.g2.pushOpacity(finalOpacity);
 
+			SUI.rawbackbuffer.g2.begin(true, kha.Color.Transparent);
 			draw();
+			SUI.rawbackbuffer.g2.end();
 
 			SUI.rawbackbuffer.g2.popOpacity(); // opacity
 			SUI.rawbackbuffer.g2.popTransformation(); // rotation
@@ -187,9 +192,7 @@ class Element {
 			SUI.rawbackbuffer.g2.popTransformation(); // scale
 			SUI.rawbackbuffer.g2.popTransformation(); // translation
 
-			SUI.rawbackbuffer.g2.end();
-
-			for (effect in effects)
+			for (effect in finalEffects)
 				effect.apply(SUI.backbuffer);
 
 			SUI.backbuffer.g2.begin(false);
