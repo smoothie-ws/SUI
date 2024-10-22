@@ -3,9 +3,11 @@
 in vec2 fragCoord;
 out vec4 FragColor;
 
-uniform vec4 color;
 uniform vec2 resolution;
+//user-defined
+uniform vec4 color;
 uniform float smoothness;
+
 
 void main() {
     float pSize = length(resolution);

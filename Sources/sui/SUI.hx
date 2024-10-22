@@ -78,6 +78,8 @@ class SUI {
 		// effects
 		EffectShaders.Clear.compile();
 		EffectShaders.Blur.compile(Shaders.blur_frag);
+		EffectShaders.Emission.compile(Shaders.emission_frag);
+		
 		// painters
 		Painters.Rect.compile();
 		Painters.Ellipse.compile();

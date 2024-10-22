@@ -7,6 +7,9 @@ uniform sampler2D tex;
 uniform vec2 resolution;
 // user-defined
 uniform float size;
+uniform vec2 offset;
+uniform vec4 color;
+uniform bool outer;
 uniform int quality;
 
 
@@ -17,20 +20,22 @@ void main() {
     float sampleNum = quality;
 
     vec2 radius = size / resolution;
-    vec4 col = vec4(0.0);
+
+    float alpha = 0.0;
     float weight = 0.0;
 
     for (float d = 0.0; d < Pi2; d += Pi2 / directions) {
-        vec2 offset = vec2(cos(d), sin(d)) * radius;
+        vec2 sampleOffset = vec2(cos(d), sin(d)) * radius;
         for (float i = 1.0 / sampleNum; i <= 1.0; i += 1.0 / sampleNum) {
-            vec4 sampleColor = texture(tex, texCoord + offset * i);
-            sampleColor.rgb *= sampleColor.a;
-            col += sampleColor * i;
+            float sampleAlpha = texture(tex, texCoord + sampleOffset * i).a;
+            alpha += sampleAlpha * i;
             weight += i;
         }
     }
 
-    col /= weight;
-    col.rgb /= col.a;
-    FragColor = col;
+    alpha /= weight;
+    FragColor = vec4(color.r, color.g, color.b, alpha);
+
+    vec4 col = texture(tex, texCoord);
+    FragColor = mix(FragColor, col, col.a);
 }
