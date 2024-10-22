@@ -23,6 +23,6 @@ class Emission extends Effect {
 	}
 
 	override public inline function apply(buffer:Canvas) {
-		EffectShaders.Emission.apply(buffer, [size, offsetX, offsetY, color, outer, quality]);
+		EffectShaders.Emission.apply(buffer, size, offsetX, offsetY, color, outer, quality);
 	}
 }

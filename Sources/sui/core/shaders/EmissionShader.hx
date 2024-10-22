@@ -1,9 +1,19 @@
 package sui.core.shaders;
 
-import kha.graphics4.Graphics;
+import kha.Canvas;
+import kha.Shaders;
+import kha.graphics4.VertexData;
+import kha.graphics4.VertexStructure;
+import kha.graphics4.PipelineState;
+import kha.graphics4.VertexShader;
+import kha.graphics4.FragmentShader;
 import kha.graphics4.ConstantLocation;
+// sui
+import sui.Color;
 
-class EmissionShader extends Shader {
+class EmissionShader {
+	var pipeline:PipelineState;
+
 	public var sizeID:ConstantLocation;
 	public var offsetID:ConstantLocation;
 	public var colorID:ConstantLocation;
@@ -11,11 +21,29 @@ class EmissionShader extends Shader {
 	public var qualityID:ConstantLocation;
 	public var resolutionID:ConstantLocation;
 
-	public function new() {
-		super();
-	}
+	public function new() {}
 
-	override function getUniforms() {
+	public function compile(?frag:FragmentShader, ?vert:VertexShader) {
+		frag = frag == null ? Shaders.painter_image_frag : frag;
+		vert = vert == null ? Shaders.painter_image_vert : vert;
+
+		var structure = new VertexStructure();
+		structure.add("vertexPosition", VertexData.Float32_3X);
+		structure.add("vertexUV", VertexData.Float32_2X);
+		structure.add("vertexColor", VertexData.UInt8_4X_Normalized);
+
+		pipeline = new PipelineState();
+		pipeline.inputLayout = [structure];
+		pipeline.vertexShader = vert;
+		pipeline.fragmentShader = frag;
+
+		pipeline.alphaBlendSource = SourceAlpha;
+		pipeline.alphaBlendDestination = InverseSourceAlpha;
+		pipeline.blendSource = SourceAlpha;
+		pipeline.blendDestination = InverseSourceAlpha;
+
+		pipeline.compile();
+
 		sizeID = pipeline.getConstantLocation("size");
 		offsetID = pipeline.getConstantLocation("offset");
 		colorID = pipeline.getConstantLocation("color");
@@ -24,16 +52,14 @@ class EmissionShader extends Shader {
 		resolutionID = pipeline.getConstantLocation("resolution");
 	}
 
-	override function setUniforms(g4:Graphics, args:Dynamic) {
-		// [size, offsetX, offsetY, color, outer, quality]
-
-		g4.setFloat(sizeID, args[0]);
-		g4.setFloat2(offsetID, args[1], args[2]);
-
-		var col = args[3];
-		g4.setFloat4(colorID, col.R / 255, col.G / 255, col.B / 255, col.A / 255);
-
-		g4.setInt(qualityID, args[5]);
-		g4.setFloat2(resolutionID, SUI.options.width, SUI.options.height);
+	public function apply(buffer:Canvas, size:Float, offsetX:Float, offsetY:Float, color:Color, outer:Bool, quality:Int) {
+		buffer.g2.pipeline = pipeline;
+		buffer.g4.setPipeline(pipeline);
+		buffer.g4.setFloat(sizeID, size);
+		buffer.g4.setFloat2(offsetID, offsetX, offsetY);
+		buffer.g4.setFloat4(colorID, color.R / 255, color.G / 255, color.B / 255, color.A / 255);
+		buffer.g4.setBool(outerID, outer);
+		buffer.g4.setInt(qualityID, quality);
+		buffer.g4.setFloat2(resolutionID, SUI.options.width, SUI.options.height);
 	}
 }

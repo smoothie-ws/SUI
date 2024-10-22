@@ -14,6 +14,8 @@ uniform int quality;
 
 
 void main() {
+    vec2 normOffset =  offset / resolution;
+
     float Pi2 = 6.28318530718; // Pi * 2
     
     float directions = 4 * quality;
@@ -27,7 +29,7 @@ void main() {
     for (float d = 0.0; d < Pi2; d += Pi2 / directions) {
         vec2 sampleOffset = vec2(cos(d), sin(d)) * radius;
         for (float i = 1.0 / sampleNum; i <= 1.0; i += 1.0 / sampleNum) {
-            float sampleAlpha = texture(tex, texCoord + sampleOffset * i).a;
+            float sampleAlpha = texture(tex, texCoord - normOffset + sampleOffset * i).a;
             alpha += sampleAlpha * i;
             weight += i;
         }

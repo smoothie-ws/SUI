@@ -15,6 +15,6 @@ class Blur extends Effect {
 	}
 
 	override public inline function apply(buffer:Canvas) {
-		EffectShaders.Blur.apply(buffer, [size, quality]);
+		EffectShaders.Blur.apply(buffer, size, quality);
 	}
 }

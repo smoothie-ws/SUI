@@ -2,7 +2,6 @@ package sui.core.shaders;
 
 import kha.Canvas;
 import kha.Shaders;
-import kha.graphics4.Graphics;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
 import kha.graphics4.PipelineState;
@@ -13,10 +12,6 @@ class Shader {
 	public var pipeline:PipelineState;
 
 	public function new() {}
-
-	public function getUniforms() {}
-
-	public function setUniforms(g4:Graphics, args:Dynamic) {}
 
 	public function compile(?frag:FragmentShader, ?vert:VertexShader) {
 		frag = frag == null ? Shaders.painter_image_frag : frag;
@@ -38,14 +33,10 @@ class Shader {
 		pipeline.blendDestination = InverseSourceAlpha;
 
 		pipeline.compile();
-
-		getUniforms();
 	}
 
 	public function apply(buffer:Canvas, args:Dynamic) {
 		buffer.g2.pipeline = pipeline;
 		buffer.g4.setPipeline(pipeline);
-
-		setUniforms(buffer.g4, args);
 	}
 }
