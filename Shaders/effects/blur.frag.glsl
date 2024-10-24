@@ -1,7 +1,7 @@
 #version 450
 
 in vec2 texCoord;
-out vec4 FragColor;
+out vec4 fragColor;
 
 uniform sampler2D tex;
 uniform vec2 resolution;
@@ -32,5 +32,5 @@ void main() {
 
     col /= weight;
     col.rgb /= col.a;
-    FragColor = texCoord.xxxx;
+    fragColor = col;
 }

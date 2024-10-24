@@ -73,8 +73,6 @@ class EllipsePainter {
 		var xR = (x + w) / tW * 2 - 1;
 		var yT = (y / tH) * 2 - 1;
 		var yB = (y + h) / tH * 2 - 1;
-
-		trace(xL, xR, yT, yB);
 		
 		setVertices([
 			[xL, yT, 0, 0], 

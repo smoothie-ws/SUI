@@ -192,11 +192,9 @@ class Element {
 			SUI.rawbackbuffer.g2.popTransformation(); // scale
 			SUI.rawbackbuffer.g2.popTransformation(); // translation
 
-			for (effect in finalEffects)
-				effect.apply(SUI.backbuffer);
-
 			SUI.backbuffer.g2.begin(false);
-			SUI.backbuffer.g2.drawImage(SUI.rawbackbuffer, 0, 0);
+			for (effect in finalEffects)
+				effect.apply(SUI.rawbackbuffer, SUI.backbuffer);
 			SUI.backbuffer.g2.end();
 
 			EffectShaders.clearEffects(SUI.backbuffer);

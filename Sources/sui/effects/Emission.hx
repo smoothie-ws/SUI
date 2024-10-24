@@ -22,7 +22,15 @@ class Emission extends Effect {
 		this.quality = quality;
 	}
 
-	override public inline function apply(buffer:Canvas) {
-		EffectShaders.Emission.apply(buffer, size, offsetX, offsetY, color, outer, quality);
+	override public inline function apply(source:Canvas, target:Canvas) {
+		EffectShaders.Emission.size = size;
+		EffectShaders.Emission.quality = quality;
+		EffectShaders.Emission.color = color;
+		EffectShaders.Emission.offsetX = offsetX;
+		EffectShaders.Emission.offsetY = offsetY;
+		EffectShaders.Emission.resolutionX = SUI.options.width;
+		EffectShaders.Emission.resolutionY = SUI.options.height;
+		EffectShaders.Emission.texture = source;
+		EffectShaders.Emission.apply(target);
 	}
 }
