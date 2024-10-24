@@ -51,7 +51,7 @@ class SUI {
 		rawbackbuffer = Image.createRenderTarget(w, h);
 	}
 
-	static inline function init(window:Window) {
+	public static inline function init(window:Window) {
 		backbuffer = Image.createRenderTarget(window.width, window.height);
 		rawbackbuffer = Image.createRenderTarget(window.width, window.height);
 		window.notifyOnResize(resize);
@@ -74,12 +74,12 @@ class SUI {
 		});
 	}
 
-	static inline function compileShaders() {
+	public static inline function compileShaders() {
 		// effects
 		EffectShaders.Clear.compile();
 		EffectShaders.Blur.compile(Shaders.blur_frag);
 		EffectShaders.Emission.compile(Shaders.emission_frag);
-		
+
 		// painters
 		Painters.Rect.compile();
 		Painters.Ellipse.compile();

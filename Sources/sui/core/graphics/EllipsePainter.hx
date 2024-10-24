@@ -25,8 +25,8 @@ class EllipsePainter {
 
 	public function compile() {
 		var structure = new VertexStructure();
-		structure.add("vertPos", VertexData.Float2);
-		structure.add("vcoord", VertexData.Float2);
+		structure.add("vertPos", VertexData.Float32_2X);
+		structure.add("vcoord", VertexData.Float32_2X);
 
 		pipeline = new PipelineState();
 		pipeline.inputLayout = [structure];
