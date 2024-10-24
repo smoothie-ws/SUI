@@ -1,7 +1,7 @@
 #version 450
 
 in vec2 fragCoord;
-out vec4 FragColor;
+out vec4 fragColor;
 
 uniform vec2 resolution;
 //user-defined
@@ -23,5 +23,5 @@ void main() {
     float threshold = smoothness / pSize;
     float mask = smoothstep(edge - threshold, edge + threshold, cornerRadius);
 
-    FragColor = vec4(color.x, color.y, color.z, color.w * mask);
+    fragColor = vec4(color.x, color.y, color.z, color.w * mask);
 }

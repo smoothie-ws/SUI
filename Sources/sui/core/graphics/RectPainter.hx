@@ -26,8 +26,7 @@ class RectPainter {
 
 	public function compile() {
 		var structure = new VertexStructure();
-		structure.add("vertPos", VertexData.Float32_2X);
-		structure.add("vertCoord", VertexData.Float32_2X);
+		structure.add("vertData", VertexData.Float32_4X);
 		
 		pipeline = new PipelineState();
 		pipeline.inputLayout = [structure];
