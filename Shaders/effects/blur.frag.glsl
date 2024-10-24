@@ -32,5 +32,5 @@ void main() {
 
     col /= weight;
     col.rgb /= col.a;
-    FragColor = col;
+    FragColor = texCoord.xxxx;
 }

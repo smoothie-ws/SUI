@@ -57,11 +57,11 @@ class EllipsePainter {
 		indices.unlock();
 	}
 
-	function setVertices(vPos:Array<Array<Float>>):Void {
+	function setVertices(vData:Array<Array<Float>>):Void {
 		var vert = vertices.lock();
 		for (i in 0...4)
-			for (j in 0...vPos[i].length)
-				vert.set(i * vPos[i].length + j, vPos[i][j]);
+			for (j in 0...vData[i].length)
+				vert.set(i * vData[i].length + j, vData[i][j]);
 		vertices.unlock();
 	}
     
@@ -74,7 +74,14 @@ class EllipsePainter {
 		var yT = (y / tH) * 2 - 1;
 		var yB = (y + h) / tH * 2 - 1;
 
-		setVertices([[xL, yT, -1, -1], [xR, yT, 1, -1], [xR, yB, 1, 1], [xL, yB, -1, 1]]);
+		trace(xL, xR, yT, yB);
+		
+		setVertices([
+			[xL, yT, 0, 0], 
+			[xR, yT, 1, 0], 
+			[xR, yB, 1, 1], 
+			[xL, yB, 0, 1]
+		]);
 
 		target.g4.setPipeline(pipeline);
 		target.g4.setVertexBuffer(vertices);

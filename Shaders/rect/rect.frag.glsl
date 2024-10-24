@@ -23,5 +23,5 @@ void main() {
     float threshold = smoothness / pSize;
     float mask = smoothstep(edge - threshold, edge + threshold, cornerRadius);
 
-    fragColor = vec4(color.x, color.y, color.z, color.w * mask);
+    fragColor = color * mask;
 }

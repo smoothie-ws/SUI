@@ -76,7 +76,12 @@ class RectPainter {
 		var yT = (y / tH) * 2 - 1;
 		var yB = (y + h) / tH * 2 - 1;
 
-		setVertices([[xL, yT, -1, -1], [xR, yT, 1, -1], [xR, yB, 1, 1], [xL, yB, -1, 1]]);
+		setVertices([
+			[xL, yT, 0, 0], 
+			[xR, yT, 1, 0], 
+			[xR, yB, 1, 1], 
+			[xL, yB, 0, 1]
+		]);
 
 		target.g4.setPipeline(pipeline);
 		target.g4.setVertexBuffer(vertices);
