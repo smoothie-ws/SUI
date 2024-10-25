@@ -13,7 +13,7 @@ import sui.core.shaders.EffectShaders;
 import sui.core.graphics.Painters;
 
 class SUI {
-	public static var rawbackbuffer:Image;
+	public static var rawbuffers:Array<Image> = [];
 	public static var backbuffer:Image;
 
 	public static var root:Root = {
@@ -48,12 +48,14 @@ class SUI {
 		root.resizeTree(w, h);
 
 		backbuffer = Image.createRenderTarget(w, h);
-		rawbackbuffer = Image.createRenderTarget(w, h);
+		rawbuffers[0] = Image.createRenderTarget(w, h);
+		rawbuffers[1] = Image.createRenderTarget(w, h);
 	}
 
 	public static inline function init(window:Window) {
 		backbuffer = Image.createRenderTarget(window.width, window.height);
-		rawbackbuffer = Image.createRenderTarget(window.width, window.height);
+		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // ping buffer
+		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // pong buffer
 		window.notifyOnResize(resize);
 
 		root.anchors.right.position = window.width;
@@ -63,20 +65,18 @@ class SUI {
 
 		Assets.loadEverything(function() {
 			compileShaders();
-			System.notifyOnFrames(function(frames:Array<kha.Framebuffer>) {
+			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
 				root.drawTree();
 
-				var g2 = frames[0].g2;
-				g2.begin(true, kha.Color.fromValue(root.color));
-				g2.drawImage(backbuffer, 0., 0.);
-				g2.end();
+				frames[0].g2.begin(true, kha.Color.fromValue(root.color));
+				frames[0].g2.drawImage(backbuffer, 0, 0);
+				frames[0].g2.end();
 			});
 		});
 	}
 
 	public static inline function compileShaders() {
 		// effects
-		EffectShaders.Clear.compile();
 		EffectShaders.Blur.compile(Shaders.image_vert, Shaders.blur_frag);
 		EffectShaders.Emission.compile(Shaders.image_vert, Shaders.emission_frag);
 

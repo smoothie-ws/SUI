@@ -16,8 +16,8 @@ class Text extends Element {
 	override function draw() {
 		var f = Assets.fonts.get(font.family);
 
-		SUI.rawbackbuffer.g2.font = f;
-		SUI.rawbackbuffer.g2.fontSize = font.size;
+		SUI.rawbuffers[0].g2.font = f;
+		SUI.rawbuffers[0].g2.fontSize = font.size;
 
 		switch (font.capitalization) {
 			case Capitalization.MixedCase:
@@ -50,15 +50,15 @@ class Text extends Element {
 		if (alignment & Alignment.VCenter != 0)
 			yPosition = (finalH - lineHeight) / 2;
 
-		SUI.rawbackbuffer.g2.drawString(text, xPosition, yPosition);
+		SUI.rawbuffers[0].g2.drawString(text, xPosition, yPosition);
 
 		if (font.strikeout) {
 			var lineYPosition = font.size / 2 + (font.size / 7.5);
-			SUI.rawbackbuffer.g2.drawLine(0., Std.int(lineYPosition), lineLength, Std.int(lineYPosition), lineWidth);
+			SUI.rawbuffers[0].g2.drawLine(0., Std.int(lineYPosition), lineLength, Std.int(lineYPosition), lineWidth);
 		}
 		if (font.underline) {
 			var lineYPosition = 0.85 * f.height(font.size);
-			SUI.rawbackbuffer.g2.drawLine(0., lineYPosition, lineLength, lineYPosition, lineWidth);
+			SUI.rawbuffers[0].g2.drawLine(0., lineYPosition, lineLength, lineYPosition, lineWidth);
 		}
 	}
 }

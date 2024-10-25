@@ -18,6 +18,6 @@ class Triangle extends Element {
 		final y2:FastFloat = offsetY + v2.y;
 		final x3:FastFloat = offsetX + v3.x;
 		final y3:FastFloat = offsetY + v3.y;
-		SUI.rawbackbuffer.g2.fillTriangle(x1, y1, x2, y2, x3, y3);
+		SUI.rawbuffers[0].g2.fillTriangle(x1, y1, x2, y2, x3, y3);
 	}
 }

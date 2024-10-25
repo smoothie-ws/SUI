@@ -176,28 +176,36 @@ class Element {
 			var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
 			var fR = (rotation + rA) * Math.PI / 180;
 
-			SUI.rawbackbuffer.g2.pushTranslation(-cXS, -cYS);
-			SUI.rawbackbuffer.g2.pushScale(finalScaleX, finalScaleY);
-			SUI.rawbackbuffer.g2.pushTranslation(cXS, cYS);
-			SUI.rawbackbuffer.g2.pushRotation(fR, cXR, cYR);
-			SUI.rawbackbuffer.g2.pushOpacity(finalOpacity);
+			SUI.rawbuffers[0].g2.pushTranslation(-cXS, -cYS);
+			SUI.rawbuffers[0].g2.pushScale(finalScaleX, finalScaleY);
+			SUI.rawbuffers[0].g2.pushTranslation(cXS, cYS);
+			SUI.rawbuffers[0].g2.pushRotation(fR, cXR, cYR);
+			SUI.rawbuffers[0].g2.pushOpacity(finalOpacity);
 
-			SUI.rawbackbuffer.g2.begin(true, kha.Color.Transparent);
+			SUI.rawbuffers[0].g2.begin(true, kha.Color.Transparent);
 			draw();
-			SUI.rawbackbuffer.g2.end();
+			SUI.rawbuffers[0].g2.end();
 
-			SUI.rawbackbuffer.g2.popOpacity(); // opacity
-			SUI.rawbackbuffer.g2.popTransformation(); // rotation
-			SUI.rawbackbuffer.g2.popTransformation(); // translation
-			SUI.rawbackbuffer.g2.popTransformation(); // scale
-			SUI.rawbackbuffer.g2.popTransformation(); // translation
+			SUI.rawbuffers[0].g2.popOpacity(); // opacity
+			SUI.rawbuffers[0].g2.popTransformation(); // rotation
+			SUI.rawbuffers[0].g2.popTransformation(); // translation
+			SUI.rawbuffers[0].g2.popTransformation(); // scale
+			SUI.rawbuffers[0].g2.popTransformation(); // translation
+
+			var sourceBufInd = 0;
+			var targetBufInd = 0;
+			for (i in 0...finalEffects.length) {
+				sourceBufInd = (i + 0) % 2;
+				targetBufInd = (i + 1) % 2;
+				var effect = finalEffects[i];
+				SUI.rawbuffers[targetBufInd].g2.begin(true, kha.Color.Transparent);
+				effect.apply(SUI.rawbuffers[sourceBufInd], SUI.rawbuffers[targetBufInd]);
+				SUI.rawbuffers[targetBufInd].g2.end();
+			}
 
 			SUI.backbuffer.g2.begin(false);
-			for (effect in finalEffects)
-				effect.apply(SUI.rawbackbuffer, SUI.backbuffer);
+			SUI.backbuffer.g2.drawImage(SUI.rawbuffers[targetBufInd], 0, 0);
 			SUI.backbuffer.g2.end();
-
-			EffectShaders.clearEffects(SUI.backbuffer);
 
 			for (child in children)
 				child.drawTree();

@@ -10,6 +10,6 @@ class Image extends Element {
 	public var source:String;
 
 	override function draw() {
-		SUI.rawbackbuffer.g2.drawScaledImage(Assets.images.get(source), offsetX, offsetY, finalW, finalH);
+		SUI.rawbuffers[0].g2.drawScaledImage(Assets.images.get(source), offsetX, offsetY, finalW, finalH);
 	}
 }

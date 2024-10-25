@@ -28,7 +28,7 @@ class RowLayout extends Element {
 				child.drawTree();
 				yOffset += yDelta;
 			}
-			return backbuffer;
+			return rawbuffers;
 		} else
 			return null;
 	}

@@ -1,25 +1,23 @@
 package sui.core.shaders;
 
-import kha.Canvas;
-import kha.Shaders;
-import kha.graphics4.VertexData;
-import kha.graphics4.VertexStructure;
-import kha.graphics4.PipelineState;
-import kha.graphics4.VertexShader;
-import kha.graphics4.FragmentShader;
+import kha.Image;
+import kha.FastFloat;
+import kha.graphics4.Graphics;
+import kha.graphics4.TextureUnit;
 import kha.graphics4.ConstantLocation;
 // sui
 import sui.Color;
 
 class EmissionShader extends Shader2D {
 	public var size:FastFloat;
-	public var quality:FastFloat;
+	public var quality:Int;
+	public var outer:Bool;
 	public var color:Color;
 	public var offsetX:FastFloat;
 	public var offsetY:FastFloat;
 	public var resolutionX:FastFloat;
 	public var resolutionY:FastFloat;
-	public var texture:FastFloat;
+	public var texture:Image;
 
 	var sizeID:ConstantLocation;
 	var offsetID:ConstantLocation;
@@ -43,13 +41,13 @@ class EmissionShader extends Shader2D {
 		textureID = pipeline.getTextureUnit("tex");
 	}
 
-	override function setUniforms(target:Canvas) {
-		target.g4.setFloat(sizeID, size);
-		target.g4.setFloat2(offsetID, offsetX, offsetY);
-		target.g4.setFloat4(colorID, color.R / 255, color.G / 255, color.B / 255, color.A / 255);
-		target.g4.setBool(outerID, outer);
-		target.g4.setInt(qualityID, quality);
-		target.g4.setFloat2(resolutionID, resolutionX, resolutionY);
-		target.g4.setTexture(textureID, texture);
+	override function setUniforms(graphics:Graphics) {
+		graphics.setFloat(sizeID, size);
+		graphics.setFloat2(offsetID, offsetX, offsetY);
+		graphics.setFloat4(colorID, color.R / 255, color.G / 255, color.B / 255, color.A / 255);
+		graphics.setBool(outerID, outer);
+		graphics.setInt(qualityID, quality);
+		graphics.setFloat2(resolutionID, resolutionX, resolutionY);
+		graphics.setTexture(textureID, texture);
 	}
 }

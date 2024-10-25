@@ -1,5 +1,6 @@
 package sui.effects;
 
+import kha.Image;
 import kha.Canvas;
 import kha.FastFloat;
 // sui
@@ -22,7 +23,7 @@ class Emission extends Effect {
 		this.quality = quality;
 	}
 
-	override public inline function apply(source:Canvas, target:Canvas) {
+	override public inline function apply(source:Image, target:Canvas) {
 		EffectShaders.Emission.size = size;
 		EffectShaders.Emission.quality = quality;
 		EffectShaders.Emission.color = color;

@@ -1,21 +1,24 @@
 package sui.core.shaders;
 
 import kha.Canvas;
-import kha.Shaders;
 import kha.arrays.Float32Array;
+import kha.graphics4.Usage;
+import kha.graphics4.Graphics;
+import kha.graphics4.PipelineState;
+import kha.graphics4.FragmentShader;
+import kha.graphics4.IndexBuffer;
+import kha.graphics4.VertexBuffer;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
-import kha.graphics4.PipelineState;
 import kha.graphics4.VertexShader;
-import kha.graphics4.FragmentShader;
-import kha.graphics4.TextureUnit;
-import kha.graphics4.ConstantLocation;
 
 class Shader2D {
-	var pipeline:PipelineState;
-	var vertData:VertData;
+	public var pipeline:PipelineState;
+	public var indices:IndexBuffer;
+	public var vertices:VertexBuffer;
+	public var vertData:VertData;
 
-	function new(?vertData:VertData) {
+	public function new(?vertData:VertData) {
 		if (vertData == null)
 			vertData = [
 				{coordX: -1, coordY: -1},
@@ -28,7 +31,7 @@ class Shader2D {
 
 	function getUniforms() {}
 
-	function setUniforms() {}
+	function setUniforms(g4:Graphics) {}
 
 	function initStructure(structure:VertexStructure) {
 		structure.add("vertCoord", VertexData.Float32_2X);
@@ -74,8 +77,8 @@ class Shader2D {
 
 	inline function setVertices():Void {
 		var vertArray = vertices.lock();
-		for (vert in vertData)
-			setVertice(vertArray, vertIndex, vert);
+		for (i in 0...vertData.length)
+			setVertice(vertArray, i, vertData[i]);
 		vertices.unlock();
 	}
 
@@ -92,7 +95,13 @@ class Shader2D {
 	}
 }
 
-abstract VertData(Array<Vert>) from Array<Vert> to Array<Vert> {}
+abstract VertData(Array<Vert>) from Array<Vert> to Array<Vert> {
+	public var length(get, never):Int;
+
+	function get_length():Int {
+		return this.length;
+	}
+}
 
 @:structInit
 class Vert {

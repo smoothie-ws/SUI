@@ -1,17 +1,17 @@
 package sui.core.shaders;
 
-import kha.math.FastVector2;
+import kha.Image;
 import kha.FastFloat;
-import kha.Canvas;
+import kha.graphics4.Graphics;
 import kha.graphics4.TextureUnit;
 import kha.graphics4.ConstantLocation;
 
 class BlurShader extends Shader2D {
 	public var size:FastFloat;
-	public var quality:FastFloat;
+	public var quality:Int;
 	public var resolutionX:FastFloat;
 	public var resolutionY:FastFloat;
-	public var texture:FastFloat;
+	public var texture:Image;
 
 	var sizeID:ConstantLocation;
 	var qualityID:ConstantLocation;
@@ -29,10 +29,10 @@ class BlurShader extends Shader2D {
 		textureID = pipeline.getTextureUnit("tex");
 	}
 
-	override inline function setUniforms(target:Canvas) {
-		target.g4.setFloat(sizeID, size);
-		target.g4.setInt(qualityID, quality);
-		target.g4.setFloat2(resolutionID, resolutionX, resolutionY);
-		target.g4.setTexture(textureID, texture);
+	override function setUniforms(graphics:Graphics) {
+		graphics.setFloat(sizeID, size);
+		graphics.setInt(qualityID, quality);
+		graphics.setFloat2(resolutionID, resolutionX, resolutionY);
+		graphics.setTexture(textureID, texture);
 	}
 }

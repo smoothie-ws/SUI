@@ -11,6 +11,6 @@ class Rectangle extends Element {
 	public var smoothness:FastFloat = 2.;
 
 	override function draw() {
-		Painters.Rect.fillRect(SUI.rawbackbuffer, offsetX, offsetY, finalW, finalH, color, radius, smoothness);
+		Painters.Rect.fillRect(SUI.rawbuffers[0], offsetX, offsetY, finalW, finalH, color, radius, smoothness);
 	}
 }
