@@ -1,7 +1,7 @@
 #version 450
 
 in vec2 fragCoord;
-out vec4 FragColor;
+out vec4 fragColor;
 
 uniform sampler2D tex;
 uniform vec2 resolution;
@@ -11,7 +11,6 @@ uniform vec2 offset;
 uniform vec4 color;
 uniform bool outer;
 uniform int quality;
-
 
 void main() {
     vec2 normOffset =  offset / resolution;
@@ -36,8 +35,8 @@ void main() {
     }
 
     alpha /= weight;
-    FragColor = vec4(color.r, color.g, color.b, alpha);
+    fragColor = vec4(color.r, color.g, color.b, alpha);
 
     vec4 col = texture(tex, fragCoord);
-    FragColor = mix(FragColor, col, col.a);
+    fragColor = mix(fragColor, col, col.a);
 }

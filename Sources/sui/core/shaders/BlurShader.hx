@@ -18,9 +18,7 @@ class BlurShader extends Shader2D {
 	var resolutionID:ConstantLocation;
 	var textureID:TextureUnit;
 
-	public function new() {
-		super();
-	}
+	public function new() {}
 
 	override inline function getUniforms() {
 		sizeID = pipeline.getConstantLocation("size");

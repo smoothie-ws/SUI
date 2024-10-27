@@ -9,7 +9,6 @@ uniform vec2 resolution;
 uniform float size;
 uniform int quality;
 
-
 void main() {
     float Pi2 = 6.28318530718; // Pi * 2
     

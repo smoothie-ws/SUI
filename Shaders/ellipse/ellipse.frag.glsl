@@ -8,7 +8,6 @@ uniform vec2 resolution;
 uniform vec4 color;
 uniform float smoothness;
 
-
 void main() {
     float pSize = length(resolution);
 

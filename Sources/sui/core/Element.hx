@@ -1,17 +1,12 @@
 package sui.core;
 
-import sui.effects.Blur;
-import kha.System;
-import kha.Scaler;
 import kha.Canvas;
-import kha.Image;
 import kha.FastFloat;
 // sui
 import sui.Color;
 import sui.transform.Transform;
 import sui.core.utils.Math.clamp;
 import sui.effects.Effect;
-import sui.core.shaders.EffectShaders;
 import sui.core.layouts.Anchors;
 
 @:structInit
@@ -194,6 +189,7 @@ class Element {
 
 			var sourceBufInd = 0;
 			var targetBufInd = 0;
+			
 			for (i in 0...finalEffects.length) {
 				sourceBufInd = (i + 0) % 2;
 				targetBufInd = (i + 1) % 2;

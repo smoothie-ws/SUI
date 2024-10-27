@@ -81,8 +81,8 @@ class SUI {
 		EffectShaders.Emission.compile(Shaders.image_vert, Shaders.emission_frag);
 
 		// painters
-		Painters.Rect.compile();
-		Painters.Ellipse.compile();
+		Painters.Rect.compile(Shaders.image_vert, Shaders.rect_frag);
+		Painters.Ellipse.compile(Shaders.image_vert, Shaders.ellipse_frag);
 	}
 }
 

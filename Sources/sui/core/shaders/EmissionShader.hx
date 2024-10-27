@@ -27,9 +27,7 @@ class EmissionShader extends Shader2D {
 	var resolutionID:ConstantLocation;
 	var textureID:TextureUnit;
 
-	public function new() {
-		super();
-	}
+	public function new() {}
 
 	override function getUniforms() {
 		sizeID = pipeline.getConstantLocation("size");
