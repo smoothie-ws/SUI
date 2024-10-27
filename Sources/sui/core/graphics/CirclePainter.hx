@@ -7,7 +7,7 @@ import kha.graphics4.ConstantLocation;
 // sui
 import sui.core.shaders.Shader2D;
 
-class EllipsePainter extends Shader2D {
+class CirclePainter extends Shader2D {
 	public var dims = new FastVector4();
 	public var color:Color;
 

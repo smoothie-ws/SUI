@@ -83,6 +83,7 @@ class SUI {
 		// painters
 		Painters.Rect.compile(Shaders.image_vert, Shaders.rect_frag);
 		Painters.Ellipse.compile(Shaders.image_vert, Shaders.ellipse_frag);
+		Painters.Circle.compile(Shaders.image_vert, Shaders.circle_frag);
 	}
 }
 

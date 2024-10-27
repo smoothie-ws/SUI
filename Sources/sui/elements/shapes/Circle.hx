@@ -5,7 +5,7 @@ import sui.core.Element;
 import sui.core.graphics.Painters;
 
 @:structInit
-class Ellipse extends Element {
+class Circle extends Element {
 	override function draw() {
 		Painters.Ellipse.dims.x = offsetX;
 		Painters.Ellipse.dims.y = offsetY;

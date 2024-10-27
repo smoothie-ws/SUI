@@ -11,12 +11,13 @@ uniform float radius;
 
 void main() {
     vec2 fragCoord = fragCoord * res;
-    vec2 rectSize = dims.zw;
-    vec2 halfSize = rectSize / 2;
-    vec2 rectCenter = dims.xy + halfSize;
+
+    vec2 size = dims.zw;
+    vec2 halfSize = size / 2;
+    vec2 center = dims.xy + halfSize;
     float radius = min(radius, min(dims.z, dims.w) / 2);
     
-    vec2 q = abs(fragCoord.xy - rectCenter) - halfSize + radius;
+    vec2 q = abs(fragCoord.xy - center) - halfSize + radius;
     float mask = 1 - min(max(q.x, q.y), 0) - length(max(q, 0)) + radius;
     
     fragColor = col * mask;
