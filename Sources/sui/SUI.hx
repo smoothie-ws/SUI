@@ -68,7 +68,7 @@ class SUI {
 			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
 				root.drawTree();
 
-				frames[0].g2.begin(true, kha.Color.fromValue(root.color));
+				frames[0].g2.begin(true, root.color);
 				frames[0].g2.drawImage(backbuffer, 0, 0);
 				frames[0].g2.end();
 			});

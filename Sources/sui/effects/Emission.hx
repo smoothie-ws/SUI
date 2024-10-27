@@ -1,5 +1,6 @@
 package sui.effects;
 
+import kha.Color;
 import kha.Image;
 import kha.Canvas;
 import kha.FastFloat;
@@ -14,7 +15,7 @@ class Emission extends Effect {
 	public var outer:Bool;
 	public var quality:Int;
 
-	public function new(?size:Float = 16., ?offsetX:Float = 0., ?offsetY:Float = 0., ?color:Color = Color.black, outer:Bool = true, ?quality:Int = 12) {
+	public function new(?size:Float = 16., ?offsetX:Float = 0., ?offsetY:Float = 0., ?color:Color = Color.Black, outer:Bool = true, ?quality:Int = 12) {
 		this.size = size;
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
@@ -29,8 +30,8 @@ class Emission extends Effect {
 		EffectShaders.Emission.color = color;
 		EffectShaders.Emission.offsetX = offsetX;
 		EffectShaders.Emission.offsetY = offsetY;
-		EffectShaders.Emission.resolutionX = SUI.options.width;
-		EffectShaders.Emission.resolutionY = SUI.options.height;
+		EffectShaders.Emission.resX = SUI.options.width;
+		EffectShaders.Emission.resY = SUI.options.height;
 		EffectShaders.Emission.texture = source;
 		EffectShaders.Emission.apply(target);
 	}

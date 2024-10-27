@@ -4,7 +4,7 @@ in vec2 fragCoord;
 out vec4 fragColor;
 
 uniform sampler2D tex;
-uniform vec2 resolution;
+uniform vec2 res;
 // user-defined
 uniform float size;
 uniform vec2 offset;
@@ -13,14 +13,14 @@ uniform bool outer;
 uniform int quality;
 
 void main() {
-    vec2 normOffset =  offset / resolution;
+    vec2 normOffset =  offset / res;
 
     float Pi2 = 6.28318530718; // Pi * 2
     
     float directions = 4 * quality;
     float sampleNum = quality;
 
-    vec2 radius = size / resolution;
+    vec2 radius = size / res;
 
     float alpha = 0.0;
     float weight = 0.0;

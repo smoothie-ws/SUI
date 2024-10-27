@@ -18,8 +18,8 @@ class Blur extends Effect {
 	override public inline function apply(source:Image, target:Canvas) {
 		EffectShaders.Blur.size = size;
 		EffectShaders.Blur.quality = quality;
-		EffectShaders.Blur.resolutionX = SUI.options.width;
-		EffectShaders.Blur.resolutionY = SUI.options.height;
+		EffectShaders.Blur.resX = SUI.options.width;
+		EffectShaders.Blur.resY = SUI.options.height;
 		EffectShaders.Blur.texture = source;
 		EffectShaders.Blur.apply(target);
 	}

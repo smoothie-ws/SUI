@@ -1,9 +1,9 @@
 package sui.core;
 
+import kha.Color;
 import kha.Canvas;
 import kha.FastFloat;
 // sui
-import sui.Color;
 import sui.transform.Transform;
 import sui.core.utils.Math.clamp;
 import sui.effects.Effect;
@@ -43,7 +43,7 @@ class Element {
 	// anchors
 	public var anchors:Anchors = {};
 	// color
-	public var color:Color = Color.white;
+	public var color:Color = Color.White;
 	// transform
 	public var transform:Transform = {};
 	// border
@@ -189,7 +189,7 @@ class Element {
 
 			var sourceBufInd = 0;
 			var targetBufInd = 0;
-			
+
 			for (i in 0...finalEffects.length) {
 				sourceBufInd = (i + 0) % 2;
 				targetBufInd = (i + 1) % 2;
@@ -246,6 +246,6 @@ class Element {
 @:structInit
 class Border {
 	public var width:Int = 0;
-	public var color:Color = "black";
+	public var color:Color = Color.Black;
 	public var opacity:Float = 1.0;
 }

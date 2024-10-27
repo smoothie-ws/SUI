@@ -1,40 +1,36 @@
 package sui.core.graphics;
 
+import kha.Color;
 import kha.FastFloat;
 import kha.math.FastVector4;
 import kha.graphics4.Graphics;
 import kha.graphics4.ConstantLocation;
 // sui
-import sui.Color;
 import sui.core.shaders.Shader2D;
 
 class RectPainter extends Shader2D {
 	public var dims = new FastVector4();
 	public var color:Color;
 	public var radius:FastFloat;
-	public var smoothness:FastFloat;
 
+	var resID:ConstantLocation;
 	var dimsID:ConstantLocation;
-	var colorID:ConstantLocation;
+	var colID:ConstantLocation;
 	var radiusID:ConstantLocation;
-	var resolutionID:ConstantLocation;
-	var smoothnessID:ConstantLocation;
 
 	public function new() {}
 
 	override inline function getUniforms() {
 		dimsID = pipeline.getConstantLocation("dims");
-		colorID = pipeline.getConstantLocation("color");
+		colID = pipeline.getConstantLocation("col");
 		radiusID = pipeline.getConstantLocation("radius");
-		resolutionID = pipeline.getConstantLocation("resolution");
-		smoothnessID = pipeline.getConstantLocation("smoothness");
+		resID = pipeline.getConstantLocation("res");
 	}
 
 	override function setUniforms(graphics:Graphics) {
-		graphics.setFloat(smoothnessID, smoothness);
 		graphics.setFloat(radiusID, radius);
-		graphics.setFloat2(resolutionID, SUI.options.width, SUI.options.height);
-		graphics.setFloat4(colorID, color.R / 255, color.G / 255, color.B / 255, color.A / 255);
+		graphics.setFloat2(resID, SUI.options.width, SUI.options.height);
+		graphics.setFloat4(colID, color.R, color.G, color.B, color.A);
 		graphics.setVector4(dimsID, dims);
 	}
 }

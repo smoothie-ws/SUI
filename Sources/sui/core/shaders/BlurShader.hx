@@ -9,13 +9,13 @@ import kha.graphics4.ConstantLocation;
 class BlurShader extends Shader2D {
 	public var size:FastFloat;
 	public var quality:Int;
-	public var resolutionX:FastFloat;
-	public var resolutionY:FastFloat;
+	public var resX:FastFloat;
+	public var resY:FastFloat;
 	public var texture:Image;
 
 	var sizeID:ConstantLocation;
 	var qualityID:ConstantLocation;
-	var resolutionID:ConstantLocation;
+	var resID:ConstantLocation;
 	var textureID:TextureUnit;
 
 	public function new() {}
@@ -23,14 +23,14 @@ class BlurShader extends Shader2D {
 	override inline function getUniforms() {
 		sizeID = pipeline.getConstantLocation("size");
 		qualityID = pipeline.getConstantLocation("quality");
-		resolutionID = pipeline.getConstantLocation("resolution");
+		resID = pipeline.getConstantLocation("res");
 		textureID = pipeline.getTextureUnit("tex");
 	}
 
 	override function setUniforms(graphics:Graphics) {
 		graphics.setFloat(sizeID, size);
 		graphics.setInt(qualityID, quality);
-		graphics.setFloat2(resolutionID, resolutionX, resolutionY);
+		graphics.setFloat2(resID, resX, resY);
 		graphics.setTexture(textureID, texture);
 	}
 }

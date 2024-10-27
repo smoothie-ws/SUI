@@ -4,7 +4,7 @@ in vec2 fragCoord;
 out vec4 fragColor;
 
 uniform sampler2D tex;
-uniform vec2 resolution;
+uniform vec2 res;
 // user-defined
 uniform float size;
 uniform int quality;
@@ -15,7 +15,7 @@ void main() {
     float directions = 4 * quality;
     float sampleNum = quality;
 
-    vec2 radius = size / resolution;
+    vec2 radius = size / res;
     vec4 col = vec4(0.0);
     float weight = 0.0;
 
