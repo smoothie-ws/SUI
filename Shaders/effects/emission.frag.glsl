@@ -35,8 +35,12 @@ void main() {
     }
 
     alpha /= weight;
-    fragColor = vec4(color.r, color.g, color.b, alpha);
 
     vec4 col = texture(tex, fragCoord);
-    fragColor = mix(fragColor, col, col.a);
+    float fOuter = float(outer);
+
+    float outside = fOuter * alpha * (1 - col.a);
+    float inside = (1 - fOuter) * (1 - alpha) * col.a;
+
+    fragColor = mix(col, color, outside + inside);
 }
