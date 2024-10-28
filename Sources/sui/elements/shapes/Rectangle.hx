@@ -1,5 +1,6 @@
 package sui.elements.shapes;
 
+import kha.Canvas;
 import kha.FastFloat;
 // sui
 import sui.core.Element;
@@ -13,7 +14,7 @@ class Rectangle extends Element {
 	public var bottomLeftRadius:FastFloat = null;
 	public var bottomRightRadius:FastFloat = null;
 
-	override function draw() {
+	override function draw(buffer:Canvas) {
 		Painters.Rect.color = color;
 		Painters.Rect.dims.x = offsetX;
 		Painters.Rect.dims.y = offsetY;
@@ -24,6 +25,6 @@ class Rectangle extends Element {
 		Painters.Rect.radiuses.z = bottomLeftRadius == null ? radius : bottomLeftRadius;
 		Painters.Rect.radiuses.w = bottomRightRadius == null ? radius : bottomRightRadius;
 
-		Painters.Rect.apply(SUI.rawbuffers[0]);
+		Painters.Rect.apply(buffer);
 	}
 }

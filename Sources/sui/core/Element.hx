@@ -4,7 +4,6 @@ import kha.Color;
 import kha.Canvas;
 import kha.FastFloat;
 // sui
-import sui.filters.Filter;
 import sui.transform.Transform;
 import sui.core.utils.Math.clamp;
 import sui.core.layouts.Anchors;
@@ -46,12 +45,8 @@ class Element {
 	public var transform:Transform = {};
 	// border
 	public var border:Border = {};
-	// filters
-	public var filters:Array<Filter> = [];
-	public var backdropFilters:Array<Filter> = [];
 
 	// final transform
-	var finalFilters(get, never):Array<Filter>;
 	var finalOpacity(get, never):FastFloat;
 	var finalEnabled(get, never):Bool;
 	var finalScaleX(get, never):FastFloat;
@@ -60,10 +55,6 @@ class Element {
 	var offsetY(get, never):FastFloat;
 	var finalW(get, never):FastFloat;
 	var finalH(get, never):FastFloat;
-
-	inline function get_finalFilters():Array<Filter> {
-		return parent == null ? filters : parent.finalFilters.concat(filters);
-	}
 
 	inline function get_finalOpacity():FastFloat {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
@@ -147,15 +138,11 @@ class Element {
 		needsUpdate = true;
 	}
 
-	public function draw() {}
+	public function draw(buffer:Canvas) {}
 
-	public function drawTree():Void {
+	public function drawTree(buffer:Canvas):Void {
 		if (!visible)
 			return;
-
-		SUI.rawbuffers[0].g2.begin(true, kha.Color.Transparent);
-		draw();
-		SUI.rawbuffers[0].g2.end();
 
 		var oX = offsetX;
 		var oY = offsetY;
@@ -175,67 +162,25 @@ class Element {
 		var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
 		var fR = (rotation + rA) * Math.PI / 180;
 
-		// apply element filters
-		var _filters = finalFilters;
-		var sourceBufInd = 0;
-		var targetBufInd = 0;
-		for (i in 0..._filters.length) {
-			sourceBufInd = i % 2;
-			targetBufInd = (i + 1) % 2;
-			SUI.rawbuffers[targetBufInd].g2.begin(true, kha.Color.Transparent);
-			_filters[i].apply(SUI.rawbuffers[sourceBufInd], SUI.rawbuffers[targetBufInd]);
-			SUI.rawbuffers[targetBufInd].g2.end();
-		}
+		// draw element on the buffer
+		buffer.g2.begin(false);
+		buffer.g2.pushTranslation(-cXS, -cYS);
+		buffer.g2.pushScale(finalScaleX, finalScaleY);
+		buffer.g2.pushTranslation(cXS, cYS);
+		buffer.g2.pushRotation(fR, cXR, cYR);
+		buffer.g2.pushOpacity(finalOpacity);
 
-		// apply element transformation
-		sourceBufInd = (targetBufInd + 1) % 2;
-		SUI.rawbuffers[sourceBufInd].g2.begin(true, kha.Color.Transparent);
-		SUI.rawbuffers[sourceBufInd].g2.pushTranslation(-cXS, -cYS);
-		SUI.rawbuffers[sourceBufInd].g2.pushScale(finalScaleX, finalScaleY);
-		SUI.rawbuffers[sourceBufInd].g2.pushTranslation(cXS, cYS);
-		SUI.rawbuffers[sourceBufInd].g2.pushRotation(fR, cXR, cYR);
-		SUI.rawbuffers[sourceBufInd].g2.pushOpacity(finalOpacity);
+		draw(buffer);
 
-		SUI.rawbuffers[sourceBufInd].g2.drawImage(SUI.rawbuffers[targetBufInd], 0, 0);
-
-		SUI.rawbuffers[sourceBufInd].g2.popOpacity(); // opacity
-		SUI.rawbuffers[sourceBufInd].g2.popTransformation(); // rotation
-		SUI.rawbuffers[sourceBufInd].g2.popTransformation(); // translation
-		SUI.rawbuffers[sourceBufInd].g2.popTransformation(); // scale
-		SUI.rawbuffers[sourceBufInd].g2.popTransformation(); // translation
-		SUI.rawbuffers[sourceBufInd].g2.end();
-
-		// apply element backdrop filters
-		var bd_filters = backdropFilters;
-		// copy backbuffer
-		SUI.rawbuffers[2].g2.begin(true);
-		SUI.rawbuffers[2].g2.drawImage(SUI.backbuffer, 0, 0);
-		SUI.rawbuffers[2].g2.end();
-
-		var bd_sourceBufInd = 0;
-		var bd_targetBufInd = 0;
-		for (i in 0...bd_filters.length) {
-			bd_sourceBufInd = 2 + i % 2;
-			bd_targetBufInd = 2 + (i + 1) % 2;
-			SUI.rawbuffers[bd_targetBufInd].g2.begin(true);
-			bd_filters[i].apply(SUI.rawbuffers[bd_sourceBufInd], SUI.rawbuffers[bd_targetBufInd], SUI.rawbuffers[sourceBufInd]);
-			SUI.rawbuffers[bd_targetBufInd].g2.end();
-		}
-
-		// draw element on the backbuffer
-		SUI.backbuffer.g2.begin(false);
-		SUI.backbuffer.g2.drawImage(SUI.rawbuffers[bd_targetBufInd], 0, 0);
-		SUI.backbuffer.g2.drawImage(SUI.rawbuffers[sourceBufInd], 0, 0);
-		SUI.backbuffer.g2.end();
+		buffer.g2.popOpacity(); // opacity
+		buffer.g2.popTransformation(); // rotation
+		buffer.g2.popTransformation(); // translation
+		buffer.g2.popTransformation(); // scale
+		buffer.g2.popTransformation(); // translation
+		buffer.g2.end();
 
 		for (child in children)
-			child.drawTree();
-
-		needsUpdate = false;
-	}
-
-	public function renderToTarget(target:Canvas, ?clear:Bool = false) {
-		drawTree();
+			child.drawTree(buffer);
 	}
 
 	public inline final function addChild(child:Element) {
