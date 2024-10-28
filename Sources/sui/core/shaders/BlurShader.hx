@@ -12,11 +12,13 @@ class BlurShader extends Shader2D {
 	public var resX:FastFloat;
 	public var resY:FastFloat;
 	public var texture:Image;
+	public var mask:Image;
 
 	var sizeID:ConstantLocation;
 	var qualityID:ConstantLocation;
 	var resID:ConstantLocation;
 	var textureID:TextureUnit;
+	var maskID:TextureUnit;
 
 	public function new() {}
 
@@ -25,6 +27,7 @@ class BlurShader extends Shader2D {
 		qualityID = pipeline.getConstantLocation("quality");
 		resID = pipeline.getConstantLocation("res");
 		textureID = pipeline.getTextureUnit("tex");
+		maskID = pipeline.getTextureUnit("mask");
 	}
 
 	override function setUniforms(graphics:Graphics) {
@@ -32,5 +35,6 @@ class BlurShader extends Shader2D {
 		graphics.setInt(qualityID, quality);
 		graphics.setFloat2(resID, resX, resY);
 		graphics.setTexture(textureID, texture);
+		graphics.setTexture(maskID, mask);
 	}
 }

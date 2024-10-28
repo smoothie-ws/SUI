@@ -16,7 +16,7 @@ class Emission extends Filter {
 	public var outer:Bool = true;
 	public var quality:Int = 12;
 
-	override public inline function apply(source:Image, target:Canvas) {
+	override public inline function apply(source:Image, target:Canvas, ?mask:Image) {
 		FilterShaders.Emission.size = size;
 		FilterShaders.Emission.quality = quality;
 		FilterShaders.Emission.color = color;
@@ -26,6 +26,7 @@ class Emission extends Filter {
 		FilterShaders.Emission.resY = SUI.options.height;
 		FilterShaders.Emission.outer = outer;
 		FilterShaders.Emission.texture = source;
+		FilterShaders.Emission.mask = mask;
 		FilterShaders.Emission.apply(target);
 	}
 }

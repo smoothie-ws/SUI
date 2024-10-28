@@ -4,5 +4,5 @@ import kha.Image;
 import kha.Canvas;
 
 class Filter {
-	public function apply(source:Image, target:Canvas):Void {}
+	public function apply(source:Image, target:Canvas, ?mask:Image):Void {}
 }

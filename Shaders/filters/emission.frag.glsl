@@ -3,14 +3,16 @@
 in vec2 fragCoord;
 out vec4 fragColor;
 
-uniform sampler2D tex;
 uniform vec2 res;
+uniform sampler2D tex;
 // user-defined
 uniform float size;
 uniform vec2 offset;
 uniform vec4 color;
 uniform bool outer;
 uniform int quality;
+uniform bool masked;
+uniform sampler2D mask;
 
 const float Pi2 = 6.28318530718; // Pi * 2
 
@@ -43,4 +45,5 @@ void main() {
     float inside = (1 - fOuter) * (1 - alpha) * col.a;
 
     fragColor = mix(col, color, outside + inside);
+    // fragColor *= texture(mask, fragCoord).a;
 }

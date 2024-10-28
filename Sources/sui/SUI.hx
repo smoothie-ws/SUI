@@ -50,12 +50,16 @@ class SUI {
 		backbuffer = Image.createRenderTarget(w, h);
 		rawbuffers[0] = Image.createRenderTarget(w, h);
 		rawbuffers[1] = Image.createRenderTarget(w, h);
+		rawbuffers[2] = Image.createRenderTarget(w, h);
+		rawbuffers[3] = Image.createRenderTarget(w, h);
 	}
 
 	public static inline function init(window:Window) {
 		backbuffer = Image.createRenderTarget(window.width, window.height);
-		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // ping buffer
-		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // pong buffer
+		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // ping1 buffer
+		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // pong1 buffer
+		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // ping2 buffer
+		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // pong2 buffer
 
 		window.notifyOnResize(resize);
 
