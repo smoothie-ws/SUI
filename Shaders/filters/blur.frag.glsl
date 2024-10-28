@@ -9,17 +9,16 @@ uniform vec2 res;
 uniform float size;
 uniform int quality;
 
+const float Pi2 = 6.28318530718; // Pi * 2
+
 void main() {
-    float Pi2 = 6.28318530718; // Pi * 2
-    
-    float directions = 4 * quality;
     float sampleNum = quality;
 
     vec2 radius = size / res;
     vec4 col = vec4(0.0);
     float weight = 0.0;
 
-    for (float d = 0.0; d < Pi2; d += Pi2 / directions) {
+    for (float d = 0.0; d < Pi2; d += Pi2 / quality / 4) {
         vec2 offset = vec2(cos(d), sin(d)) * radius;
         for (float i = 1.0 / sampleNum; i <= 1.0; i += 1.0 / sampleNum) {
             vec4 sampleColor = texture(tex, fragCoord + offset * i);

@@ -9,7 +9,7 @@ import kha.System;
 import kha.Framebuffer;
 // sui
 import sui.core.Root;
-import sui.core.shaders.EffectShaders;
+import sui.core.shaders.FilterShaders;
 import sui.core.graphics.Painters;
 
 class SUI {
@@ -56,6 +56,7 @@ class SUI {
 		backbuffer = Image.createRenderTarget(window.width, window.height);
 		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // ping buffer
 		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // pong buffer
+
 		window.notifyOnResize(resize);
 
 		root.anchors.right.position = window.width;
@@ -66,9 +67,12 @@ class SUI {
 		Assets.loadEverything(function() {
 			compileShaders();
 			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
+				backbuffer.g2.begin(true, root.color);
+				backbuffer.g2.end();
+
 				root.drawTree();
 
-				frames[0].g2.begin(true, root.color);
+				frames[0].g2.begin(true);
 				frames[0].g2.drawImage(backbuffer, 0, 0);
 				frames[0].g2.end();
 			});
@@ -76,9 +80,9 @@ class SUI {
 	}
 
 	public static inline function compileShaders() {
-		// effects
-		EffectShaders.Blur.compile(Shaders.image_vert, Shaders.blur_frag);
-		EffectShaders.Emission.compile(Shaders.image_vert, Shaders.emission_frag);
+		// filters
+		FilterShaders.Blur.compile(Shaders.image_vert, Shaders.blur_frag);
+		FilterShaders.Emission.compile(Shaders.image_vert, Shaders.emission_frag);
 
 		// painters
 		Painters.Rect.compile(Shaders.image_vert, Shaders.rect_frag);

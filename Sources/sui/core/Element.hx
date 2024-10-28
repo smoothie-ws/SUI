@@ -4,15 +4,13 @@ import kha.Color;
 import kha.Canvas;
 import kha.FastFloat;
 // sui
+import sui.filters.Filter;
 import sui.transform.Transform;
 import sui.core.utils.Math.clamp;
-import sui.effects.Effect;
 import sui.core.layouts.Anchors;
 
 @:structInit
 class Element {
-	public var effects:Array<Effect> = [];
-
 	var needsUpdate:Bool = true;
 
 	// position
@@ -48,9 +46,12 @@ class Element {
 	public var transform:Transform = {};
 	// border
 	public var border:Border = {};
+	// filters
+	public var filters:Array<Filter> = [];
+	public var backdropFilters:Array<Filter> = [];
 
 	// final transform
-	var finalEffects(get, never):Array<Effect>;
+	var finalFilters(get, never):Array<Filter>;
 	var finalOpacity(get, never):FastFloat;
 	var finalEnabled(get, never):Bool;
 	var finalScaleX(get, never):FastFloat;
@@ -60,8 +61,8 @@ class Element {
 	var finalW(get, never):FastFloat;
 	var finalH(get, never):FastFloat;
 
-	inline function get_finalEffects():Array<Effect> {
-		return parent == null ? effects : parent.effects.concat(effects);
+	inline function get_finalFilters():Array<Filter> {
+		return parent == null ? filters : parent.finalFilters.concat(filters);
 	}
 
 	inline function get_finalOpacity():FastFloat {
@@ -152,60 +153,60 @@ class Element {
 		if (!visible)
 			return;
 
-		if (needsUpdate) {
-			var oX = offsetX;
-			var oY = offsetY;
+		// if (needsUpdate) {
+		SUI.rawbuffers[0].g2.begin(true, kha.Color.Transparent);
+		draw();
+		SUI.rawbuffers[0].g2.end();
 
-			var centerX = oX + finalW / 2;
-			var centerY = oY + finalH / 2;
+		var sourceBufInd = 0;
+		var targetBufInd = 0;
 
-			var sOX = transform.scale.origin.x;
-			var sOY = transform.scale.origin.y;
-			var rOX = transform.scale.origin.x;
-			var rOY = transform.scale.origin.y;
-			var rA = transform.rotation.angle;
-
-			var cXS = Math.isNaN(sOX) ? centerX : oX + sOX;
-			var cYS = Math.isNaN(sOY) ? centerY : oY + sOY;
-			var cXR = Math.isNaN(rOX) ? centerX : oX + rOX;
-			var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
-			var fR = (rotation + rA) * Math.PI / 180;
-
-			SUI.rawbuffers[0].g2.pushTranslation(-cXS, -cYS);
-			SUI.rawbuffers[0].g2.pushScale(finalScaleX, finalScaleY);
-			SUI.rawbuffers[0].g2.pushTranslation(cXS, cYS);
-			SUI.rawbuffers[0].g2.pushRotation(fR, cXR, cYR);
-			SUI.rawbuffers[0].g2.pushOpacity(finalOpacity);
-
-			SUI.rawbuffers[0].g2.begin(true, kha.Color.Transparent);
-			draw();
-			SUI.rawbuffers[0].g2.end();
-
-			SUI.rawbuffers[0].g2.popOpacity(); // opacity
-			SUI.rawbuffers[0].g2.popTransformation(); // rotation
-			SUI.rawbuffers[0].g2.popTransformation(); // translation
-			SUI.rawbuffers[0].g2.popTransformation(); // scale
-			SUI.rawbuffers[0].g2.popTransformation(); // translation
-
-			var sourceBufInd = 0;
-			var targetBufInd = 0;
-
-			for (i in 0...finalEffects.length) {
-				sourceBufInd = (i + 0) % 2;
-				targetBufInd = (i + 1) % 2;
-				var effect = finalEffects[i];
-				SUI.rawbuffers[targetBufInd].g2.begin(true, kha.Color.Transparent);
-				effect.apply(SUI.rawbuffers[sourceBufInd], SUI.rawbuffers[targetBufInd]);
-				SUI.rawbuffers[targetBufInd].g2.end();
-			}
-
-			SUI.backbuffer.g2.begin(false);
-			SUI.backbuffer.g2.drawImage(SUI.rawbuffers[targetBufInd], 0, 0);
-			SUI.backbuffer.g2.end();
-
-			for (child in children)
-				child.drawTree();
+		for (i in 0...finalFilters.length) {
+			sourceBufInd = (i + 0) % 2;
+			targetBufInd = (i + 1) % 2;
+			var filter = finalFilters[i];
+			SUI.rawbuffers[targetBufInd].g2.begin(true, kha.Color.Transparent);
+			filter.apply(SUI.rawbuffers[sourceBufInd], SUI.rawbuffers[targetBufInd]);
+			SUI.rawbuffers[targetBufInd].g2.end();
 		}
+
+		var oX = offsetX;
+		var oY = offsetY;
+
+		var centerX = oX + finalW / 2;
+		var centerY = oY + finalH / 2;
+
+		var sOX = transform.scale.origin.x;
+		var sOY = transform.scale.origin.y;
+		var rOX = transform.scale.origin.x;
+		var rOY = transform.scale.origin.y;
+		var rA = transform.rotation.angle;
+
+		var cXS = Math.isNaN(sOX) ? centerX : oX + sOX;
+		var cYS = Math.isNaN(sOY) ? centerY : oY + sOY;
+		var cXR = Math.isNaN(rOX) ? centerX : oX + rOX;
+		var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
+		var fR = (rotation + rA) * Math.PI / 180;
+
+		SUI.backbuffer.g2.begin(false);
+		SUI.backbuffer.g2.pushTranslation(-cXS, -cYS);
+		SUI.backbuffer.g2.pushScale(finalScaleX, finalScaleY);
+		SUI.backbuffer.g2.pushTranslation(cXS, cYS);
+		SUI.backbuffer.g2.pushRotation(fR, cXR, cYR);
+		SUI.backbuffer.g2.pushOpacity(finalOpacity);
+
+		SUI.backbuffer.g2.drawImage(SUI.rawbuffers[targetBufInd], 0, 0);
+
+		SUI.backbuffer.g2.popOpacity(); // opacity
+		SUI.backbuffer.g2.popTransformation(); // rotation
+		SUI.backbuffer.g2.popTransformation(); // translation
+		SUI.backbuffer.g2.popTransformation(); // scale
+		SUI.backbuffer.g2.popTransformation(); // translation
+		SUI.backbuffer.g2.end();
+
+		for (child in children)
+			child.drawTree();
+		// }
 
 		needsUpdate = false;
 	}

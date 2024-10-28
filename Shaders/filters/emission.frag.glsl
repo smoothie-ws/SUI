@@ -12,10 +12,10 @@ uniform vec4 color;
 uniform bool outer;
 uniform int quality;
 
+const float Pi2 = 6.28318530718; // Pi * 2
+
 void main() {
     vec2 normOffset =  offset / res;
-
-    float Pi2 = 6.28318530718; // Pi * 2
     
     float directions = 4 * quality;
     float sampleNum = quality;
