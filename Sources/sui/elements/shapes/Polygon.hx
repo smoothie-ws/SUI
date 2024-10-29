@@ -1,6 +1,5 @@
 package sui.elements.shapes;
 
-import kha.Canvas;
 import kha.math.Vector2;
 // sui
 import sui.core.Element;
@@ -9,7 +8,7 @@ import sui.core.Element;
 class Polygon extends Element {
 	public var vertices:Array<Vector2> = [{}];
 
-	override function draw(buffer:Canvas) {
+	override function draw() {
 		var iterator = vertices.iterator();
 
 		if (!iterator.hasNext())
@@ -22,7 +21,7 @@ class Polygon extends Element {
 
 		while (iterator.hasNext()) {
 			var v2 = iterator.next();
-			buffer.g2.fillTriangle(v0.x + x, v0.y + y, v1.x + x, v1.y + y, v2.x + x, v2.y + y);
+			SUI.rawbuffers[0].g2.fillTriangle(v0.x + x, v0.y + y, v1.x + x, v1.y + y, v2.x + x, v2.y + y);
 			v1 = v2;
 		}
 	}

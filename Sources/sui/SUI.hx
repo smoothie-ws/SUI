@@ -24,19 +24,17 @@ class SUI {
 	};
 	public static var options:SUIOptions;
 
-	public static inline function start(?title:String = "SUI App", ?width:Int = 800, ?height:Int = 600, ?samplesPerPixes:Int = 1) {
-		options = {
-			title: title,
-			width: width,
-			height: height,
-			samplesPerPixel: samplesPerPixes
-		};
+	public static inline function start(?options:SUIOptions) {
+		if (options == null)
+			SUI.options = {};
+		else
+			SUI.options = options;
 
 		System.start({
-			title: options.title,
-			width: options.width,
-			height: options.height,
-			framebuffer: {samplesPerPixel: options.samplesPerPixel}
+			title: SUI.options.title,
+			width: SUI.options.width,
+			height: SUI.options.height,
+			framebuffer: {samplesPerPixel: SUI.options.samplesPerPixel}
 		}, init);
 	}
 
@@ -76,7 +74,7 @@ class SUI {
 				backbuffer.g2.begin(true, root.color);
 				backbuffer.g2.end();
 
-				root.drawTree(backbuffer);
+				root.drawTree();
 
 				frames[0].g2.begin(true);
 				frames[0].g2.drawImage(backbuffer, 0, 0);
@@ -97,8 +95,8 @@ class SUI {
 
 @:structInit
 class SUIOptions {
-	public var title:String;
-	public var width:Int;
-	public var height:Int;
-	public var samplesPerPixel:Int;
+	public var title:String = "SUI App";
+	public var width:Int = 800;
+	public var height:Int = 600;
+	public var samplesPerPixel:Int = 4;
 }
