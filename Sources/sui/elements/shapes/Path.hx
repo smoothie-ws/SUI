@@ -16,6 +16,6 @@ class Path extends Element {
 		final y1:FastFloat = offsetY + start.y;
 		final x2:FastFloat = offsetX + end.x;
 		final y2:FastFloat = offsetY + end.y;
-		SUI.rawbuffers[0].g2.drawLine(x1, y1, x2, y2, lineWidth);
+		SUI.rawbuffer.g2.drawLine(x1, y1, x2, y2, lineWidth);
 	}
 }

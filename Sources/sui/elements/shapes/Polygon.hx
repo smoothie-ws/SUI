@@ -21,7 +21,7 @@ class Polygon extends Element {
 
 		while (iterator.hasNext()) {
 			var v2 = iterator.next();
-			SUI.rawbuffers[0].g2.fillTriangle(v0.x + x, v0.y + y, v1.x + x, v1.y + y, v2.x + x, v2.y + y);
+			SUI.rawbuffer.g2.fillTriangle(v0.x + x, v0.y + y, v1.x + x, v1.y + y, v2.x + x, v2.y + y);
 			v1 = v2;
 		}
 	}

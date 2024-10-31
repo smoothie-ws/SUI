@@ -140,9 +140,9 @@ class Element {
 		if (!visible)
 			return;
 
-		SUI.rawbuffers[0].g2.begin(true, kha.Color.Transparent);
+		SUI.rawbuffer.g2.begin(true, kha.Color.Transparent);
 		draw();
-		SUI.rawbuffers[0].g2.end();
+		SUI.rawbuffer.g2.end();
 
 		var oX = offsetX;
 		var oY = offsetY;
@@ -170,7 +170,7 @@ class Element {
 		SUI.backbuffer.g2.pushRotation(fR, cXR, cYR);
 		SUI.backbuffer.g2.pushOpacity(finalOpacity);
 
-		SUI.backbuffer.g2.drawImage(SUI.rawbuffers[0], 0, 0);
+		SUI.backbuffer.g2.drawImage(SUI.rawbuffer, 0, 0);
 
 		SUI.backbuffer.g2.popOpacity(); // opacity
 		SUI.backbuffer.g2.popTransformation(); // rotation

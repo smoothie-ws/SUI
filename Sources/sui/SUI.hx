@@ -12,7 +12,7 @@ import sui.core.Root;
 import sui.core.graphics.Painters;
 
 class SUI {
-	public static var rawbuffers:Array<Image> = [];
+	public static var rawbuffer:Image;
 	public static var backbuffer:Image;
 
 	public static var root:Root = {
@@ -47,18 +47,12 @@ class SUI {
 		root.resizeTree(w, h);
 
 		backbuffer = Image.createRenderTarget(w, h);
-		rawbuffers[0] = Image.createRenderTarget(w, h);
-		rawbuffers[1] = Image.createRenderTarget(w, h);
-		rawbuffers[2] = Image.createRenderTarget(w, h);
-		rawbuffers[3] = Image.createRenderTarget(w, h);
+		rawbuffer = Image.createRenderTarget(w, h);
 	}
 
 	public static inline function init(window:Window) {
 		backbuffer = Image.createRenderTarget(window.width, window.height);
-		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // ping1 buffer
-		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // pong1 buffer
-		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // ping2 buffer
-		rawbuffers.push(Image.createRenderTarget(window.width, window.height)); // pong2 buffer
+		rawbuffer = Image.createRenderTarget(window.width, window.height);
 
 		window.notifyOnResize(resize);
 
