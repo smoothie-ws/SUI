@@ -9,7 +9,6 @@ import kha.System;
 import kha.Framebuffer;
 // sui
 import sui.core.Root;
-import sui.core.shaders.FilterShaders;
 import sui.core.graphics.Painters;
 
 class SUI {
@@ -84,10 +83,6 @@ class SUI {
 	}
 
 	public static inline function compileShaders() {
-		// filters
-		FilterShaders.Blur.compile(Shaders.image_vert, Shaders.blur_frag);
-		FilterShaders.Emission.compile(Shaders.image_vert, Shaders.emission_frag);
-
 		// painters
 		Painters.Rect.compile(Shaders.image_vert, Shaders.rect_frag);
 	}

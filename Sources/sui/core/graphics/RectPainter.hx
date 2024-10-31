@@ -5,7 +5,7 @@ import kha.math.FastVector4;
 import kha.graphics4.Graphics;
 import kha.graphics4.ConstantLocation;
 // sui
-import sui.core.shaders.Shader2D;
+import sui.core.graphics.Shader2D;
 
 class RectPainter extends Shader2D {
 	public var color:Color;

@@ -1,4 +1,4 @@
-package sui.core.shaders;
+package sui.core.graphics;
 
 import kha.Canvas;
 import kha.graphics4.Usage;
@@ -35,7 +35,6 @@ class Shader2D {
 		pipeline.blendSource = SourceAlpha;
 		pipeline.blendDestination = InverseSourceAlpha;
 		pipeline.compile();
-
 		// init vertices
 		vertices = new VertexBuffer(4, structure, Usage.StaticUsage);
 		var v = vertices.lock();
