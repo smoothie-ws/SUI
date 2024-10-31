@@ -24,6 +24,8 @@ class Rectangle extends Element {
 		Painters.Rect.radiuses.z = bottomLeftRadius == null ? radius : bottomLeftRadius;
 		Painters.Rect.radiuses.w = bottomRightRadius == null ? radius : bottomRightRadius;
 
+		SUI.rawbuffers[0].g2.scissor(Std.int(offsetX), Std.int(offsetY), Std.int(finalW), Std.int(finalH));
 		Painters.Rect.apply(SUI.rawbuffers[0]);
+		SUI.rawbuffers[0].g2.disableScissor();
 	}
 }
