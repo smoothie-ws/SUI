@@ -8,10 +8,10 @@ import sui.core.graphics.Painters;
 @:structInit
 class Rectangle extends Element {
 	public var radius:FastFloat = 0.;
-	public var topLeftRadius:FastFloat = null;
-	public var topRightRadius:FastFloat = null;
-	public var bottomLeftRadius:FastFloat = null;
-	public var bottomRightRadius:FastFloat = null;
+	public var topLeftRadius:FastFloat = Math.NaN;
+	public var topRightRadius:FastFloat = Math.NaN;
+	public var bottomLeftRadius:FastFloat = Math.NaN;
+	public var bottomRightRadius:FastFloat = Math.NaN;
 
 	override function draw() {
 		Painters.Rect.color = color;
@@ -19,10 +19,10 @@ class Rectangle extends Element {
 		Painters.Rect.dims.y = offsetY;
 		Painters.Rect.dims.z = finalW;
 		Painters.Rect.dims.w = finalH;
-		Painters.Rect.radiuses.x = topLeftRadius == null ? radius : topLeftRadius;
-		Painters.Rect.radiuses.y = topRightRadius == null ? radius : topRightRadius;
-		Painters.Rect.radiuses.z = bottomLeftRadius == null ? radius : bottomLeftRadius;
-		Painters.Rect.radiuses.w = bottomRightRadius == null ? radius : bottomRightRadius;
+		Painters.Rect.radiuses.x = Math.isNaN(topLeftRadius) ? radius : topLeftRadius;
+		Painters.Rect.radiuses.y = Math.isNaN(topRightRadius) ? radius : topRightRadius;
+		Painters.Rect.radiuses.z = Math.isNaN(bottomLeftRadius) ? radius : bottomLeftRadius;
+		Painters.Rect.radiuses.w = Math.isNaN(bottomRightRadius) ? radius : bottomRightRadius;
 
 		SUI.rawbuffer.g2.scissor(Std.int(offsetX), Std.int(offsetY), Std.int(finalW), Std.int(finalH));
 		Painters.Rect.apply(SUI.rawbuffer);

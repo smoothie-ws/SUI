@@ -11,6 +11,14 @@ import kha.Framebuffer;
 import sui.core.Root;
 import sui.core.graphics.Painters;
 
+@:structInit
+private class SUIOptions {
+	public var title:String;
+	public var width:Int;
+	public var height:Int;
+	public var samplesPerPixel:Int;
+}
+
 class SUI {
 	public static var rawbuffer:Image;
 	public static var backbuffer:Image;
@@ -23,16 +31,18 @@ class SUI {
 	};
 	public static var options:SUIOptions;
 
-	public static inline function start(?options:SUIOptions) {
-		if (options == null)
-			SUI.options = {};
-		else
-			SUI.options = options;
+	public static inline function start(?title:String = "SUI App", ?width:Int = 800, ?height:Int = 600, ?samplesPerPixel:Int = 1) {
+		options = {
+			title: title,
+			width: width,
+			height: height,
+			samplesPerPixel: samplesPerPixel
+		};
 
 		System.start({
-			title: SUI.options.title,
-			width: SUI.options.width,
-			height: SUI.options.height,
+			title: title,
+			width: width,
+			height: height,
 			framebuffer: {samplesPerPixel: SUI.options.samplesPerPixel}
 		}, init);
 	}
@@ -80,12 +90,4 @@ class SUI {
 		// painters
 		Painters.Rect.compile(Shaders.image_vert, Shaders.rect_frag);
 	}
-}
-
-@:structInit
-class SUIOptions {
-	public var title:String = "SUI App";
-	public var width:Int = 800;
-	public var height:Int = 600;
-	public var samplesPerPixel:Int = 4;
 }
