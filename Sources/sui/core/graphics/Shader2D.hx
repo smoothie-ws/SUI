@@ -13,6 +13,9 @@ import kha.graphics4.VertexShader;
 
 class Shader2D {
 	public var pipeline:PipelineState;
+	public var vertData:Array<Array<Float>> = [[0., 0.], [1., 0.], [1., 1.], [0., 1.]];
+
+	var structure:VertexStructure;
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;
 
@@ -20,10 +23,23 @@ class Shader2D {
 
 	function setUniforms(g4:Graphics) {}
 
-	public inline function compile(vert:VertexShader, frag:FragmentShader) {
-		// init structure
-		var structure = new VertexStructure();
+	function initStructure() {
 		structure.add("vertCoord", VertexData.Float32_2X);
+	}
+
+	inline function setVertices() {
+		var v = vertices.lock();
+		for (i in 0...vertData.length) {
+			var vert = vertData[i];
+			for (j in 0...vert.length)
+				v[i * vert.length + j] = vert[j];
+		}
+		vertices.unlock();
+	}
+
+	public inline function compile(vert:VertexShader, frag:FragmentShader) {
+		structure = new VertexStructure();
+		initStructure();
 
 		// init pipeline
 		pipeline = new PipelineState();
@@ -35,18 +51,8 @@ class Shader2D {
 		pipeline.blendSource = SourceAlpha;
 		pipeline.blendDestination = InverseSourceAlpha;
 		pipeline.compile();
-		// init vertices
-		vertices = new VertexBuffer(4, structure, Usage.StaticUsage);
-		var v = vertices.lock();
-		v[0] = 0.;
-		v[1] = 0.;
-		v[2] = 1.;
-		v[3] = 0.;
-		v[4] = 1.;
-		v[5] = 1.;
-		v[6] = 0.;
-		v[7] = 1.;
-		vertices.unlock();
+
+		vertices = new VertexBuffer(4, structure, Usage.DynamicUsage);
 
 		// init indices
 		indices = new IndexBuffer(6, Usage.StaticUsage);
@@ -63,6 +69,7 @@ class Shader2D {
 	}
 
 	public inline function apply(target:Canvas):Void {
+		setVertices();
 		target.g4.setPipeline(pipeline);
 		target.g4.setVertexBuffer(vertices);
 		target.g4.setIndexBuffer(indices);

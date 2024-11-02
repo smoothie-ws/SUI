@@ -88,6 +88,6 @@ class SUI {
 
 	public static inline function compileShaders() {
 		// painters
-		Painters.Rect.compile(Shaders.image_vert, Shaders.rect_frag);
+		Painters.Rect.compile(Shaders.rect_vert, Shaders.rect_frag);
 	}
 }
