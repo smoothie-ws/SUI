@@ -1,11 +1,15 @@
 package sui.core;
 
-@:structInit
-class Root extends Element {
-	public inline function update() {}
+import sui.core.graphics.batches.DrawBatch;
 
-	override public inline function resize(w:Int, h:Int) {
-		anchors.right.position = w;
-		anchors.bottom.position = h;
+@:structInit
+class Root {
+	var batches:Array<DrawBatch> = [];
+
+	public inline function update() {};
+
+	public inline function drawBatches() {
+		for (batch in batches)
+			batch.draw();
 	}
 }

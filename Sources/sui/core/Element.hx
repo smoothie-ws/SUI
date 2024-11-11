@@ -1,7 +1,6 @@
 package sui.core;
 
 import kha.Color;
-import kha.Canvas;
 import kha.FastFloat;
 // sui
 import sui.transform.Transform;
@@ -20,12 +19,9 @@ class Element {
 	public var maxWidth:FastFloat = Math.POSITIVE_INFINITY;
 	public var minHeight:FastFloat = Math.NEGATIVE_INFINITY;
 	public var maxHeight:FastFloat = Math.POSITIVE_INFINITY;
-	// scale
-	public var scale:FastFloat = 1.;
-	public var scaleX:FastFloat = Math.NaN;
-	public var scaleY:FastFloat = Math.NaN;
-	// rotation
-	public var rotation:FastFloat = 0.;
+	// transform
+	public var transform:Transform = {};
+	public var scale:FastFloat = Math.NaN;
 	// opacity
 	public var opacity:FastFloat = 1.;
 	// relations
@@ -39,91 +35,98 @@ class Element {
 	public var anchors:Anchors = {};
 	// color
 	public var color:Color = Color.White;
-	// transform
-	public var transform:Transform = {};
-	// border
-	public var border:Border = {};
 
 	// final transform
-	var finalOpacity(get, never):FastFloat;
-	var finalEnabled(get, never):Bool;
-	var finalScaleX(get, never):FastFloat;
-	var finalScaleY(get, never):FastFloat;
-	var offsetX(get, never):FastFloat;
-	var offsetY(get, never):FastFloat;
-	var finalW(get, never):FastFloat;
-	var finalH(get, never):FastFloat;
-
-	inline function get_finalOpacity():FastFloat {
-		return parent == null ? opacity : parent.finalOpacity * opacity;
-	}
-
-	inline function get_finalEnabled():Bool {
-		return parent == null ? enabled : parent.finalEnabled && enabled;
-	}
+	public var finalX(get, never):FastFloat;
+	public var finalY(get, never):FastFloat;
+	public var finalW(get, never):FastFloat;
+	public var finalH(get, never):FastFloat;
+	public var finalBounds(get, never):Array<FastFloat>;
+	public var finalScaleX(get, never):FastFloat;
+	public var finalScaleY(get, never):FastFloat;
+	public var finalEnabled(get, never):Bool;
+	public var finalOpacity(get, never):FastFloat;
+	public var finalRotation(get, never):FastFloat;
 
 	inline function get_finalScaleX():FastFloat {
-		var sX = Math.isNaN(scaleX) ? scale : scaleX;
-		return sX * transform.scale.x;
+		var scale = Math.isNaN(transform.scale.x) ? scale : transform.scale.x;
+		var parentScale = parent == null ? 1 : parent.finalScaleX;
+		return scale * parentScale;
 	}
 
 	inline function get_finalScaleY():FastFloat {
-		var sY = Math.isNaN(scaleY) ? scale : scaleY;
-		return sY * transform.scale.y;
+		var scale = Math.isNaN(transform.scale.y) ? scale : transform.scale.y;
+		var parentScale = parent == null ? 1 : parent.finalScaleY;
+		return scale * parentScale;
 	}
 
-	inline function get_offsetX():FastFloat {
-		var itemToFill = anchors.fill;
-		var oX = 0.;
-		if (itemToFill == null)
+	inline function get_finalX():FastFloat {
+		var _fill = anchors.fill;
+		var oX = parent == null ? 0 : parent.finalX;
+		if (_fill == null)
 			oX = Math.isNaN(anchors.left.position) ? x : anchors.left.position;
 		else
-			oX = Math.isNaN(anchors.left.position) ? itemToFill.offsetX : anchors.left.position;
+			oX = Math.isNaN(anchors.left.position) ? _fill.finalX : anchors.left.position;
 		oX += Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
 		return oX + transform.translate.x;
 	}
 
-	inline function get_offsetY():FastFloat {
-		var itemToFill = anchors.fill;
-		var oY = 0.;
-		if (itemToFill == null)
+	inline function get_finalY():FastFloat {
+		var _fill = anchors.fill;
+		var oY = parent == null ? 0 : parent.finalY;
+		if (_fill == null)
 			oY = Math.isNaN(anchors.top.position) ? y : anchors.top.position;
 		else
-			oY = Math.isNaN(anchors.top.position) ? itemToFill.offsetY : anchors.top.position;
+			oY = Math.isNaN(anchors.top.position) ? _fill.finalY : anchors.top.position;
 		oY += Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
 		return oY + transform.translate.y;
 	}
 
 	inline function get_finalW():FastFloat {
-		var itemToFill = anchors.fill;
+		var _fill = anchors.fill;
 		var fW = 0.;
-		if (itemToFill == null)
+		if (_fill == null)
 			fW = Math.isNaN(anchors.right.position) ? width : anchors.right.position;
 		else
-			fW = Math.isNaN(anchors.right.position) ? itemToFill.finalW : anchors.right.position;
+			fW = Math.isNaN(anchors.right.position) ? _fill.finalW : anchors.right.position;
 		fW -= Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
 		fW -= Math.isNaN(anchors.right.margin) ? anchors.margins : anchors.right.margin;
 		return clamp(fW, minWidth, maxWidth);
 	}
 
 	inline function get_finalH():FastFloat {
-		var itemToFill = anchors.fill;
+		var _fill = anchors.fill;
 		var fH = 0.;
-		if (itemToFill == null)
+		if (_fill == null)
 			fH = Math.isNaN(anchors.bottom.position) ? height : anchors.bottom.position;
 		else
-			fH = Math.isNaN(anchors.bottom.position) ? itemToFill.finalH : anchors.bottom.position;
+			fH = Math.isNaN(anchors.bottom.position) ? _fill.finalH : anchors.bottom.position;
 		fH -= Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
 		fH -= Math.isNaN(anchors.bottom.margin) ? anchors.margins : anchors.bottom.margin;
 		return clamp(fH, minHeight, maxHeight);
 	}
 
-	function construct() {}
+	inline function get_finalBounds():Array<FastFloat> {
+		return [
+			(finalX + finalW / 2) / SUI.backbuffer.width * 2 - 1,
+			(finalY + finalH / 2) / SUI.backbuffer.width * 2 - 1,
+			finalW,
+			finalH
+		];
+	}
 
-	public inline final function constructTree() {
-		construct();
-		for (child in children)
-			child.constructTree();
+	inline function get_finalEnabled():Bool {
+		return parent == null ? enabled : parent.finalEnabled && enabled;
+	}
+
+	inline function get_finalOpacity():FastFloat {
+		return parent == null ? opacity : parent.finalOpacity * opacity;
+	}
+
+	inline function get_finalRotation():FastFloat {
+		var rotation = transform.rotation.angle;
+		var parentRotation = parent == null ? 0 : parent.finalRotation;
+		return rotation + parentRotation;
 	}
 
 	function resize(w:Int, h:Int) {}
@@ -132,59 +135,6 @@ class Element {
 		resize(w, h);
 		for (child in children)
 			child.resizeTree(w, h);
-	}
-
-	public function draw() {}
-
-	public function drawTree():Void {
-		if (!visible)
-			return;
-
-		SUI.rawbuffer.g2.begin(true, kha.Color.Transparent);
-		draw();
-		SUI.rawbuffer.g2.end();
-
-		var oX = offsetX;
-		var oY = offsetY;
-
-		var centerX = oX + finalW / 2;
-		var centerY = oY + finalH / 2;
-
-		var sOX = transform.scale.origin.x;
-		var sOY = transform.scale.origin.y;
-		var rOX = transform.scale.origin.x;
-		var rOY = transform.scale.origin.y;
-		var rA = transform.rotation.angle;
-
-		var cXS = Math.isNaN(sOX) ? centerX : oX + sOX;
-		var cYS = Math.isNaN(sOY) ? centerY : oY + sOY;
-		var cXR = Math.isNaN(rOX) ? centerX : oX + rOX;
-		var cYR = Math.isNaN(rOY) ? centerY : oY + rOY;
-		var fR = (rotation + rA) * Math.PI / 180;
-
-		// apply element transformation
-		SUI.backbuffer.g2.begin(false);
-		SUI.backbuffer.g2.pushTranslation(-cXS, -cYS);
-		SUI.backbuffer.g2.pushScale(finalScaleX, finalScaleY);
-		SUI.backbuffer.g2.pushTranslation(cXS, cYS);
-		SUI.backbuffer.g2.pushRotation(fR, cXR, cYR);
-		SUI.backbuffer.g2.pushOpacity(finalOpacity);
-
-		SUI.backbuffer.g2.drawImage(SUI.rawbuffer, 0, 0);
-
-		SUI.backbuffer.g2.popOpacity(); // opacity
-		SUI.backbuffer.g2.popTransformation(); // rotation
-		SUI.backbuffer.g2.popTransformation(); // translation
-		SUI.backbuffer.g2.popTransformation(); // scale
-		SUI.backbuffer.g2.popTransformation(); // translation
-		SUI.backbuffer.g2.end();
-
-		for (child in children)
-			child.drawTree();
-	}
-
-	public function renderToTarget(target:Canvas, ?clear:Bool = false) {
-		drawTree();
 	}
 
 	public inline final function addChild(child:Element) {
@@ -201,9 +151,9 @@ class Element {
 	}
 
 	public inline final function removeChildren() {
-		for (child in children) {
+		for (child in children)
 			child.parent = null;
-		}
+
 		children = [];
 	}
 
@@ -214,11 +164,4 @@ class Element {
 	public inline final function removeParent() {
 		parent.removeChild(this);
 	}
-}
-
-@:structInit
-class Border {
-	public var width:Int = 0;
-	public var color:Color = Color.Black;
-	public var opacity:Float = 1.0;
 }

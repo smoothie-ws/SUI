@@ -1,31 +1,48 @@
 #version 450
 
+#define BATCH_SIZE 64
+
+uniform ivec2 uResolution;
+uniform float uOpacity[BATCH_SIZE];
+uniform vec4 uRectRadius[BATCH_SIZE];
+uniform vec4 uRectBounds[BATCH_SIZE];
+uniform vec4 uRectColor[BATCH_SIZE];
+uniform float uRectSoftness[BATCH_SIZE];
+uniform vec4 uBordColor[BATCH_SIZE];
+uniform float uBordSoftness[BATCH_SIZE];
+uniform float uBordThickness[BATCH_SIZE];
+uniform vec4 uEmisColor[BATCH_SIZE];
+uniform vec2 uEmisOffset[BATCH_SIZE];
+uniform float uEmisSize[BATCH_SIZE];
+uniform float uEmisSoftness[BATCH_SIZE];
+
 in vec2 fragCoord;
+flat in int ID;
 out vec4 fragColor;
 
-uniform vec2 res;
-//user-defined
-uniform vec4 dims;
-uniform vec4 col;
-uniform vec4 radiuses;
+float sdf(vec2 cp, vec2 si, vec4 ra) {
+    ra.xy = (cp.x > 0.0) ? ra.xy : ra.zw;
+    ra.x  = (cp.y > 0.0) ? ra.x : ra.y;
+    vec2 q = abs(cp) - si + ra.x;
+    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - ra.x;
+}
 
 void main() {
-    vec2 fragCoord = fragCoord * res;
+    vec2 uv = fragCoord.xy * uResolution;
 
-    vec2 size = dims.zw;
-    vec2 halfSize = size / 2;
-    vec2 center = dims.xy + halfSize;
+    vec2 cp = uv - uRectBounds[ID].xy;
+    vec2 si = uRectBounds[ID].zw / 2.0;
 
-    float radius = dot(radiuses, vec4(
-        float(fragCoord.x <= center.x && fragCoord.y <= center.y),
-        float(fragCoord.x > center.x && fragCoord.y <= center.y),
-        float(fragCoord.x <= center.x && fragCoord.y > center.y),
-        float(fragCoord.x > center.x && fragCoord.y > center.y)
-    ));
-    radius = min(radius, min(dims.z, dims.w) / 2.0);
+    float rectDist = sdf(cp, si, uRectRadius[ID]);
+    float emisDist = sdf(cp - uEmisOffset[ID], si, uRectRadius[ID]);
 
-    vec2 q = abs(fragCoord.xy - center) - halfSize + radius;
-    float mask = 1 - min(max(q.x, q.y), 0) - length(max(q, 0)) + radius;
-    
-    fragColor = col * mask;
+    float emisMask = smoothstep(-uEmisSoftness[ID], uEmisSoftness[ID], emisDist - uEmisSize[ID]);
+    float bordMask = smoothstep(uBordThickness[ID] - uBordSoftness[ID], uBordThickness[ID] + uBordSoftness[ID], abs(rectDist));
+    float rectMask = smoothstep(-uRectSoftness[ID], uRectSoftness[ID], rectDist);
+
+    fragColor = vec4(0.0);
+    fragColor = mix(uEmisColor[ID], fragColor, emisMask);
+    fragColor = mix(uRectColor[ID], fragColor, rectMask);
+    fragColor = mix(uBordColor[ID], fragColor, bordMask);
+    fragColor.a *= uOpacity[ID];
 }

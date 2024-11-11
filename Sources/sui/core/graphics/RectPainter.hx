@@ -1,35 +1,152 @@
 package sui.core.graphics;
 
-import kha.Color;
-import kha.math.FastVector4;
+import kha.arrays.Float32Array;
+import kha.graphics4.Usage;
 import kha.graphics4.Graphics;
+import kha.graphics4.VertexBuffer;
+import kha.graphics4.IndexBuffer;
 import kha.graphics4.ConstantLocation;
 // sui
-import sui.core.graphics.Shader2D;
+import sui.elements.shapes.Rectangle;
 
-class RectPainter extends Shader2D {
-	public var color:Color;
-	public var dims:FastVector4 = new FastVector4();
-	public var radiuses:FastVector4 = new FastVector4();
+using sui.core.utils.Float32ArrayExtension;
 
-	var resID:ConstantLocation;
-	var dimsID:ConstantLocation;
-	var colID:ConstantLocation;
-	var radiusesID:ConstantLocation;
+class RectPainter extends ElementPainter {
+	var rectRadius:Float32Array;
+	var rectBounds:Float32Array;
+	var rectColor:Float32Array;
+	var rectSoftness:Float32Array;
+	var bordColor:Float32Array;
+	var bordSoftness:Float32Array;
+	var bordThickness:Float32Array;
+	var emisColor:Float32Array;
+	var emisOffset:Float32Array;
+	var emisSoftness:Float32Array;
+	var emisSize:Float32Array;
+	var opacity:Float32Array;
 
-	public function new() {}
+	var rectRadiusCL:ConstantLocation;
+	var rectBoundsCL:ConstantLocation;
+	var rectColorCL:ConstantLocation;
+	var rectSoftnessCL:ConstantLocation;
+	var bordColorCL:ConstantLocation;
+	var bordSoftnessCL:ConstantLocation;
+	var bordThicknessCL:ConstantLocation;
+	var emisColorCL:ConstantLocation;
+	var emisOffsetCL:ConstantLocation;
+	var emisSoftnessCL:ConstantLocation;
+	var emisSizeCL:ConstantLocation;
+	var opacityCL:ConstantLocation;
 
-	override inline function getUniforms() {
-		colID = pipeline.getConstantLocation("col");
-		resID = pipeline.getConstantLocation("res");
-		dimsID = pipeline.getConstantLocation("dims");
-		radiusesID = pipeline.getConstantLocation("radiuses");
+	public final inline function setRects(rects:Array<Rectangle>) {
+		numElements = rects.length;
+
+		for (i in 0...rects.length) {
+			var rect = rects[i];
+			scale.fromArray([rect.finalScaleX, rect.finalScaleY], i * 4);
+			rotation.fromArray(rect.finalRotation, i * 3);
+
+			var r = Math.min(rect.radius, Math.min(rect.width, rect.height) / 2);
+			rectRadius.fromArray([r, r, r, r], i * 4);
+			rectBounds.fromArray(rect.finalBounds, i * 4);
+			rectColor.fromColor(rect.color, i * 4);
+			rectSoftness.fromArray([rect.softness], i * 1);
+
+			bordColor.fromColor(rect.border.color, i * 4);
+			bordSoftness.fromArray([rect.border.softness], i * 1);
+			bordThickness.fromArray([rect.border.thickness / 2], i * 1);
+
+			emisColor.fromColor(rect.emission.color, i * 4);
+			emisOffset.fromArray([rect.emission.offsetX, rect.emission.offsetY], i * 2);
+			emisSoftness.fromArray([Math.max(1, rect.emission.softness)], i * 1);
+			emisSize.fromArray([Math.max(0.0, rect.emission.size)], i * 1);
+			opacity.fromArray([rect.finalOpacity], i * 1);
+		}
 	}
 
-	override function setUniforms(graphics:Graphics) {
-		graphics.setVector4(dimsID, dims);
-		graphics.setVector4(radiusesID, radiuses);
-		graphics.setFloat4(colID, color.R, color.G, color.B, color.A);
-		graphics.setFloat2(resID, SUI.options.width, SUI.options.height);
+	final override inline function initVertices() {
+		scale = new Float32Array(numElements * 4);
+		rotation = new Float32Array(numElements * 3);
+		rectRadius = new Float32Array(numElements * 4);
+		rectBounds = new Float32Array(numElements * 4);
+		rectColor = new Float32Array(numElements * 4);
+		rectSoftness = new Float32Array(numElements * 1);
+		bordColor = new Float32Array(numElements * 4);
+		bordSoftness = new Float32Array(numElements * 1);
+		bordThickness = new Float32Array(numElements * 1);
+		emisColor = new Float32Array(numElements * 4);
+		emisOffset = new Float32Array(numElements * 2);
+		emisSoftness = new Float32Array(numElements * 1);
+		emisSize = new Float32Array(numElements * 1);
+		opacity = new Float32Array(numElements * 1);
+
+		vertices = new VertexBuffer(numElements * 4, structure, Usage.StaticUsage);
+		var v = vertices.lock();
+		for (i in 0...numElements) {
+			v[i * 12 + 0] = -1;
+			v[i * 12 + 1] = -1;
+			v[i * 12 + 2] = i;
+
+			v[i * 12 + 3] = -1;
+			v[i * 12 + 4] = 1;
+			v[i * 12 + 5] = i;
+
+			v[i * 12 + 6] = 1;
+			v[i * 12 + 7] = 1;
+			v[i * 12 + 8] = i;
+
+			v[i * 12 + 9] = 1;
+			v[i * 12 + 10] = -1;
+			v[i * 12 + 11] = i;
+		}
+		vertices.unlock();
+
+		indices = new IndexBuffer(numElements * 6, Usage.StaticUsage);
+		var ind = indices.lock();
+		for (i in 0...numElements) {
+			ind[i * 6 + 0] = i * 4 + 0;
+			ind[i * 6 + 1] = i * 4 + 1;
+			ind[i * 6 + 2] = i * 4 + 2;
+			ind[i * 6 + 3] = i * 4 + 2;
+			ind[i * 6 + 4] = i * 4 + 3;
+			ind[i * 6 + 5] = i * 4 + 0;
+		}
+		indices.unlock();
+	}
+
+	final override inline function getUniforms() {
+		scaleCL = pipeline.getConstantLocation("uScale");
+		rotationCL = pipeline.getConstantLocation("uRotation");
+		resolutionCL = pipeline.getConstantLocation("uResolution");
+		rectRadiusCL = pipeline.getConstantLocation("uRectRadius");
+		rectBoundsCL = pipeline.getConstantLocation("uRectBounds");
+		rectColorCL = pipeline.getConstantLocation("uRectColor");
+		rectSoftnessCL = pipeline.getConstantLocation("uRectSoftness");
+		bordColorCL = pipeline.getConstantLocation("uBordColor");
+		bordSoftnessCL = pipeline.getConstantLocation("uBordSoftness");
+		bordThicknessCL = pipeline.getConstantLocation("uBordThickness");
+		emisColorCL = pipeline.getConstantLocation("uEmisColor");
+		emisOffsetCL = pipeline.getConstantLocation("uEmisOffset");
+		emisSoftnessCL = pipeline.getConstantLocation("uEmisSoftness");
+		emisSizeCL = pipeline.getConstantLocation("uEmisSize");
+		opacityCL = pipeline.getConstantLocation("uOpacity");
+	}
+
+	final override inline function setUniforms(g4:Graphics) {
+		g4.setInt2(resolutionCL, SUI.backbuffer.width, SUI.backbuffer.height);
+		g4.setFloats(scaleCL, scale);
+		g4.setFloats(rotationCL, rotation);
+		g4.setFloats(rectRadiusCL, rectRadius);
+		g4.setFloats(rectBoundsCL, rectBounds);
+		g4.setFloats(rectColorCL, rectColor);
+		g4.setFloats(rectSoftnessCL, rectSoftness);
+		g4.setFloats(bordColorCL, bordColor);
+		g4.setFloats(bordSoftnessCL, bordSoftness);
+		g4.setFloats(bordThicknessCL, bordThickness);
+		g4.setFloats(emisColorCL, emisColor);
+		g4.setFloats(emisOffsetCL, emisOffset);
+		g4.setFloats(emisSoftnessCL, emisSoftness);
+		g4.setFloats(emisSizeCL, emisSize);
+		g4.setFloats(opacityCL, opacity);
 	}
 }
