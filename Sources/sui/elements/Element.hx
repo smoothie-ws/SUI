@@ -1,11 +1,11 @@
-package sui.core;
+package sui.elements;
 
 import kha.Color;
 import kha.FastFloat;
 // sui
+import sui.layouts.Anchors;
 import sui.transform.Transform;
 import sui.core.utils.Math.clamp;
-import sui.core.layouts.Anchors;
 
 @:structInit
 class Element {

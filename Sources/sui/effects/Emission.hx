@@ -1,4 +1,4 @@
-package sui.core;
+package sui.effects;
 
 import kha.Color;
 import kha.FastFloat;

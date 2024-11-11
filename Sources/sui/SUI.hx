@@ -63,6 +63,6 @@ class SUI {
 	}
 
 	public static inline function compileShaders() {
-		Painters.rectPainter.compile(Shaders.image_vert, Shaders.rect_frag);
+		Painters.rectPainter.compile(Shaders.rect_vert, Shaders.rect_frag);
 	}
 }

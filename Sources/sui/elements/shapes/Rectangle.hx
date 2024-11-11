@@ -1,10 +1,10 @@
 package sui.elements.shapes;
 
-import sui.core.Emission;
-import sui.core.Border;
 import kha.FastFloat;
 // sui
-import sui.core.Element;
+import sui.elements.Element;
+import sui.effects.Border;
+import sui.effects.Emission;
 
 @:structInit
 class Rectangle extends Element {
