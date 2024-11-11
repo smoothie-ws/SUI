@@ -11,6 +11,14 @@ import kha.Framebuffer;
 import sui.core.Root;
 import sui.core.graphics.Painters;
 
+@:structInit
+private class SUIOptions {
+	public var title:String;
+	public var width:Int;
+	public var height:Int;
+	public var samplesPerPixel:Int;
+}
+
 class SUI {
 	public static var window:Window;
 	public static var rawbuffer:Image;
