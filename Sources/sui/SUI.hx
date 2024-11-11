@@ -8,7 +8,6 @@ import kha.Scheduler;
 import kha.System;
 import kha.Framebuffer;
 // sui
-import sui.core.Root;
 import sui.core.graphics.Painters;
 
 @:structInit
@@ -23,7 +22,7 @@ class SUI {
 	public static var window:Window;
 	public static var rawbuffer:Image;
 	public static var backbuffer:Image;
-	public static var root:Root = {};
+	public static var scene:Scene = {};
 
 	public static inline function start(?title:String = "SUI App", ?width:Int = 800, ?height:Int = 600, ?samplesPerPixel:Int = 1) {
 		System.start({
@@ -50,12 +49,12 @@ class SUI {
 		backbuffer = Image.createRenderTarget(window.width, window.height);
 		rawbuffer = Image.createRenderTarget(window.width, window.height);
 
-		Scheduler.addTimeTask(root.update, 0, 1 / 60);
+		Scheduler.addTimeTask(scene.update, 0, 1 / 60);
 
 		Assets.loadEverything(function() {
 			compileShaders();
 			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
-				root.drawBatches();
+				scene.drawBatches();
 				frames[0].g2.begin(true);
 				frames[0].g2.drawImage(backbuffer, 0, 0);
 				frames[0].g2.end();

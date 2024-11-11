@@ -3,7 +3,7 @@ package sui.core;
 import sui.core.graphics.batches.DrawBatch;
 
 @:structInit
-class Root {
+class Scene {
 	var batches:Array<DrawBatch> = [];
 
 	public inline function update() {};

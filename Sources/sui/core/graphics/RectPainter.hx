@@ -62,6 +62,8 @@ class RectPainter extends ElementPainter {
 			emisSize.fromArray([Math.max(0.0, rect.emission.size)], i * 1);
 			opacity.fromArray([rect.finalOpacity], i * 1);
 		}
+
+		initVertices();
 	}
 
 	final override inline function initVertices() {
