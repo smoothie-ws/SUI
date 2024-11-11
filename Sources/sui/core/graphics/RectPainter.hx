@@ -1,8 +1,8 @@
 package sui.core.graphics;
 
+import kha.Canvas;
 import kha.arrays.Float32Array;
 import kha.graphics4.Usage;
-import kha.graphics4.Graphics;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.ConstantLocation;
@@ -40,30 +40,36 @@ class RectPainter extends ElementPainter {
 
 	public final inline function setRects(rects:Array<Rectangle>) {
 		numElements = rects.length;
+		initVertices();
 
 		for (i in 0...rects.length) {
 			var rect = rects[i];
-			scale.fromArray([rect.finalScaleX, rect.finalScaleY], i * 4);
-			rotation.fromArray(rect.finalRotation, i * 3);
 
-			var r = Math.min(rect.radius, Math.min(rect.width, rect.height) / 2);
-			rectRadius.fromArray([r, r, r, r], i * 4);
-			rectBounds.fromArray(rect.finalBounds, i * 4);
-			rectColor.fromColor(rect.color, i * 4);
-			rectSoftness.fromArray([rect.softness], i * 1);
+			opacity[i] = rect.finalOpacity;
+			rotation.setArray([rect.centerX, rect.centerY, rect.finalRotation], i * 3);
+			scale.setArray([rect.centerX, rect.centerY, rect.finalScaleX, rect.finalScaleY], i * 4);
 
-			bordColor.fromColor(rect.border.color, i * 4);
-			bordSoftness.fromArray([rect.border.softness], i * 1);
-			bordThickness.fromArray([rect.border.thickness / 2], i * 1);
+			var maxR = Math.min(rect.width, rect.height) / 2;
+			rectSoftness[i] = rect.softness;
+			rectColor.setColor(rect.color, i * 4);
+			trace(rect.centerX, rect.centerY, rect.finalW, rect.finalH);
+			rectBounds.setArray([rect.centerX, rect.centerY, rect.finalW, rect.finalH], i * 4);
+			rectRadius.setArray([
+				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR),
+				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR),
+				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR),
+				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR)
+			], i * 4);
 
-			emisColor.fromColor(rect.emission.color, i * 4);
-			emisOffset.fromArray([rect.emission.offsetX, rect.emission.offsetY], i * 2);
-			emisSoftness.fromArray([Math.max(1, rect.emission.softness)], i * 1);
-			emisSize.fromArray([Math.max(0.0, rect.emission.size)], i * 1);
-			opacity.fromArray([rect.finalOpacity], i * 1);
+			bordSoftness[i] = rect.border.softness;
+			bordThickness[i] = rect.border.thickness / 2;
+			bordColor.setColor(rect.border.color, i * 4);
+
+			emisSize[i] = Math.max(0, rect.emission.size);
+			emisColor.setColor(rect.emission.color, i * 4);
+			emisSoftness[i] = Math.max(0, rect.emission.softness);
+			emisOffset.setArray([rect.emission.offsetX, rect.emission.offsetY], i * 2);
 		}
-
-		initVertices();
 	}
 
 	final override inline function initVertices() {
@@ -134,21 +140,21 @@ class RectPainter extends ElementPainter {
 		opacityCL = pipeline.getConstantLocation("uOpacity");
 	}
 
-	final override inline function setUniforms(g4:Graphics) {
-		g4.setInt2(resolutionCL, SUI.backbuffer.width, SUI.backbuffer.height);
-		g4.setFloats(scaleCL, scale);
-		g4.setFloats(rotationCL, rotation);
-		g4.setFloats(rectRadiusCL, rectRadius);
-		g4.setFloats(rectBoundsCL, rectBounds);
-		g4.setFloats(rectColorCL, rectColor);
-		g4.setFloats(rectSoftnessCL, rectSoftness);
-		g4.setFloats(bordColorCL, bordColor);
-		g4.setFloats(bordSoftnessCL, bordSoftness);
-		g4.setFloats(bordThicknessCL, bordThickness);
-		g4.setFloats(emisColorCL, emisColor);
-		g4.setFloats(emisOffsetCL, emisOffset);
-		g4.setFloats(emisSoftnessCL, emisSoftness);
-		g4.setFloats(emisSizeCL, emisSize);
-		g4.setFloats(opacityCL, opacity);
+	final override inline function setUniforms(target:Canvas) {
+		target.g4.setInt2(resolutionCL, target.width, target.height);
+		target.g4.setFloats(scaleCL, scale);
+		target.g4.setFloats(rotationCL, rotation);
+		target.g4.setFloats(rectRadiusCL, rectRadius);
+		target.g4.setFloats(rectBoundsCL, rectBounds);
+		target.g4.setFloats(rectColorCL, rectColor);
+		target.g4.setFloats(rectSoftnessCL, rectSoftness);
+		target.g4.setFloats(bordColorCL, bordColor);
+		target.g4.setFloats(bordSoftnessCL, bordSoftness);
+		target.g4.setFloats(bordThicknessCL, bordThickness);
+		target.g4.setFloats(emisColorCL, emisColor);
+		target.g4.setFloats(emisOffsetCL, emisOffset);
+		target.g4.setFloats(emisSoftnessCL, emisSoftness);
+		target.g4.setFloats(emisSizeCL, emisSize);
+		target.g4.setFloats(opacityCL, opacity);
 	}
 }

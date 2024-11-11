@@ -1,5 +1,6 @@
 package sui.core.graphics;
 
+import kha.Canvas;
 import kha.arrays.Float32Array;
 import kha.graphics4.Usage;
 import kha.graphics4.Graphics;
@@ -72,9 +73,9 @@ class ElementPainter extends Shader2D {
 		rotationCL = pipeline.getConstantLocation("uRotation");
 	}
 
-	override function setUniforms(g4:Graphics) {
-		g4.setInt2(resolutionCL, SUI.backbuffer.width, SUI.backbuffer.height);
-		g4.setFloats(scaleCL, scale);
-		g4.setFloats(rotationCL, rotation);
+	override function setUniforms(target:Canvas) {
+		target.g4.setInt2(resolutionCL, SUI.backbuffer.width, SUI.backbuffer.height);
+		target.g4.setFloats(scaleCL, scale);
+		target.g4.setFloats(rotationCL, rotation);
 	}
 }

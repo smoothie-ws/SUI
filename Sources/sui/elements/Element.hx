@@ -33,20 +33,27 @@ class Element {
 	public var clip:Bool = true;
 	// anchors
 	public var anchors:Anchors = {};
-	// color
-	public var color:Color = Color.White;
 
 	// final transform
 	public var finalX(get, never):FastFloat;
 	public var finalY(get, never):FastFloat;
 	public var finalW(get, never):FastFloat;
 	public var finalH(get, never):FastFloat;
-	public var finalBounds(get, never):Array<FastFloat>;
+	public var centerX(get, never):FastFloat;
+	public var centerY(get, never):FastFloat;
 	public var finalScaleX(get, never):FastFloat;
 	public var finalScaleY(get, never):FastFloat;
 	public var finalEnabled(get, never):Bool;
 	public var finalOpacity(get, never):FastFloat;
 	public var finalRotation(get, never):FastFloat;
+
+	inline function get_centerX():FastFloat {
+		return finalX + finalW / 2;
+	}
+
+	inline function get_centerY():FastFloat {
+		return finalY + finalH / 2;
+	}
 
 	inline function get_finalScaleX():FastFloat {
 		var scale = Math.isNaN(transform.scale.x) ? scale : transform.scale.x;
@@ -104,15 +111,6 @@ class Element {
 		fH -= Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
 		fH -= Math.isNaN(anchors.bottom.margin) ? anchors.margins : anchors.bottom.margin;
 		return clamp(fH, minHeight, maxHeight);
-	}
-
-	inline function get_finalBounds():Array<FastFloat> {
-		return [
-			(finalX + finalW / 2) / SUI.backbuffer.width * 2 - 1,
-			(finalY + finalH / 2) / SUI.backbuffer.width * 2 - 1,
-			finalW,
-			finalH
-		];
 	}
 
 	inline function get_finalEnabled():Bool {

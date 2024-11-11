@@ -67,13 +67,13 @@ class Shader2D {
 
 	function getUniforms() {}
 
-	function setUniforms(g4:Graphics) {}
+	function setUniforms(target:Canvas) {}
 
 	public final inline function apply(target:Canvas):Void {
 		target.g4.setPipeline(pipeline);
 		target.g4.setVertexBuffer(vertices);
 		target.g4.setIndexBuffer(indices);
-		setUniforms(target.g4);
+		setUniforms(target);
 		target.g4.scissor(0, 0, SUI.window.width, SUI.window.height);
 		target.g4.drawIndexedVertices();
 	}

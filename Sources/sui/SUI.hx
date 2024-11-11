@@ -38,16 +38,18 @@ class SUI {
 	}
 
 	public static inline function resize(w:Int, h:Int) {
-		backbuffer = Image.createRenderTarget(w, h);
-		rawbuffer = Image.createRenderTarget(w, h);
+		var _res = w > h ? w : h;
+		rawbuffer = Image.createRenderTarget(_res, _res);
+		backbuffer = Image.createRenderTarget(_res, _res);
 	}
 
 	public static inline function init(window:Window) {
 		SUI.window = window;
 		window.notifyOnResize(resize);
 
-		backbuffer = Image.createRenderTarget(window.width, window.height);
-		rawbuffer = Image.createRenderTarget(window.width, window.height);
+		var _res = window.width > window.height ? window.width : window.height;
+		rawbuffer = Image.createRenderTarget(_res, _res);
+		backbuffer = Image.createRenderTarget(_res, _res);
 
 		Scheduler.addTimeTask(scene.update, 0, 1 / 60);
 
@@ -55,6 +57,7 @@ class SUI {
 			compileShaders();
 			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
 				scene.drawBatches();
+
 				frames[0].g2.begin(true);
 				frames[0].g2.drawImage(backbuffer, 0, 0);
 				frames[0].g2.end();
