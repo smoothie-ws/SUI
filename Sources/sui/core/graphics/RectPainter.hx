@@ -9,8 +9,6 @@ import kha.graphics4.ConstantLocation;
 // sui
 import sui.elements.shapes.Rectangle;
 
-using sui.core.utils.Float32ArrayExtension;
-
 class RectPainter extends ElementPainter {
 	var rectRadius:Float32Array;
 	var rectBounds:Float32Array;
@@ -48,39 +46,46 @@ class RectPainter extends ElementPainter {
 			var sOY = rect.transform.scale.origin.y;
 			var rOX = rect.transform.rotation.origin.x;
 			var rOY = rect.transform.rotation.origin.y;
+			var rMax = Math.min(rect.finalW, rect.finalH) / 2;
 
 			opacity[i] = rect.finalOpacity;
-			rotation.setArray([
-				((Math.isNaN(rOX) ? rect.centerX : rOX) / SUI.backbuffer.width) * 2 - 1,
-				((Math.isNaN(rOY) ? rect.centerY : rOY) / SUI.backbuffer.height) * 2 - 1,
-				rect.finalRotation * Math.PI / 180
-			], i * 3);
-			scale.setArray([
-				((Math.isNaN(sOX) ? rect.centerX : sOX) / SUI.backbuffer.width) * 2 - 1,
-				((Math.isNaN(sOY) ? rect.centerY : sOY) / SUI.backbuffer.height) * 2 - 1,
-				rect.finalScaleX,
-				rect.finalScaleY
-			], i * 4);
-
-			var maxR = Math.min(rect.width, rect.height) / 2;
+			rotation[i * 3 + 0] = ((Math.isNaN(rOX) ? rect.centerX : rOX) / SUI.backbuffer.width) * 2 - 1;
+			rotation[i * 3 + 1] = ((Math.isNaN(rOY) ? rect.centerY : rOY) / SUI.backbuffer.height) * 2 - 1;
+			rotation[i * 3 + 2] = rect.finalRotation * Math.PI / 180;
+			scale[i * 4 + 0] = ((Math.isNaN(sOX) ? rect.centerX : sOX) / SUI.backbuffer.width) * 2 - 1;
+			scale[i * 4 + 1] = ((Math.isNaN(sOY) ? rect.centerY : sOY) / SUI.backbuffer.height) * 2 - 1;
+			scale[i * 4 + 2] = rect.finalScaleX;
+			scale[i * 4 + 3] = rect.finalScaleY;
 			rectSoftness[i] = rect.softness;
-			rectColor.setColor(rect.color, i * 4);
-			rectBounds.setArray([rect.centerX, rect.centerY, rect.finalW, rect.finalH], i * 4);
-			rectRadius.setArray([
-				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR),
-				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR),
-				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR),
-				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR)
-			], i * 4);
+			rectColor[i * 4 + 0] = rect.color.R;
+			rectColor[i * 4 + 1] = rect.color.G;
+			rectColor[i * 4 + 2] = rect.color.B;
+			rectColor[i * 4 + 3] = rect.color.A;
+			rectBounds[i * 4 + 0] = rect.centerX;
+			rectBounds[i * 4 + 1] = rect.centerY;
+			rectBounds[i * 4 + 2] = rect.finalW;
+			rectBounds[i * 4 + 3] = rect.finalH;
+
+			rectRadius[i * 4 + 0] = Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, rMax);
+			rectRadius[i * 4 + 1] = Math.min(Math.isNaN(rect.topRightRadius) ? rect.radius : rect.topLeftRadius, rMax);
+			rectRadius[i * 4 + 2] = Math.min(Math.isNaN(rect.bottomRightRadius) ? rect.radius : rect.topLeftRadius, rMax);
+			rectRadius[i * 4 + 3] = Math.min(Math.isNaN(rect.bottomLeftRadius) ? rect.radius : rect.topLeftRadius, rMax);
 
 			bordSoftness[i] = rect.border.softness;
 			bordThickness[i] = rect.border.thickness / 2;
-			bordColor.setColor(rect.border.color, i * 4);
+			bordColor[i * 4 + 0] = rect.border.color.R;
+			bordColor[i * 4 + 1] = rect.border.color.G;
+			bordColor[i * 4 + 2] = rect.border.color.B;
+			bordColor[i * 4 + 3] = rect.border.color.A;
 
 			emisSize[i] = Math.max(0, rect.emission.size);
-			emisColor.setColor(rect.emission.color, i * 4);
+			emisColor[i * 4 + 0] = rect.emission.color.R;
+			emisColor[i * 4 + 1] = rect.emission.color.G;
+			emisColor[i * 4 + 2] = rect.emission.color.B;
+			emisColor[i * 4 + 3] = rect.emission.color.A;
 			emisSoftness[i] = Math.max(0, rect.emission.softness);
-			emisOffset.setArray([rect.emission.offsetX, rect.emission.offsetY], i * 2);
+			emisOffset[i * 2 + 0] = rect.emission.offsetX;
+			emisOffset[i * 2 + 1] = rect.emission.offsetY;
 		}
 	}
 

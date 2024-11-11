@@ -3,14 +3,11 @@ package sui.core.graphics;
 import kha.Canvas;
 import kha.arrays.Float32Array;
 import kha.graphics4.Usage;
-import kha.graphics4.Graphics;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.VertexStructure;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.ConstantLocation;
-
-using sui.core.utils.Float32ArrayExtension;
 
 class ElementPainter extends Shader2D {
 	var numElements:Int = 0;
