@@ -56,13 +56,19 @@ class SUI {
 		Assets.loadEverything(function() {
 			compileShaders();
 			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
-				scene.drawBatches();
-
-				frames[0].g2.begin(true);
-				frames[0].g2.drawImage(backbuffer, 0, 0);
-				frames[0].g2.end();
+				render(frames[0]);
 			});
 		});
+	}
+
+	public static inline function render(fb:Framebuffer) {
+		SUI.backbuffer.g2.begin(true, scene.color);
+		scene.drawBatches();
+		SUI.backbuffer.g2.end();
+
+		fb.g2.begin();
+		fb.g2.drawImage(backbuffer, 0, 0);
+		fb.g2.end();
 	}
 
 	public static inline function compileShaders() {

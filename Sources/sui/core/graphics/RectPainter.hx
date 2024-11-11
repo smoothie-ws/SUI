@@ -44,15 +44,27 @@ class RectPainter extends ElementPainter {
 
 		for (i in 0...rects.length) {
 			var rect = rects[i];
+			var sOX = rect.transform.scale.origin.x;
+			var sOY = rect.transform.scale.origin.y;
+			var rOX = rect.transform.rotation.origin.x;
+			var rOY = rect.transform.rotation.origin.y;
 
 			opacity[i] = rect.finalOpacity;
-			rotation.setArray([rect.centerX, rect.centerY, rect.finalRotation], i * 3);
-			scale.setArray([rect.centerX, rect.centerY, rect.finalScaleX, rect.finalScaleY], i * 4);
+			rotation.setArray([
+				((Math.isNaN(rOX) ? rect.centerX : rOX) / SUI.backbuffer.width) * 2 - 1,
+				((Math.isNaN(rOY) ? rect.centerY : rOY) / SUI.backbuffer.height) * 2 - 1,
+				rect.finalRotation * Math.PI / 180
+			], i * 3);
+			scale.setArray([
+				((Math.isNaN(sOX) ? rect.centerX : sOX) / SUI.backbuffer.width) * 2 - 1,
+				((Math.isNaN(sOY) ? rect.centerY : sOY) / SUI.backbuffer.height) * 2 - 1,
+				rect.finalScaleX,
+				rect.finalScaleY
+			], i * 4);
 
 			var maxR = Math.min(rect.width, rect.height) / 2;
 			rectSoftness[i] = rect.softness;
 			rectColor.setColor(rect.color, i * 4);
-			trace(rect.centerX, rect.centerY, rect.finalW, rect.finalH);
 			rectBounds.setArray([rect.centerX, rect.centerY, rect.finalW, rect.finalH], i * 4);
 			rectRadius.setArray([
 				Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, maxR),

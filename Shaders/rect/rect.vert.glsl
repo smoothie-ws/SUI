@@ -6,8 +6,8 @@ uniform vec4 uScale[BATCH_SIZE];
 uniform vec3 uRotation[BATCH_SIZE];
 
 in vec3 vertPos;
-flat out int ID;
 out vec2 fragCoord;
+flat out int ID;
 
 vec2 rotate(vec2 c, vec2 o, float a) {
     mat2 r = mat2(
@@ -27,8 +27,8 @@ vec2 transform(vec2 c, vec4 s, vec3 r) {
 
 void main() {
     ID = int(vertPos.z);
-    vec2 pos = transform(vertPos.xy, uScale[ID], uRotation[ID]);
+    vec2 coord = transform(vertPos.xy, uScale[ID], uRotation[ID]);
 
-    gl_Position = vec4(pos, 0.0, 1.0);
+    gl_Position = vec4(coord, 0.0, 1.0);
     fragCoord = vertPos.xy * 0.5 + 0.5;
 }

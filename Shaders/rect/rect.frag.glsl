@@ -21,17 +21,18 @@ flat in int ID;
 out vec4 fragColor;
 
 float sdf(vec2 cp, vec2 si, vec4 ra) {
-    ra.xy = (cp.x > 0.0) ? ra.xy : ra.zw;
-    ra.x  = (cp.y > 0.0) ? ra.x : ra.y;
+    ra.xy = cp.x > 0 ? ra.xy : ra.zw;
+    ra.x  = cp.y > 0 ? ra.x : ra.y;
+
     vec2 q = abs(cp) - si + ra.x;
-    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - ra.x;
+    return min(max(q.x, q.y), 0) + length(max(q, 0)) - ra.x;
 }
 
 void main() {
     vec2 uv = fragCoord.xy * uResolution;
 
     vec2 cp = uv - uRectBounds[ID].xy;
-    vec2 si = uRectBounds[ID].zw / 2.0;
+    vec2 si = uRectBounds[ID].zw / 2;
 
     float rectDist = sdf(cp, si, uRectRadius[ID]);
     float emisDist = sdf(cp - uEmisOffset[ID], si, uRectRadius[ID]);
@@ -40,7 +41,7 @@ void main() {
     float bordMask = smoothstep(uBordThickness[ID] - uBordSoftness[ID], uBordThickness[ID] + uBordSoftness[ID], abs(rectDist));
     float rectMask = smoothstep(-uRectSoftness[ID], uRectSoftness[ID], rectDist);
 
-    fragColor = vec4(0.0);
+    fragColor = vec4(0);
     fragColor = mix(uEmisColor[ID], fragColor, emisMask);
     fragColor = mix(uRectColor[ID], fragColor, rectMask);
     fragColor = mix(uBordColor[ID], fragColor, bordMask);
