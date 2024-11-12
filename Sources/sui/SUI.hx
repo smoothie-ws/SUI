@@ -62,7 +62,7 @@ class SUI {
 	}
 
 	public static inline function render(fb:Framebuffer) {
-		SUI.backbuffer.g2.begin(true, scene.color);
+		SUI.backbuffer.g2.begin(true, scene.backgroundColor);
 		scene.drawBatches();
 		SUI.backbuffer.g2.end();
 

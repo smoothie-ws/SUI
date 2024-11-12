@@ -9,17 +9,19 @@ import sui.core.graphics.batches.DrawBatch;
 
 @:structInit
 class Scene {
-	var batches:Array<DrawBatch> = [new RectBatch()];
+	var batches:Array<DrawBatch> = [];
 
-	public var color:Color = Color.White;
+	public var backgroundColor:Color = Color.White;
 
 	public inline function add(element:Element) {
+		var lastBatch = batches[batches.length - 1];
+
 		if (element is Rectangle) {
-			trace(batches[-1] is RectBatch);
-			if (batches[-1] is RectBatch)
-				batches[-1].elements.push(element);
-			else
+			if (lastBatch is RectBatch)
+				lastBatch.elements.push(element);
+			else {
 				batches.push(new RectBatch([element]));
+			}
 		}
 	};
 
