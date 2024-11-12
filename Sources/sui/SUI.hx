@@ -8,15 +8,7 @@ import kha.Scheduler;
 import kha.System;
 import kha.Framebuffer;
 // sui
-import sui.core.graphics.Painters;
-
-@:structInit
-private class SUIOptions {
-	public var title:String;
-	public var width:Int;
-	public var height:Int;
-	public var samplesPerPixel:Int;
-}
+import sui.core.graphics.painters.shaders.PainterShaders;
 
 class SUI {
 	public static var window:Window;
@@ -55,15 +47,16 @@ class SUI {
 
 		Assets.loadEverything(function() {
 			compileShaders();
-			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
-				render(frames[0]);
-			});
+		});
+
+		System.notifyOnFrames(function(frames:Array<Framebuffer>) {
+			render(frames[0]);
 		});
 	}
 
 	public static inline function render(fb:Framebuffer) {
 		SUI.backbuffer.g2.begin(true, scene.backgroundColor);
-		scene.drawBatches();
+		scene.draw();
 		SUI.backbuffer.g2.end();
 
 		fb.g2.begin();
@@ -72,6 +65,6 @@ class SUI {
 	}
 
 	public static inline function compileShaders() {
-		Painters.rectPainter.compile(Shaders.rect_vert, Shaders.rect_frag);
+		PainterShaders.rectPainterShader.compile(Shaders.rect_vert, Shaders.rect_frag);
 	}
 }
