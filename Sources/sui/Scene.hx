@@ -17,7 +17,7 @@ class Scene {
 		var lastPainter = painters[painters.length - 1];
 
 		if (element is Rectangle) {
-			if (lastPainter is RectPainter)
+			if (lastPainter is RectPainter && lastPainter.elements.length < 64)
 				lastPainter.elements.push(element);
 			else {
 				var rectPainter = new RectPainter();

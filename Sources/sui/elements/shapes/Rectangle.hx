@@ -6,6 +6,7 @@ import kha.FastFloat;
 import sui.elements.Element;
 import sui.effects.Border;
 import sui.effects.Emission;
+import sui.effects.Gradient;
 
 @:structInit
 class Rectangle extends Element {
@@ -18,4 +19,5 @@ class Rectangle extends Element {
 	public var bottomRightRadius:FastFloat = Math.NaN;
 	public var border:Border = {};
 	public var emission:Emission = {};
+	public var gradient:Gradient = null;
 }

@@ -21,6 +21,8 @@ class RectPainterShader extends Shader2D {
 	var emisSoftnessCL:ConstantLocation;
 	var emisSizeCL:ConstantLocation;
 	var opacityCL:ConstantLocation;
+	var gradColorsCL:ConstantLocation;
+	var gradAttribCL:ConstantLocation;
 
 	override inline function initStructure() {
 		structure = new VertexStructure();
@@ -43,6 +45,8 @@ class RectPainterShader extends Shader2D {
 		emisSoftnessCL = pipeline.getConstantLocation("uEmisSoftness");
 		emisSizeCL = pipeline.getConstantLocation("uEmisSize");
 		opacityCL = pipeline.getConstantLocation("uOpacity");
+		gradColorsCL = pipeline.getConstantLocation("uGradColors");
+		gradAttribCL = pipeline.getConstantLocation("uGradAttrib");
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
@@ -61,5 +65,7 @@ class RectPainterShader extends Shader2D {
 		target.g4.setFloats(emisSoftnessCL, uniforms[11]);
 		target.g4.setFloats(emisSizeCL, uniforms[12]);
 		target.g4.setFloats(opacityCL, uniforms[13]);
+		target.g4.setFloats(gradColorsCL, uniforms[14]);
+		target.g4.setFloats(gradAttribCL, uniforms[15]);
 	}
 }

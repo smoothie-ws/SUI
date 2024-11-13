@@ -24,6 +24,8 @@ class RectPainter extends ElementPainter {
 	var emisSoftness:Float32Array;
 	var emisSize:Float32Array;
 	var opacity:Float32Array;
+	var gradColors:Float32Array;
+	var gradAttrib:Float32Array;
 
 	public final inline function setRects() {
 		scale = new Float32Array(elements.length * 4);
@@ -40,6 +42,8 @@ class RectPainter extends ElementPainter {
 		emisSoftness = new Float32Array(elements.length * 1);
 		emisSize = new Float32Array(elements.length * 1);
 		opacity = new Float32Array(elements.length * 1);
+		gradColors = new Float32Array(elements.length * 4 * 2);
+		gradAttrib = new Float32Array(elements.length * 4);
 
 		initVertices();
 
@@ -55,7 +59,7 @@ class RectPainter extends ElementPainter {
 			opacity[i] = rect.finalOpacity;
 			rotation[i * 3 + 0] = ((Math.isNaN(rOX) ? rect.centerX : rOX) / SUI.backbuffer.width) * 2 - 1;
 			rotation[i * 3 + 1] = ((Math.isNaN(rOY) ? rect.centerY : rOY) / SUI.backbuffer.height) * 2 - 1;
-			rotation[i * 3 + 2] = rect.finalRotation * Math.PI / 180;
+			rotation[i * 3 + 2] = rect.finalRotation;
 			scale[i * 4 + 0] = ((Math.isNaN(sOX) ? rect.centerX : sOX) / SUI.backbuffer.width) * 2 - 1;
 			scale[i * 4 + 1] = ((Math.isNaN(sOY) ? rect.centerY : sOY) / SUI.backbuffer.height) * 2 - 1;
 			scale[i * 4 + 2] = rect.finalScaleX;
@@ -82,14 +86,27 @@ class RectPainter extends ElementPainter {
 			bordColor[i * 4 + 2] = rect.border.color.B;
 			bordColor[i * 4 + 3] = rect.border.color.A;
 
-			emisSize[i] = Math.max(0, rect.emission.size);
+			emisSize[i] = rect.emission.size;
 			emisColor[i * 4 + 0] = rect.emission.color.R;
 			emisColor[i * 4 + 1] = rect.emission.color.G;
 			emisColor[i * 4 + 2] = rect.emission.color.B;
 			emisColor[i * 4 + 3] = rect.emission.color.A;
-			emisSoftness[i] = Math.max(0, rect.emission.softness);
+			emisSoftness[i] = rect.emission.softness;
 			emisOffset[i * 2 + 0] = rect.emission.offsetX;
 			emisOffset[i * 2 + 1] = rect.emission.offsetY;
+
+			gradColors[i * 4 + 0] = rect.gradient.start.R;
+			gradColors[i * 4 + 1] = rect.gradient.start.G;
+			gradColors[i * 4 + 2] = rect.gradient.start.B;
+			gradColors[i * 4 + 3] = rect.gradient.start.A;
+			gradColors[i * 4 + 4] = rect.gradient.end.R;
+			gradColors[i * 4 + 5] = rect.gradient.end.G;
+			gradColors[i * 4 + 6] = rect.gradient.end.B;
+			gradColors[i * 4 + 7] = rect.gradient.end.A;
+			gradAttrib[i * 4 + 0] = rect.gradient == null ? 0.0 : 1.0;
+			gradAttrib[i * 4 + 1] = rect.gradient.angle;
+			gradAttrib[i * 4 + 2] = rect.gradient.offset;
+			gradAttrib[i * 4 + 3] = rect.gradient.scale;
 		}
 	}
 
@@ -145,6 +162,8 @@ class RectPainter extends ElementPainter {
 			emisSoftness,
 			emisSize,
 			opacity,
+			gradColors,
+			gradAttrib
 		]);
 	}
 }

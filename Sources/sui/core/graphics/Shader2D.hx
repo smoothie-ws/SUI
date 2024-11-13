@@ -47,7 +47,7 @@ class Shader2D {
 		target.g4.setVertexBuffer(vertices);
 		target.g4.setIndexBuffer(indices);
 		setUniforms(target, uniforms);
-		target.g4.scissor(0, 0, SUI.window.width, SUI.window.height);
+		target.g4.scissor(0, 0, target.width, target.height);
 		target.g4.drawIndexedVertices();
 	}
 }

@@ -22,7 +22,7 @@ vec2 scale(vec2 c, vec2 o, vec2 s) {
 }
 
 vec2 transform(vec2 c, vec4 s, vec3 r) {
-    return scale(rotate(c, r.xy, r.z), s.xy, s.zw);
+    return scale(rotate(c, r.xy, radians(r.z)), s.xy, s.zw);
 }
 
 void main() {

@@ -15,6 +15,8 @@ uniform vec4 uEmisColor[BATCH_SIZE];
 uniform vec2 uEmisOffset[BATCH_SIZE];
 uniform float uEmisSize[BATCH_SIZE];
 uniform float uEmisSoftness[BATCH_SIZE];
+uniform vec4 uGradColors[BATCH_SIZE * 2];
+uniform vec4 uGradAttrib[BATCH_SIZE]; // [use_grad, angle, offset, scale]
 
 in vec2 fragCoord;
 flat in int ID;
@@ -26,6 +28,13 @@ float sdf(vec2 cp, vec2 si, vec4 ra) {
 
     vec2 q = abs(cp) - si + ra.x;
     return min(max(q.x, q.y), 0) + length(max(q, 0)) - ra.x;
+}
+
+vec4 gradCol() {
+    float o = 0.5 - uGradAttrib[ID][1];
+    vec2 c = fragCoord - o;
+    float m = o + uGradAttrib[ID][2] * length(c) * cos(atan(c.y, -c.x) + uGradAttrib[ID][0]);
+    return mix(uGradColors[ID], uGradColors[ID + 1], m);
 }
 
 void main() {
@@ -41,9 +50,12 @@ void main() {
     float bordMask = smoothstep(uBordThickness[ID] - uBordSoftness[ID], uBordThickness[ID] + uBordSoftness[ID], abs(rectDist));
     float rectMask = smoothstep(-uRectSoftness[ID], uRectSoftness[ID], rectDist);
 
-    fragColor = vec4(0);
+    fragColor = vec4(0.0);
     fragColor = mix(uEmisColor[ID], fragColor, emisMask);
-    fragColor = mix(uRectColor[ID], fragColor, rectMask);
+    if (uGradAttrib[ID][0] == 0.0) 
+        fragColor = mix(uRectColor[ID], fragColor, rectMask);
+    else 
+        fragColor = mix(gradCol(), fragColor, rectMask);
     fragColor = mix(uBordColor[ID], fragColor, bordMask);
     fragColor.a *= uOpacity[ID];
 }

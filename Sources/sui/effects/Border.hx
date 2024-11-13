@@ -5,7 +5,7 @@ import kha.FastFloat;
 
 @:structInit
 class Border {
-	public var thickness:FastFloat = 0;
+	public var thickness:FastFloat = 2;
 	public var softness:FastFloat = 1;
-	public var color:Color = Color.Black;
+	public var color:Color = Color.Transparent;
 }
