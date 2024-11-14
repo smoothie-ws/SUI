@@ -61,5 +61,6 @@ void main() {
     else 
         fragColor = mix(gradCol(), fragColor, rectMask);
     fragColor = mix(uBordColor[ID], fragColor, bordMask);
+    
     fragColor.a *= uOpacity[ID];
 }

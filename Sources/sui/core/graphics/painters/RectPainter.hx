@@ -53,12 +53,12 @@ class RectPainter extends ElementPainter {
 
 			opacity[i] = rect.finalOpacity;
 
-			transformOrigin[i * 2 + 0] = (rect.finalX + rect.origin.x) / SUI.backbuffer.width;
-			transformOrigin[i * 2 + 1] = (rect.finalY + rect.origin.y) / SUI.backbuffer.height;
+			transformOrigin[i * 2 + 0] = ((rect.finalX + rect.origin.x) / SUI.backbuffer.width) * 2 - 1;
+			transformOrigin[i * 2 + 1] = ((rect.finalY + rect.origin.y) / SUI.backbuffer.height) * 2 - 1;
 			scaleRotation[i * 3 + 0] = rect.scale.x;
 			scaleRotation[i * 3 + 1] = rect.scale.y;
 			scaleRotation[i * 3 + 2] = rect.rotation;
-
+			
 			rectSoftness[i] = rect.softness;
 			rectColor[i * 4 + 0] = rect.color.R;
 			rectColor[i * 4 + 1] = rect.color.G;
@@ -90,18 +90,20 @@ class RectPainter extends ElementPainter {
 			emisOffset[i * 2 + 0] = rect.emission.offsetX;
 			emisOffset[i * 2 + 1] = rect.emission.offsetY;
 
-			gradColors[i * 4 + 0] = rect.gradient.end.R;
-			gradColors[i * 4 + 1] = rect.gradient.end.G;
-			gradColors[i * 4 + 2] = rect.gradient.end.B;
-			gradColors[i * 4 + 3] = rect.gradient.end.A;
-			gradColors[i * 4 + 4] = rect.gradient.start.R;
-			gradColors[i * 4 + 5] = rect.gradient.start.G;
-			gradColors[i * 4 + 6] = rect.gradient.start.B;
-			gradColors[i * 4 + 7] = rect.gradient.start.A;
-			gradAttrib[i * 4 + 0] = rect.gradient == null ? 0.0 : rect.gradient.alignByElement ? 1.0 : 2.0;
-			gradAttrib[i * 4 + 1] = rect.gradient.angle;
-			gradAttrib[i * 4 + 2] = rect.gradient.position;
-			gradAttrib[i * 4 + 3] = rect.gradient.scale;
+			if (rect.gradient != null) {
+				gradColors[i * 4 + 0] = rect.gradient.end.R;
+				gradColors[i * 4 + 1] = rect.gradient.end.G;
+				gradColors[i * 4 + 2] = rect.gradient.end.B;
+				gradColors[i * 4 + 3] = rect.gradient.end.A;
+				gradColors[i * 4 + 4] = rect.gradient.start.R;
+				gradColors[i * 4 + 5] = rect.gradient.start.G;
+				gradColors[i * 4 + 6] = rect.gradient.start.B;
+				gradColors[i * 4 + 7] = rect.gradient.start.A;
+				gradAttrib[i * 4 + 0] = rect.gradient.alignByElement ? 1.0 : 2.0;
+				gradAttrib[i * 4 + 1] = rect.gradient.angle;
+				gradAttrib[i * 4 + 2] = rect.gradient.position;
+				gradAttrib[i * 4 + 3] = rect.gradient.scale;
+			}
 		}
 	}
 
