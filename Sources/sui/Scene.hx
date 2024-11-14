@@ -8,7 +8,7 @@ import sui.core.graphics.painters.ElementPainter;
 import sui.core.graphics.painters.RectPainter;
 
 @:structInit
-class Scene {
+class Scene extends Element {
 	var painters:Array<ElementPainter> = [];
 
 	public var backgroundColor:Color = Color.White;

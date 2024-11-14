@@ -95,17 +95,17 @@ class RectPainter extends ElementPainter {
 			emisOffset[i * 2 + 0] = rect.emission.offsetX;
 			emisOffset[i * 2 + 1] = rect.emission.offsetY;
 
-			gradColors[i * 4 + 0] = rect.gradient.start.R;
-			gradColors[i * 4 + 1] = rect.gradient.start.G;
-			gradColors[i * 4 + 2] = rect.gradient.start.B;
-			gradColors[i * 4 + 3] = rect.gradient.start.A;
-			gradColors[i * 4 + 4] = rect.gradient.end.R;
-			gradColors[i * 4 + 5] = rect.gradient.end.G;
-			gradColors[i * 4 + 6] = rect.gradient.end.B;
-			gradColors[i * 4 + 7] = rect.gradient.end.A;
-			gradAttrib[i * 4 + 0] = rect.gradient == null ? 0.0 : 1.0;
+			gradColors[i * 4 + 0] = rect.gradient.end.R;
+			gradColors[i * 4 + 1] = rect.gradient.end.G;
+			gradColors[i * 4 + 2] = rect.gradient.end.B;
+			gradColors[i * 4 + 3] = rect.gradient.end.A;
+			gradColors[i * 4 + 4] = rect.gradient.start.R;
+			gradColors[i * 4 + 5] = rect.gradient.start.G;
+			gradColors[i * 4 + 6] = rect.gradient.start.B;
+			gradColors[i * 4 + 7] = rect.gradient.start.A;
+			gradAttrib[i * 4 + 0] = rect.gradient == null ? 0.0 : rect.gradient.alignByElement ? 1.0 : 2.0;
 			gradAttrib[i * 4 + 1] = rect.gradient.angle;
-			gradAttrib[i * 4 + 2] = rect.gradient.offset;
+			gradAttrib[i * 4 + 2] = rect.gradient.position;
 			gradAttrib[i * 4 + 3] = rect.gradient.scale;
 		}
 	}

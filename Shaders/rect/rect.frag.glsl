@@ -2,7 +2,7 @@
 
 #define BATCH_SIZE 64
 
-uniform ivec2 uResolution;
+uniform vec4 uResolution;
 uniform float uOpacity[BATCH_SIZE];
 uniform vec4 uRectRadius[BATCH_SIZE];
 uniform vec4 uRectBounds[BATCH_SIZE];
@@ -16,7 +16,7 @@ uniform vec2 uEmisOffset[BATCH_SIZE];
 uniform float uEmisSize[BATCH_SIZE];
 uniform float uEmisSoftness[BATCH_SIZE];
 uniform vec4 uGradColors[BATCH_SIZE * 2];
-uniform vec4 uGradAttrib[BATCH_SIZE]; // [use_grad, angle, offset, scale]
+uniform vec4 uGradAttrib[BATCH_SIZE]; // [align_by_element, angle, offset, scale]
 
 in vec2 fragCoord;
 flat in int ID;
@@ -31,14 +31,18 @@ float sdf(vec2 cp, vec2 si, vec4 ra) {
 }
 
 vec4 gradCol() {
-    float o = 0.5 - uGradAttrib[ID][1];
-    vec2 c = fragCoord - o;
-    float m = o + uGradAttrib[ID][2] * length(c) * cos(atan(c.y, -c.x) + uGradAttrib[ID][0]);
+    vec2 c = fragCoord / (uResolution.zw / uResolution.xy);
+    if (uGradAttrib[ID][0] == 1.0) {
+        c -= (uRectBounds[ID].xy - uRectBounds[ID].zw / 2) / uResolution.zw;
+        c /= uRectBounds[ID].zw / uResolution.zw;
+    }
+    c -= uGradAttrib[ID][2];
+    float m = uGradAttrib[ID][2] + uGradAttrib[ID][3] * length(c) * cos(atan(c.y, -c.x) + radians(uGradAttrib[ID][1]));
     return mix(uGradColors[ID], uGradColors[ID + 1], m);
 }
 
 void main() {
-    vec2 uv = fragCoord.xy * uResolution;
+    vec2 uv = fragCoord.xy * uResolution.xy;
 
     vec2 cp = uv - uRectBounds[ID].xy;
     vec2 si = uRectBounds[ID].zw / 2;

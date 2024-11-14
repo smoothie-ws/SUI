@@ -33,6 +33,8 @@ class SUI {
 		var _res = w > h ? w : h;
 		rawbuffer = Image.createRenderTarget(_res, _res);
 		backbuffer = Image.createRenderTarget(_res, _res);
+		
+		scene.resize(w, h);
 	}
 
 	public static inline function init(window:Window) {

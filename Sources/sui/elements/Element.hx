@@ -127,7 +127,10 @@ class Element {
 		return rotation + parentRotation;
 	}
 
-	function resize(w:Int, h:Int) {}
+	public inline function resize(w:Int, h:Int) {
+		width = w;
+		height = h;
+	}
 
 	public inline final function resizeTree(w:Int, h:Int) {
 		resize(w, h);

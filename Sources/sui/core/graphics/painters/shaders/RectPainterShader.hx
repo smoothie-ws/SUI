@@ -50,7 +50,7 @@ class RectPainterShader extends Shader2D {
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
-		target.g4.setInt2(resolutionCL, target.width, target.height);
+		target.g4.setFloat4(resolutionCL, target.width, target.height, SUI.window.width, SUI.window.height);
 		target.g4.setFloats(scaleCL, uniforms[0]);
 		target.g4.setFloats(rotationCL, uniforms[1]);
 		target.g4.setFloats(rectRadiusCL, uniforms[2]);
