@@ -31,7 +31,7 @@ float sdf(vec2 cp, vec2 si, vec4 ra) {
 }
 
 vec4 gradCol() {
-    vec2 c = fragCoord / (uResolution.zw / uResolution.xy);
+    vec2 c = fragCoord * (uResolution.xy / uResolution.zw);
     if (uGradAttrib[ID][0] == 1.0) {
         c -= (uRectBounds[ID].xy - uRectBounds[ID].zw / 2) / uResolution.zw;
         c /= uRectBounds[ID].zw / uResolution.zw;

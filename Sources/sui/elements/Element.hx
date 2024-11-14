@@ -1,29 +1,31 @@
 package sui.elements;
 
+import kha.math.FastVector2;
 import kha.Color;
 import kha.FastFloat;
 // sui
 import sui.layouts.Anchors;
-import sui.transform.Transform;
 import sui.core.utils.Math.clamp;
 
 @:structInit
 class Element {
 	// position
-	public var x:FastFloat = 0.;
-	public var y:FastFloat = 0.;
+	public var x:FastFloat = 0;
+	public var y:FastFloat = 0;
 	// dimensions
-	public var width:FastFloat = 0.;
-	public var height:FastFloat = 0.;
+	public var width:FastFloat = 0;
+	public var height:FastFloat = 0;
 	public var minWidth:FastFloat = Math.NEGATIVE_INFINITY;
 	public var maxWidth:FastFloat = Math.POSITIVE_INFINITY;
 	public var minHeight:FastFloat = Math.NEGATIVE_INFINITY;
 	public var maxHeight:FastFloat = Math.POSITIVE_INFINITY;
 	// transform
-	public var transform:Transform = {};
-	public var scale:FastFloat = Math.NaN;
+	public var origin:FastVector2 = {};
+	public var scale:FastVector2 = {x: 1, y: 1};
+	public var rotation:FastFloat = 0;
+	public var translation:FastVector2 = {};
 	// opacity
-	public var opacity:FastFloat = 1.;
+	public var opacity:FastFloat = 1;
 	// relations
 	public var parent:Element = null;
 	public var children:Array<Element> = [];
@@ -41,8 +43,7 @@ class Element {
 	public var finalH(get, never):FastFloat;
 	public var centerX(get, never):FastFloat;
 	public var centerY(get, never):FastFloat;
-	public var finalScaleX(get, never):FastFloat;
-	public var finalScaleY(get, never):FastFloat;
+	public var finalScale(get, never):FastVector2;
 	public var finalEnabled(get, never):Bool;
 	public var finalOpacity(get, never):FastFloat;
 	public var finalRotation(get, never):FastFloat;
@@ -55,16 +56,8 @@ class Element {
 		return finalY + finalH / 2;
 	}
 
-	inline function get_finalScaleX():FastFloat {
-		var scale = Math.isNaN(transform.scale.x) ? scale : transform.scale.x;
-		var parentScale = parent == null ? 1 : parent.finalScaleX;
-		return scale * parentScale;
-	}
-
-	inline function get_finalScaleY():FastFloat {
-		var scale = Math.isNaN(transform.scale.y) ? scale : transform.scale.y;
-		var parentScale = parent == null ? 1 : parent.finalScaleY;
-		return scale * parentScale;
+	inline function get_finalScale():FastVector2 {
+		return {x: scale.x * parent.finalScale.x, y: scale.y * parent.finalScale.y};
 	}
 
 	inline function get_finalX():FastFloat {
@@ -75,7 +68,7 @@ class Element {
 		else
 			oX = Math.isNaN(anchors.left.position) ? _fill.finalX : anchors.left.position;
 		oX += Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
-		return oX + transform.translate.x;
+		return oX + translation.x;
 	}
 
 	inline function get_finalY():FastFloat {
@@ -86,7 +79,7 @@ class Element {
 		else
 			oY = Math.isNaN(anchors.top.position) ? _fill.finalY : anchors.top.position;
 		oY += Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
-		return oY + transform.translate.y;
+		return oY + translation.y;
 	}
 
 	inline function get_finalW():FastFloat {
@@ -122,9 +115,7 @@ class Element {
 	}
 
 	inline function get_finalRotation():FastFloat {
-		var rotation = transform.rotation.angle;
-		var parentRotation = parent == null ? 0 : parent.finalRotation;
-		return rotation + parentRotation;
+		return rotation + parent.finalRotation;
 	}
 
 	public inline function resize(w:Int, h:Int) {

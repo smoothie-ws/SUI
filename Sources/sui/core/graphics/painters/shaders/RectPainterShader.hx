@@ -7,8 +7,8 @@ import kha.graphics4.ConstantLocation;
 
 class RectPainterShader extends Shader2D {
 	var resolutionCL:ConstantLocation;
-	var scaleCL:ConstantLocation;
-	var rotationCL:ConstantLocation;
+	var transformOriginCL:ConstantLocation;
+	var scaleRotationCL:ConstantLocation;
 	var rectRadiusCL:ConstantLocation;
 	var rectBoundsCL:ConstantLocation;
 	var rectColorCL:ConstantLocation;
@@ -30,8 +30,8 @@ class RectPainterShader extends Shader2D {
 	}
 
 	override inline function getUniforms() {
-		scaleCL = pipeline.getConstantLocation("uScale");
-		rotationCL = pipeline.getConstantLocation("uRotation");
+		transformOriginCL = pipeline.getConstantLocation("uTransformOrigin");
+		scaleRotationCL = pipeline.getConstantLocation("uScaleRotation");
 		resolutionCL = pipeline.getConstantLocation("uResolution");
 		rectRadiusCL = pipeline.getConstantLocation("uRectRadius");
 		rectBoundsCL = pipeline.getConstantLocation("uRectBounds");
@@ -51,8 +51,8 @@ class RectPainterShader extends Shader2D {
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
 		target.g4.setFloat4(resolutionCL, target.width, target.height, SUI.window.width, SUI.window.height);
-		target.g4.setFloats(scaleCL, uniforms[0]);
-		target.g4.setFloats(rotationCL, uniforms[1]);
+		target.g4.setFloats(transformOriginCL, uniforms[0]);
+		target.g4.setFloats(scaleRotationCL, uniforms[1]);
 		target.g4.setFloats(rectRadiusCL, uniforms[2]);
 		target.g4.setFloats(rectBoundsCL, uniforms[3]);
 		target.g4.setFloats(rectColorCL, uniforms[4]);

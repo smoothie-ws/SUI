@@ -27,7 +27,10 @@ class Scene extends Element {
 		}
 	};
 
-	public inline function update() {};
+	public inline function update() {
+		for (c in children)
+			c.rotation += 1;
+	};
 
 	public inline function draw() {
 		for (painter in painters)

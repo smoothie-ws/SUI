@@ -10,8 +10,8 @@ import sui.elements.shapes.Rectangle;
 import sui.core.graphics.painters.shaders.PainterShaders;
 
 class RectPainter extends ElementPainter {
-	var scale:Float32Array;
-	var rotation:Float32Array;
+	var transformOrigin:Float32Array;
+	var scaleRotation:Float32Array;
 	var rectRadius:Float32Array;
 	var rectBounds:Float32Array;
 	var rectColor:Float32Array;
@@ -28,8 +28,8 @@ class RectPainter extends ElementPainter {
 	var gradAttrib:Float32Array;
 
 	public final inline function setRects() {
-		scale = new Float32Array(elements.length * 4);
-		rotation = new Float32Array(elements.length * 3);
+		transformOrigin = new Float32Array(elements.length * 2);
+		scaleRotation = new Float32Array(elements.length * 3);
 		rectRadius = new Float32Array(elements.length * 4);
 		rectBounds = new Float32Array(elements.length * 4);
 		rectColor = new Float32Array(elements.length * 4);
@@ -49,21 +49,16 @@ class RectPainter extends ElementPainter {
 
 		for (i in 0...elements.length) {
 			var rect:Rectangle = cast elements[i];
-
-			var sOX = rect.transform.scale.origin.x;
-			var sOY = rect.transform.scale.origin.y;
-			var rOX = rect.transform.rotation.origin.x;
-			var rOY = rect.transform.rotation.origin.y;
 			var rMax = Math.min(rect.finalW, rect.finalH) / 2;
 
 			opacity[i] = rect.finalOpacity;
-			rotation[i * 3 + 0] = ((Math.isNaN(rOX) ? rect.centerX : rOX) / SUI.backbuffer.width) * 2 - 1;
-			rotation[i * 3 + 1] = ((Math.isNaN(rOY) ? rect.centerY : rOY) / SUI.backbuffer.height) * 2 - 1;
-			rotation[i * 3 + 2] = rect.finalRotation;
-			scale[i * 4 + 0] = ((Math.isNaN(sOX) ? rect.centerX : sOX) / SUI.backbuffer.width) * 2 - 1;
-			scale[i * 4 + 1] = ((Math.isNaN(sOY) ? rect.centerY : sOY) / SUI.backbuffer.height) * 2 - 1;
-			scale[i * 4 + 2] = rect.finalScaleX;
-			scale[i * 4 + 3] = rect.finalScaleY;
+
+			transformOrigin[i * 2 + 0] = (rect.finalX + rect.origin.x) / SUI.backbuffer.width;
+			transformOrigin[i * 2 + 1] = (rect.finalY + rect.origin.y) / SUI.backbuffer.height;
+			scaleRotation[i * 3 + 0] = rect.scale.x;
+			scaleRotation[i * 3 + 1] = rect.scale.y;
+			scaleRotation[i * 3 + 2] = rect.rotation;
+
 			rectSoftness[i] = rect.softness;
 			rectColor[i * 4 + 0] = rect.color.R;
 			rectColor[i * 4 + 1] = rect.color.G;
@@ -148,8 +143,8 @@ class RectPainter extends ElementPainter {
 	public override function draw(target:Canvas) {
 		setRects();
 		PainterShaders.rectPainterShader.draw(target, vertices, indices, [
-			scale,
-			rotation,
+			transformOrigin,
+			scaleRotation,
 			rectRadius,
 			rectBounds,
 			rectColor,
