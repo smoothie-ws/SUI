@@ -7,6 +7,7 @@ import kha.Window;
 import kha.Scheduler;
 import kha.System;
 import kha.Framebuffer;
+import kha.graphics2.Graphics;
 // sui
 import sui.core.graphics.painters.shaders.PainterShaders;
 
@@ -52,21 +53,21 @@ class SUI {
 		});
 
 		System.notifyOnFrames(function(frames:Array<Framebuffer>) {
-			render(frames[0]);
+			render(frames[0].g2);
 		});
 	}
 
-	public static inline function render(fb:Framebuffer) {
+	public static inline function render(g2:Graphics) {
 		SUI.backbuffer.g2.begin(true, scene.backgroundColor);
 		scene.draw();
 		SUI.backbuffer.g2.end();
 
-		fb.g2.begin();
-		fb.g2.drawImage(backbuffer, 0, 0);
-		fb.g2.end();
+		g2.begin();
+		g2.drawImage(backbuffer, 0, 0);
+		g2.end();
 	}
 
 	public static inline function compileShaders() {
-		PainterShaders.rectPainterShader.compile(Shaders.rect_vert, Shaders.rect_frag);
+		PainterShaders.rectPainterShader.compile(Shaders.sui_rect_vert, Shaders.sui_rect_frag);
 	}
 }
