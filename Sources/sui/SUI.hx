@@ -22,7 +22,15 @@ class SUI {
 			width: width,
 			height: height,
 			framebuffer: {samplesPerPixel: samplesPerPixel}
-		}, init);
+		}, function(window:Window) {
+			init(window);
+			Assets.loadEverything(function() {
+				compileShaders();
+				System.notifyOnFrames(function(frames:Array<Framebuffer>) {
+					render(frames[0]);
+				});
+			});
+		});
 	}
 
 	public static inline function stop() {
@@ -33,7 +41,7 @@ class SUI {
 		var _res = w > h ? w : h;
 		rawbuffer = Image.createRenderTarget(_res, _res);
 		backbuffer = Image.createRenderTarget(_res, _res);
-		
+
 		scene.resize(w, h);
 	}
 
@@ -46,14 +54,6 @@ class SUI {
 		backbuffer = Image.createRenderTarget(_res, _res);
 
 		Scheduler.addTimeTask(scene.update, 0, 1 / 60);
-
-		Assets.loadEverything(function() {
-			compileShaders();
-		});
-
-		System.notifyOnFrames(function(frames:Array<Framebuffer>) {
-			render(frames[0]);
-		});
 	}
 
 	public static inline function render(fb:Framebuffer) {

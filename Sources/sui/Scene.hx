@@ -1,5 +1,6 @@
 package sui;
 
+import kha.System;
 import kha.Color;
 // sui
 import sui.elements.Element;
@@ -15,7 +16,7 @@ class Scene extends Element {
 
 	public inline function add(element:Element) {
 		addChild(element);
-		
+
 		var lastPainter = painters[painters.length - 1];
 
 		if (element is Rectangle) {
@@ -29,10 +30,7 @@ class Scene extends Element {
 		}
 	};
 
-	public inline function update() {
-		for (c in children)
-			c.rotation += .01;
-	};
+	public inline function update() {};
 
 	public inline function draw() {
 		for (painter in painters)
