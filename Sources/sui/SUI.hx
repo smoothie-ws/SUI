@@ -28,7 +28,7 @@ class SUI {
 			Assets.loadEverything(function() {
 				compileShaders();
 				System.notifyOnFrames(function(frames:Array<Framebuffer>) {
-					render(frames[0]);
+					render(frames[0].g2);
 				});
 			});
 		});
