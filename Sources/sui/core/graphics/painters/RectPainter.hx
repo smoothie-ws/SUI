@@ -16,13 +16,6 @@ class RectPainter extends ElementPainter {
 	var rectBounds:Float32Array;
 	var rectColor:Float32Array;
 	var rectSoftness:Float32Array;
-	var bordColor:Float32Array;
-	var bordSoftness:Float32Array;
-	var bordThickness:Float32Array;
-	var emisColor:Float32Array;
-	var emisOffset:Float32Array;
-	var emisSoftness:Float32Array;
-	var emisSize:Float32Array;
 	var opacity:Float32Array;
 	var gradColors:Float32Array;
 	var gradAttrib:Float32Array;
@@ -34,13 +27,6 @@ class RectPainter extends ElementPainter {
 		rectBounds = new Float32Array(elements.length * 4);
 		rectColor = new Float32Array(elements.length * 4);
 		rectSoftness = new Float32Array(elements.length * 1);
-		bordColor = new Float32Array(elements.length * 4);
-		bordSoftness = new Float32Array(elements.length * 1);
-		bordThickness = new Float32Array(elements.length * 1);
-		emisColor = new Float32Array(elements.length * 4);
-		emisOffset = new Float32Array(elements.length * 2);
-		emisSoftness = new Float32Array(elements.length * 1);
-		emisSize = new Float32Array(elements.length * 1);
 		opacity = new Float32Array(elements.length * 1);
 		gradColors = new Float32Array(elements.length * 4 * 2);
 		gradAttrib = new Float32Array(elements.length * 4);
@@ -73,22 +59,6 @@ class RectPainter extends ElementPainter {
 			rectRadius[i * 4 + 1] = Math.min(Math.isNaN(rect.topRightRadius) ? rect.radius : rect.topLeftRadius, rMax);
 			rectRadius[i * 4 + 2] = Math.min(Math.isNaN(rect.bottomRightRadius) ? rect.radius : rect.topLeftRadius, rMax);
 			rectRadius[i * 4 + 3] = Math.min(Math.isNaN(rect.bottomLeftRadius) ? rect.radius : rect.topLeftRadius, rMax);
-
-			bordSoftness[i] = rect.border.softness;
-			bordThickness[i] = rect.border.thickness / 2;
-			bordColor[i * 4 + 0] = rect.border.color.R;
-			bordColor[i * 4 + 1] = rect.border.color.G;
-			bordColor[i * 4 + 2] = rect.border.color.B;
-			bordColor[i * 4 + 3] = rect.border.color.A;
-
-			emisSize[i] = rect.emission.size;
-			emisColor[i * 4 + 0] = rect.emission.color.R;
-			emisColor[i * 4 + 1] = rect.emission.color.G;
-			emisColor[i * 4 + 2] = rect.emission.color.B;
-			emisColor[i * 4 + 3] = rect.emission.color.A;
-			emisSoftness[i] = rect.emission.softness;
-			emisOffset[i * 2 + 0] = rect.emission.offsetX;
-			emisOffset[i * 2 + 1] = rect.emission.offsetY;
 
 			if (rect.gradient != null) {
 				gradColors[i * 4 + 0] = rect.gradient.end.R;
@@ -151,13 +121,6 @@ class RectPainter extends ElementPainter {
 			rectBounds,
 			rectColor,
 			rectSoftness,
-			bordColor,
-			bordSoftness,
-			bordThickness,
-			emisColor,
-			emisOffset,
-			emisSoftness,
-			emisSize,
 			opacity,
 			gradColors,
 			gradAttrib

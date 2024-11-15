@@ -13,13 +13,6 @@ class RectPainterShader extends Shader2D {
 	var rectBoundsCL:ConstantLocation;
 	var rectColorCL:ConstantLocation;
 	var rectSoftnessCL:ConstantLocation;
-	var bordColorCL:ConstantLocation;
-	var bordSoftnessCL:ConstantLocation;
-	var bordThicknessCL:ConstantLocation;
-	var emisColorCL:ConstantLocation;
-	var emisOffsetCL:ConstantLocation;
-	var emisSoftnessCL:ConstantLocation;
-	var emisSizeCL:ConstantLocation;
 	var opacityCL:ConstantLocation;
 	var gradColorsCL:ConstantLocation;
 	var gradAttribCL:ConstantLocation;
@@ -37,13 +30,6 @@ class RectPainterShader extends Shader2D {
 		rectBoundsCL = pipeline.getConstantLocation("uRectBounds");
 		rectColorCL = pipeline.getConstantLocation("uRectColor");
 		rectSoftnessCL = pipeline.getConstantLocation("uRectSoftness");
-		bordColorCL = pipeline.getConstantLocation("uBordColor");
-		bordSoftnessCL = pipeline.getConstantLocation("uBordSoftness");
-		bordThicknessCL = pipeline.getConstantLocation("uBordThickness");
-		emisColorCL = pipeline.getConstantLocation("uEmisColor");
-		emisOffsetCL = pipeline.getConstantLocation("uEmisOffset");
-		emisSoftnessCL = pipeline.getConstantLocation("uEmisSoftness");
-		emisSizeCL = pipeline.getConstantLocation("uEmisSize");
 		opacityCL = pipeline.getConstantLocation("uOpacity");
 		gradColorsCL = pipeline.getConstantLocation("uGradColors");
 		gradAttribCL = pipeline.getConstantLocation("uGradAttrib");
@@ -57,15 +43,8 @@ class RectPainterShader extends Shader2D {
 		target.g4.setFloats(rectBoundsCL, uniforms[3]);
 		target.g4.setFloats(rectColorCL, uniforms[4]);
 		target.g4.setFloats(rectSoftnessCL, uniforms[5]);
-		target.g4.setFloats(bordColorCL, uniforms[6]);
-		target.g4.setFloats(bordSoftnessCL, uniforms[7]);
-		target.g4.setFloats(bordThicknessCL, uniforms[8]);
-		target.g4.setFloats(emisColorCL, uniforms[9]);
-		target.g4.setFloats(emisOffsetCL, uniforms[10]);
-		target.g4.setFloats(emisSoftnessCL, uniforms[11]);
-		target.g4.setFloats(emisSizeCL, uniforms[12]);
-		target.g4.setFloats(opacityCL, uniforms[13]);
-		target.g4.setFloats(gradColorsCL, uniforms[14]);
-		target.g4.setFloats(gradAttribCL, uniforms[15]);
+		target.g4.setFloats(opacityCL, uniforms[6]);
+		target.g4.setFloats(gradColorsCL, uniforms[7]);
+		target.g4.setFloats(gradAttribCL, uniforms[8]);
 	}
 }
