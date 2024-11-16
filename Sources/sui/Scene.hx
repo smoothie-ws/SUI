@@ -23,7 +23,7 @@ class Scene extends Element {
 		var lastPainter = painters[painters.length - 1];
 
 		if (element is Rectangle) {
-			if (lastPainter is RectPainter && lastPainter.elements.length < 64)
+			if (lastPainter is RectPainter && lastPainter.elements.length < 128)
 				lastPainter.elements.push(element);
 			else {
 				var rectPainter = new RectPainter();

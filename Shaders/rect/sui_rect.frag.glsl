@@ -1,9 +1,9 @@
 #version 450
 
-#define BATCH_SIZE 64
+#define BATCH_SIZE 128
 
 uniform vec4 uResolution;
-uniform vec4 uRectRadius[BATCH_SIZE];
+uniform float uRectRadius[BATCH_SIZE];
 uniform vec4 uRectBounds[BATCH_SIZE];
 uniform float uRectSoftness[BATCH_SIZE];
 uniform vec4 uGradColors[BATCH_SIZE * 2];
@@ -13,12 +13,9 @@ in vec2 fragCoord;
 flat in int ID;
 out vec4 fragColor;
 
-float sdf(vec2 cp, vec2 si, vec4 ra) {
-    ra.xy = cp.x > 0 ? ra.xy : ra.zw;
-    ra.x  = cp.y > 0 ? ra.x : ra.y;
-
-    vec2 q = abs(cp) - si + ra.x;
-    return min(max(q.x, q.y), 0) + length(max(q, 0)) - ra.x;
+float sdf(vec2 cp, vec2 si, float ra) {
+    vec2 q = abs(cp) - si + ra;
+    return min(max(q.x, q.y), 0) + length(max(q, 0)) - ra;
 }
 
 vec4 gradCol() {

@@ -23,7 +23,7 @@ class RectPainter extends ElementPainter {
 	public final inline function setRects() {
 		transformOrigin = new Float32Array(elements.length * 2);
 		scaleRotation = new Float32Array(elements.length * 3);
-		rectRadius = new Float32Array(elements.length * 4);
+		rectRadius = new Float32Array(elements.length * 1);
 		rectBounds = new Float32Array(elements.length * 4);
 		rectColor = new Float32Array(elements.length * 4);
 		rectSoftness = new Float32Array(elements.length * 1);
@@ -35,7 +35,6 @@ class RectPainter extends ElementPainter {
 
 		for (i in 0...elements.length) {
 			var rect:Rectangle = cast elements[i];
-			var rMax = Math.min(rect.finalW, rect.finalH) / 2;
 
 			opacity[i] = rect.finalOpacity;
 
@@ -46,15 +45,12 @@ class RectPainter extends ElementPainter {
 			scaleRotation[i * 3 + 2] = rect.rotation;
 
 			rectSoftness[i] = rect.softness;
+			rectRadius[i] = Math.min(rect.radius, Math.min(rect.finalW, rect.finalH) / 2);
 			rectBounds[i * 4 + 0] = rect.centerX;
 			rectBounds[i * 4 + 1] = rect.centerY;
 			rectBounds[i * 4 + 2] = rect.finalW;
 			rectBounds[i * 4 + 3] = rect.finalH;
 
-			rectRadius[i * 4 + 0] = Math.min(Math.isNaN(rect.topLeftRadius) ? rect.radius : rect.topLeftRadius, rMax);
-			rectRadius[i * 4 + 1] = Math.min(Math.isNaN(rect.topRightRadius) ? rect.radius : rect.topLeftRadius, rMax);
-			rectRadius[i * 4 + 2] = Math.min(Math.isNaN(rect.bottomRightRadius) ? rect.radius : rect.topLeftRadius, rMax);
-			rectRadius[i * 4 + 3] = Math.min(Math.isNaN(rect.bottomLeftRadius) ? rect.radius : rect.topLeftRadius, rMax);
 
 			if (rect.gradient != null) {
 				gradColors[i * 4 + 0] = rect.gradient.end.R;
