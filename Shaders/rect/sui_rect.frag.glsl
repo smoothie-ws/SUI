@@ -3,10 +3,8 @@
 #define BATCH_SIZE 64
 
 uniform vec4 uResolution;
-uniform float uOpacity[BATCH_SIZE];
 uniform vec4 uRectRadius[BATCH_SIZE];
 uniform vec4 uRectBounds[BATCH_SIZE];
-uniform vec4 uRectColor[BATCH_SIZE];
 uniform float uRectSoftness[BATCH_SIZE];
 uniform vec4 uGradColors[BATCH_SIZE * 2];
 uniform vec4 uGradAttrib[BATCH_SIZE]; // [align_by_element, angle, offset, scale]
@@ -43,5 +41,6 @@ void main() {
     float rectDist = sdf(cp, si, uRectRadius[ID]);
     float rectMask = 1.0 - smoothstep(-uRectSoftness[ID], uRectSoftness[ID], rectDist);
 
-    fragColor = vec4(uRectColor[ID].rgb, uRectColor[ID].a * rectMask * uOpacity[ID]);
+    vec4 col = gradCol();
+    fragColor = vec4(col.rgb, col.a * rectMask);
 }

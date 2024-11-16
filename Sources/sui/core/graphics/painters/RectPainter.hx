@@ -44,12 +44,8 @@ class RectPainter extends ElementPainter {
 			scaleRotation[i * 3 + 0] = rect.scale.x;
 			scaleRotation[i * 3 + 1] = rect.scale.y;
 			scaleRotation[i * 3 + 2] = rect.rotation;
-			
+
 			rectSoftness[i] = rect.softness;
-			rectColor[i * 4 + 0] = rect.color.R;
-			rectColor[i * 4 + 1] = rect.color.G;
-			rectColor[i * 4 + 2] = rect.color.B;
-			rectColor[i * 4 + 3] = rect.color.A;
 			rectBounds[i * 4 + 0] = rect.centerX;
 			rectBounds[i * 4 + 1] = rect.centerY;
 			rectBounds[i * 4 + 2] = rect.finalW;
@@ -64,15 +60,24 @@ class RectPainter extends ElementPainter {
 				gradColors[i * 4 + 0] = rect.gradient.end.R;
 				gradColors[i * 4 + 1] = rect.gradient.end.G;
 				gradColors[i * 4 + 2] = rect.gradient.end.B;
-				gradColors[i * 4 + 3] = rect.gradient.end.A;
+				gradColors[i * 4 + 3] = rect.gradient.end.A * rect.finalOpacity;
 				gradColors[i * 4 + 4] = rect.gradient.start.R;
 				gradColors[i * 4 + 5] = rect.gradient.start.G;
 				gradColors[i * 4 + 6] = rect.gradient.start.B;
-				gradColors[i * 4 + 7] = rect.gradient.start.A;
+				gradColors[i * 4 + 7] = rect.gradient.start.A * rect.finalOpacity;
 				gradAttrib[i * 4 + 0] = rect.gradient.alignByElement ? 1.0 : 2.0;
 				gradAttrib[i * 4 + 1] = rect.gradient.angle;
 				gradAttrib[i * 4 + 2] = rect.gradient.position;
 				gradAttrib[i * 4 + 3] = rect.gradient.scale;
+			} else {
+				gradColors[i * 4 + 0] = rect.color.R;
+				gradColors[i * 4 + 1] = rect.color.G;
+				gradColors[i * 4 + 2] = rect.color.B;
+				gradColors[i * 4 + 3] = rect.color.A * rect.finalOpacity;
+				gradColors[i * 4 + 4] = rect.color.R;
+				gradColors[i * 4 + 5] = rect.color.G;
+				gradColors[i * 4 + 6] = rect.color.B;
+				gradColors[i * 4 + 7] = rect.color.A * rect.finalOpacity;
 			}
 		}
 	}
@@ -119,9 +124,7 @@ class RectPainter extends ElementPainter {
 			scaleRotation,
 			rectRadius,
 			rectBounds,
-			rectColor,
 			rectSoftness,
-			opacity,
 			gradColors,
 			gradAttrib
 		]);
