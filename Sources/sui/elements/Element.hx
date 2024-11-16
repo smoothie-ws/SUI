@@ -118,7 +118,7 @@ class Element {
 		return rotation + parent.finalRotation;
 	}
 
-	public inline function resize(w:Int, h:Int) {
+	public function resize(w:Int, h:Int) {
 		width = w;
 		height = h;
 	}
@@ -155,5 +155,13 @@ class Element {
 
 	public inline final function removeParent() {
 		parent.removeChild(this);
+	}
+
+	public function construct() {}
+
+	public inline final function constructTree() {
+		construct();
+		for (child in children)
+			child.constructTree();
 	}
 }

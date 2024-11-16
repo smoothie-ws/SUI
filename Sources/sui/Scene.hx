@@ -1,6 +1,6 @@
 package sui;
 
-import kha.System;
+import kha.Image;
 import kha.Color;
 // sui
 import sui.elements.Element;
@@ -10,6 +10,9 @@ import sui.core.graphics.painters.RectPainter;
 
 @:structInit
 class Scene extends Element {
+	public var rawbuffer:Image = null;
+	public var backbuffer:Image = null;
+
 	var painters:Array<ElementPainter> = [];
 
 	public var backgroundColor:Color = Color.White;
@@ -30,10 +33,19 @@ class Scene extends Element {
 		}
 	};
 
+	override public inline function resize(w:Int, h:Int) {
+		width = w;
+		height = h;
+
+		var res = w > h ? w : h;
+		rawbuffer = Image.createRenderTarget(res, res);
+		backbuffer = Image.createRenderTarget(res, res);
+	}
+
 	public inline function update() {};
 
 	public inline function draw() {
 		for (painter in painters)
-			painter.draw(SUI.backbuffer);
+			painter.draw(backbuffer);
 	}
 }

@@ -3,8 +3,8 @@ package sui.elements;
 import kha.Assets;
 import kha.FastFloat;
 // sui
-import sui.core.Element;
-import sui.core.layouts.Alignment;
+import sui.elements.Element;
+import sui.layouts.Alignment;
 import sui.core.utils.String.capitalizeWords;
 
 @:structInit
@@ -13,7 +13,7 @@ class Text extends Element {
 	public var alignment:Int = Alignment.HCenter | Alignment.VCenter;
 	public var font:Font = {};
 
-	override function draw() {
+	override function construct() {
 		var f = Assets.fonts.get(font.family);
 
 		SUI.rawbuffer.g2.font = f;

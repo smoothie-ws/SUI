@@ -39,8 +39,8 @@ class RectPainter extends ElementPainter {
 
 			opacity[i] = rect.finalOpacity;
 
-			transformOrigin[i * 2 + 0] = ((rect.finalX + rect.origin.x) / SUI.backbuffer.width) * 2 - 1;
-			transformOrigin[i * 2 + 1] = ((rect.finalY + rect.origin.y) / SUI.backbuffer.height) * 2 - 1;
+			transformOrigin[i * 2 + 0] = ((rect.finalX + rect.origin.x) / SUI.scene.width) * 2 - 1;
+			transformOrigin[i * 2 + 1] = ((rect.finalY + rect.origin.y) / SUI.scene.height) * 2 - 1;
 			scaleRotation[i * 3 + 0] = rect.scale.x;
 			scaleRotation[i * 3 + 1] = rect.scale.y;
 			scaleRotation[i * 3 + 2] = rect.rotation;

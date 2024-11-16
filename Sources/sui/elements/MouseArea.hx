@@ -6,12 +6,12 @@ import sui.elements.Element;
 
 @:structInit
 class MouseArea extends Element {
-	public var onDown:(button:Int, x:Int, y:Int) -> Void = null;
-	public var onUp:(button:Int, x:Int, y:Int) -> Void = null;
-	public var onEnter:(x:Int, y:Int) -> Void = null;
-	public var onExit:(x:Int, y:Int) -> Void = null;
-	public var onMove:(x:Int, y:Int, moveX:Int, moveY:Int) -> Void = null;
-	public var onWheel:(delta:Int) -> Void = null;
+	var onDown:(button:Int, x:Int, y:Int) -> Void = function(button:Int, x:Int, y:Int) {};
+	var onUp:(button:Int, x:Int, y:Int) -> Void = function(button:Int, x:Int, y:Int) {};
+	var onEnter:(x:Int, y:Int) -> Void = function(x:Int, y:Int) {};
+	var onExit:(x:Int, y:Int) -> Void = function(x:Int, y:Int) {};
+	var onMove:(x:Int, y:Int, moveX:Int, moveY:Int) -> Void = function(x:Int, y:Int, moveX:Int, moveY:Int) {};
+	var onWheel:(delta:Int) -> Void = function(delta:Int) {};
 
 	public var mouseX:Int = 0;
 	public var mouseY:Int = 0;
@@ -25,7 +25,31 @@ class MouseArea extends Element {
 		return xBounded && yBounded;
 	}
 
-	public inline function startListening() {
+	public inline function notifyOnDown(f:(button:Int, x:Int, y:Int) -> Void) {
+		onDown = f;
+	}
+
+	public inline function notifyOnUp(f:(button:Int, x:Int, y:Int) -> Void) {
+		onUp = f;
+	}
+
+	public inline function notifyOnEnter(f:(x:Int, y:Int) -> Void) {
+		onEnter = f;
+	}
+
+	public inline function notifyOnExit(f:(x:Int, y:Int) -> Void) {
+		onExit = f;
+	}
+
+	public inline function notifyOnMove(f:(x:Int, y:Int, moveX:Int, moveY:Int) -> Void) {
+		onMove = f;
+	}
+
+	public inline function notifyOnWheel(f:(delta:Int) -> Void) {
+		onWheel = f;
+	}
+
+	override public inline function construct() {
 		Mouse.get().notify(function(button:Int, x:Int, y:Int) {
 			if (focused)
 				onDown(button, x, y);

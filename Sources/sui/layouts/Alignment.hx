@@ -1,4 +1,4 @@
-package sui.core.layouts;
+package sui.layouts;
 
 enum abstract Alignment(Int) from Int to Int {
 	// horizontal
