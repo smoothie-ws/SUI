@@ -2,7 +2,7 @@ package sui.elements;
 
 import kha.input.Mouse;
 // sui
-import sui.core.Element;
+import sui.elements.Element;
 
 @:structInit
 class MouseArea extends Element {
@@ -20,8 +20,8 @@ class MouseArea extends Element {
 	var focused(get, never):Bool;
 
 	function get_focused():Bool {
-		final xBounded = mouseX >= offsetX && mouseX <= offsetX + finalW;
-		final yBounded = mouseY >= offsetY && mouseY <= offsetY + finalH;
+		final xBounded = mouseX >= finalX && mouseX <= finalX + finalW;
+		final yBounded = mouseY >= finalY && mouseY <= finalY + finalH;
 		return xBounded && yBounded;
 	}
 
