@@ -1,5 +1,6 @@
 package sui;
 
+import kha.Color;
 import kha.Shaders;
 import kha.Assets;
 import kha.Window;
@@ -13,14 +14,10 @@ import kha.graphics2.Graphics;
 import sui.core.graphics.painters.shaders.PainterShaders;
 
 class SUI {
+	public static var window:Window;
 	public static var mouse:Mouse;
 	public static var keyboard:Keyboard;
-
-	@:isVar public static var cursor(get, set):MouseCursor;
-
-	static function get_cursor():MouseCursor {
-		return cursor;
-	}
+	public static var cursor(never, set):MouseCursor;
 
 	static function set_cursor(cursor:MouseCursor):MouseCursor {
 		mouse.setSystemCursor(cursor);
@@ -37,11 +34,8 @@ class SUI {
 			framebuffer: {samplesPerPixel: samplesPerPixel}
 		}, function(window:Window) {
 			init(window);
-			Assets.loadEverything(function() {
-				compileShaders();
-				System.notifyOnFrames(function(frames:Array<Framebuffer>) {
-					render(frames[0].g2);
-				});
+			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
+				render(frames[0].g2);
 			});
 		});
 	}
@@ -51,21 +45,24 @@ class SUI {
 	}
 
 	public static inline function init(window:Window) {
-		mouse = Mouse.get();
-		keyboard = Keyboard.get();
-
+		SUI.window = window;
 		scene.resize(window.width, window.height);
 		window.notifyOnResize(scene.resize);
+
+		SUI.mouse = Mouse.get();
+		SUI.keyboard = Keyboard.get();
+
 		scene.constructTree();
 		Scheduler.addTimeTask(scene.update, 0, 1 / 60);
+		Assets.loadEverything(function() {
+			compileShaders();
+		});
 	}
 
-	public static inline function render(g2:Graphics) {
-		scene.backbuffer.g2.begin(true, scene.backgroundColor);
+	public static inline function render(g2:Graphics, ?clear:Bool = true, clearColor:Color = Color.Transparent) {
 		scene.draw();
-		scene.backbuffer.g2.end();
 
-		g2.begin();
+		g2.begin(clear, clearColor);
 		g2.drawImage(scene.backbuffer, 0, 0);
 		g2.end();
 	}

@@ -25,5 +25,5 @@ vec2 transform(vec2 c, vec2 o, vec3 sr) {
 void main() {
     ID = int(vertPos.z);
     gl_Position = vec4(transform(vertPos.xy, uTransformOrigin[ID], uScaleRotation[ID]), 0.0, 1.0);
-    fragCoord = vertPos.xy * 0.5 + 0.5;
+    fragCoord = vec2(vertPos.x, -vertPos.y) * 0.5 + 0.5;
 }

@@ -15,7 +15,7 @@ class Scene extends Element {
 
 	var painters:Array<ElementPainter> = [];
 
-	public var backgroundColor:Color = Color.White;
+	public var backgroundColor:Color = Color.Transparent;
 
 	public inline function add(element:Element) {
 		addChild(element);
@@ -45,7 +45,9 @@ class Scene extends Element {
 	public inline function update() {};
 
 	public inline function draw() {
+		backbuffer.g2.begin(true, backgroundColor);
 		for (painter in painters)
 			painter.draw(backbuffer);
+		backbuffer.g2.end();
 	}
 }
