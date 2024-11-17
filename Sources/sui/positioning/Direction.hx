@@ -1,4 +1,4 @@
-package sui.core.layouts;
+package sui.positioning;
 
 enum abstract Direction(Int) from Int to Int {
 	// horizontal

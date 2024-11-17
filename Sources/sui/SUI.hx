@@ -18,6 +18,9 @@ class SUI {
 	public static var mouse:Mouse;
 	public static var keyboard:Keyboard;
 	public static var cursor(never, set):MouseCursor;
+	static var onUpdateListeners = [];
+	static var onRenderListeners = [];
+	static var updateTaskId:Int;
 
 	static function set_cursor(cursor:MouseCursor):MouseCursor {
 		mouse.setSystemCursor(cursor);
@@ -46,20 +49,22 @@ class SUI {
 
 	public static inline function init(window:Window) {
 		SUI.window = window;
-		scene.resize(window.width, window.height);
-		window.notifyOnResize(scene.resize);
-
 		SUI.mouse = Mouse.get();
 		SUI.keyboard = Keyboard.get();
 
+		window.notifyOnResize(scene.resize);
+		scene.resize(window.width, window.height);
 		scene.constructTree();
-		Scheduler.addTimeTask(scene.update, 0, 1 / 60);
+
 		Assets.loadEverything(function() {
 			compileShaders();
+			startUpdates();
 		});
 	}
 
 	public static inline function render(g2:Graphics, ?clear:Bool = true, clearColor:Color = Color.Transparent) {
+		for (f in onRenderListeners)
+			f();
 		scene.draw();
 
 		g2.begin(clear, clearColor);
@@ -69,5 +74,35 @@ class SUI {
 
 	public static inline function compileShaders() {
 		PainterShaders.rectPainterShader.compile(Shaders.sui_rect_vert, Shaders.sui_rect_frag);
+	}
+
+	public static inline function update() {
+		for (f in onUpdateListeners)
+			f();
+		scene.update();
+	}
+
+	public static inline function startUpdates() {
+		updateTaskId = Scheduler.addTimeTask(update, 0, 1 / 60);
+	}
+
+	public static inline function stopUpdates() {
+		Scheduler.removeTimeTask(updateTaskId);
+	}
+
+	public static inline function notifyOnUpdate(f:Void->Void) {
+		onUpdateListeners.push(f);
+	}
+
+	public static inline function removeUpdateListener(f:Void->Void) {
+		onUpdateListeners.remove(f);
+	}
+
+	public static inline function notifyOnRender(f:Void->Void) {
+		onRenderListeners.push(f);
+	}
+
+	public static inline function removeRenderListener(f:Void->Void) {
+		onRenderListeners.remove(f);
 	}
 }

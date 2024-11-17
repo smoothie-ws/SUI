@@ -19,6 +19,8 @@ class Scene extends Element {
 
 	public inline function add(element:Element) {
 		addChild(element);
+		for (c in element.children)
+			add(c);
 
 		var lastPainter = painters[painters.length - 1];
 

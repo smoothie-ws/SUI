@@ -1,12 +1,10 @@
-package sui.layouts;
+package sui.positioning;
 
 import kha.FastFloat;
 // sui
 import sui.elements.Element;
 
-@:structInit
 class Anchors {
-	public var fill:Element = null;
 	public var top:AnchorLine = {};
 	public var left:AnchorLine = {};
 	public var right:AnchorLine = {};
@@ -16,6 +14,19 @@ class Anchors {
 	public var leftMargin:FastFloat = Math.NaN;
 	public var rightMargin:FastFloat = Math.NaN;
 	public var bottomMargin:FastFloat = Math.NaN;
+
+	public function new() {}
+
+	public inline function set(left:AnchorLine, top:AnchorLine, right:AnchorLine, bottom:AnchorLine) {
+		this.top = top;
+		this.left = left;
+		this.right = right;
+		this.bottom = bottom;
+	}
+
+	public inline function fill(element:Element):Void {
+		set(element.top, element.left, element.right, element.bottom);
+	}
 }
 
 @:structInit
