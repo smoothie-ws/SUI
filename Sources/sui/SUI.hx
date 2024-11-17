@@ -6,11 +6,27 @@ import kha.Window;
 import kha.Scheduler;
 import kha.System;
 import kha.Framebuffer;
+import kha.input.Mouse;
+import kha.input.Keyboard;
 import kha.graphics2.Graphics;
 // sui
 import sui.core.graphics.painters.shaders.PainterShaders;
 
 class SUI {
+	public static var mouse:Mouse;
+	public static var keyboard:Keyboard;
+
+	@:isVar public static var cursor(get, set):MouseCursor;
+
+	static function get_cursor():MouseCursor {
+		return cursor;
+	}
+
+	static function set_cursor(cursor:MouseCursor):MouseCursor {
+		mouse.setSystemCursor(cursor);
+		return cursor;
+	}
+
 	public static var scene:Scene = {};
 
 	public static inline function start(?title:String = "SUI App", ?width:Int = 800, ?height:Int = 600, ?samplesPerPixel:Int = 1) {
@@ -35,6 +51,9 @@ class SUI {
 	}
 
 	public static inline function init(window:Window) {
+		mouse = Mouse.get();
+		keyboard = Keyboard.get();
+
 		scene.resize(window.width, window.height);
 		window.notifyOnResize(scene.resize);
 		scene.constructTree();

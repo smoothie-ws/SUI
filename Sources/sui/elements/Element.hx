@@ -67,7 +67,7 @@ class Element {
 			oX = Math.isNaN(anchors.left.position) ? x : anchors.left.position;
 		else
 			oX = Math.isNaN(anchors.left.position) ? _fill.finalX : anchors.left.position;
-		oX += Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
+		oX += Math.isNaN(anchors.leftMargin) ? anchors.margins : anchors.leftMargin;
 		return oX + translation.x;
 	}
 
@@ -78,7 +78,7 @@ class Element {
 			oY = Math.isNaN(anchors.top.position) ? y : anchors.top.position;
 		else
 			oY = Math.isNaN(anchors.top.position) ? _fill.finalY : anchors.top.position;
-		oY += Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
+		oY += Math.isNaN(anchors.topMargin) ? anchors.margins : anchors.topMargin;
 		return oY + translation.y;
 	}
 
@@ -89,8 +89,8 @@ class Element {
 			fW = Math.isNaN(anchors.right.position) ? width : anchors.right.position;
 		else
 			fW = Math.isNaN(anchors.right.position) ? _fill.finalW : anchors.right.position;
-		fW -= Math.isNaN(anchors.left.margin) ? anchors.margins : anchors.left.margin;
-		fW -= Math.isNaN(anchors.right.margin) ? anchors.margins : anchors.right.margin;
+		fW -= Math.isNaN(anchors.leftMargin) ? anchors.margins : anchors.leftMargin;
+		fW -= Math.isNaN(anchors.rightMargin) ? anchors.margins : anchors.rightMargin;
 		return clamp(fW, minWidth, maxWidth);
 	}
 
@@ -101,8 +101,8 @@ class Element {
 			fH = Math.isNaN(anchors.bottom.position) ? height : anchors.bottom.position;
 		else
 			fH = Math.isNaN(anchors.bottom.position) ? _fill.finalH : anchors.bottom.position;
-		fH -= Math.isNaN(anchors.top.margin) ? anchors.margins : anchors.top.margin;
-		fH -= Math.isNaN(anchors.bottom.margin) ? anchors.margins : anchors.bottom.margin;
+		fH -= Math.isNaN(anchors.topMargin) ? anchors.margins : anchors.topMargin;
+		fH -= Math.isNaN(anchors.bottomMargin) ? anchors.margins : anchors.bottomMargin;
 		return clamp(fH, minHeight, maxHeight);
 	}
 

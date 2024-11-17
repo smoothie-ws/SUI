@@ -12,10 +12,13 @@ class Anchors {
 	public var right:AnchorLine = {};
 	public var bottom:AnchorLine = {};
 	public var margins:FastFloat = 0.;
+	public var topMargin:FastFloat = Math.NaN;
+	public var leftMargin:FastFloat = Math.NaN;
+	public var rightMargin:FastFloat = Math.NaN;
+	public var bottomMargin:FastFloat = Math.NaN;
 }
 
 @:structInit
 class AnchorLine {
 	public var position:FastFloat = Math.NaN;
-	public var margin:FastFloat = Math.NaN;
 }

@@ -1,7 +1,5 @@
 package sui.elements;
 
-import kha.input.Mouse;
-// sui
 import sui.elements.Element;
 
 @:structInit
@@ -50,7 +48,7 @@ class MouseArea extends Element {
 	}
 
 	override public inline function construct() {
-		Mouse.get().notify(function(button:Int, x:Int, y:Int) {
+		SUI.mouse.notify(function(button:Int, x:Int, y:Int) {
 			if (focused)
 				onDown(button, x, y);
 		}, function(button:Int, x:Int, y:Int) {
