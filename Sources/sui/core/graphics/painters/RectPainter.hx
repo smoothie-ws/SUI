@@ -12,22 +12,16 @@ import sui.core.graphics.painters.shaders.PainterShaders;
 class RectPainter extends ElementPainter {
 	var transformOrigin:Float32Array;
 	var scaleRotation:Float32Array;
-	var rectRadius:Float32Array;
 	var rectBounds:Float32Array;
-	var rectColor:Float32Array;
-	var rectSoftness:Float32Array;
-	var opacity:Float32Array;
+	var rectAttrib:Float32Array;
 	var gradColors:Float32Array;
 	var gradAttrib:Float32Array;
 
 	public final inline function setRects() {
 		transformOrigin = new Float32Array(elements.length * 2);
 		scaleRotation = new Float32Array(elements.length * 3);
-		rectRadius = new Float32Array(elements.length * 1);
 		rectBounds = new Float32Array(elements.length * 4);
-		rectColor = new Float32Array(elements.length * 4);
-		rectSoftness = new Float32Array(elements.length * 1);
-		opacity = new Float32Array(elements.length * 1);
+		rectAttrib = new Float32Array(elements.length * 2);
 		gradColors = new Float32Array(elements.length * 4 * 2);
 		gradAttrib = new Float32Array(elements.length * 4);
 
@@ -36,21 +30,18 @@ class RectPainter extends ElementPainter {
 		for (i in 0...elements.length) {
 			var rect:Rectangle = cast elements[i];
 
-			opacity[i] = rect.finalOpacity;
-
 			transformOrigin[i * 2 + 0] = ((rect.finalX + rect.origin.x) / SUI.scene.width) * 2 - 1;
 			transformOrigin[i * 2 + 1] = ((rect.finalY + rect.origin.y) / SUI.scene.height) * 2 - 1;
 			scaleRotation[i * 3 + 0] = rect.scale.x;
 			scaleRotation[i * 3 + 1] = rect.scale.y;
 			scaleRotation[i * 3 + 2] = rect.rotation;
 
-			rectSoftness[i] = rect.softness;
-			rectRadius[i] = Math.min(rect.radius, Math.min(rect.finalW, rect.finalH) / 2);
 			rectBounds[i * 4 + 0] = rect.centerX;
 			rectBounds[i * 4 + 1] = rect.centerY;
 			rectBounds[i * 4 + 2] = rect.finalW;
 			rectBounds[i * 4 + 3] = rect.finalH;
-
+			rectAttrib[i * 2 + 0] = Math.min(rect.radius, Math.min(rect.finalW, rect.finalH) / 2);
+			rectAttrib[i * 2 + 1] = rect.softness;
 
 			if (rect.gradient != null) {
 				gradColors[i * 4 + 0] = rect.gradient.end.R;
@@ -118,9 +109,8 @@ class RectPainter extends ElementPainter {
 		PainterShaders.rectPainterShader.draw(target, vertices, indices, [
 			transformOrigin,
 			scaleRotation,
-			rectRadius,
 			rectBounds,
-			rectSoftness,
+			rectAttrib,
 			gradColors,
 			gradAttrib
 		]);

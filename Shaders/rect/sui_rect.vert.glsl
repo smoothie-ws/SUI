@@ -1,9 +1,13 @@
 #version 450
 
-#define BATCH_SIZE 64
+#ifdef GL_ES
+precision mediump float;
+#endif
 
-uniform vec2 uTransformOrigin[BATCH_SIZE];
+#define BATCH_SIZE 128
+
 uniform vec3 uScaleRotation[BATCH_SIZE];
+uniform vec2 uTransformOrigin[BATCH_SIZE];
 
 in vec3 vertPos;
 out vec2 fragCoord;

@@ -3,9 +3,8 @@
 #define BATCH_SIZE 128
 
 uniform vec4 uResolution;
-uniform float uRectRadius[BATCH_SIZE];
 uniform vec4 uRectBounds[BATCH_SIZE];
-uniform float uRectSoftness[BATCH_SIZE];
+uniform vec2 uRectAttrib[BATCH_SIZE]; // [radius, softness]
 uniform vec4 uGradColors[BATCH_SIZE * 2];
 uniform vec4 uGradAttrib[BATCH_SIZE]; // [align_by_element, angle, offset, scale]
 
@@ -35,8 +34,8 @@ void main() {
     vec2 cp = uv - uRectBounds[ID].xy;
     vec2 si = uRectBounds[ID].zw / 2;
 
-    float rectDist = sdf(cp, si, uRectRadius[ID]);
-    float rectMask = 1.0 - smoothstep(-uRectSoftness[ID], uRectSoftness[ID], rectDist);
+    float rectDist = sdf(cp, si, uRectAttrib[ID][0]);
+    float rectMask = 1.0 - smoothstep(-uRectAttrib[ID][1], uRectAttrib[ID][1], rectDist);
 
     vec4 col = gradCol();
     fragColor = vec4(col.rgb, col.a * rectMask);

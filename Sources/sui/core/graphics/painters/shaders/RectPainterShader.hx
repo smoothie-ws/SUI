@@ -9,9 +9,8 @@ class RectPainterShader extends Shader2D {
 	var resolutionCL:ConstantLocation;
 	var transformOriginCL:ConstantLocation;
 	var scaleRotationCL:ConstantLocation;
-	var rectRadiusCL:ConstantLocation;
 	var rectBoundsCL:ConstantLocation;
-	var rectSoftnessCL:ConstantLocation;
+	var rectAttribCL:ConstantLocation;
 	var gradColorsCL:ConstantLocation;
 	var gradAttribCL:ConstantLocation;
 
@@ -24,9 +23,8 @@ class RectPainterShader extends Shader2D {
 		transformOriginCL = pipeline.getConstantLocation("uTransformOrigin");
 		scaleRotationCL = pipeline.getConstantLocation("uScaleRotation");
 		resolutionCL = pipeline.getConstantLocation("uResolution");
-		rectRadiusCL = pipeline.getConstantLocation("uRectRadius");
 		rectBoundsCL = pipeline.getConstantLocation("uRectBounds");
-		rectSoftnessCL = pipeline.getConstantLocation("uRectSoftness");
+		rectAttribCL = pipeline.getConstantLocation("uRectAttrib");
 		gradColorsCL = pipeline.getConstantLocation("uGradColors");
 		gradAttribCL = pipeline.getConstantLocation("uGradAttrib");
 	}
@@ -35,10 +33,9 @@ class RectPainterShader extends Shader2D {
 		target.g4.setFloat4(resolutionCL, target.width, target.height, SUI.scene.width, SUI.scene.height);
 		target.g4.setFloats(transformOriginCL, uniforms[0]);
 		target.g4.setFloats(scaleRotationCL, uniforms[1]);
-		target.g4.setFloats(rectRadiusCL, uniforms[2]);
-		target.g4.setFloats(rectBoundsCL, uniforms[3]);
-		target.g4.setFloats(rectSoftnessCL, uniforms[4]);
-		target.g4.setFloats(gradColorsCL, uniforms[5]);
-		target.g4.setFloats(gradAttribCL, uniforms[6]);
+		target.g4.setFloats(rectBoundsCL, uniforms[2]);
+		target.g4.setFloats(rectAttribCL, uniforms[3]);
+		target.g4.setFloats(gradColorsCL, uniforms[4]);
+		target.g4.setFloats(gradAttribCL, uniforms[5]);
 	}
 }
