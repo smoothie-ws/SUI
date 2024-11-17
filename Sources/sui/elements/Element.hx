@@ -1,8 +1,7 @@
 package sui.elements;
 
-import kha.math.FastVector2;
-import kha.Color;
 import kha.FastFloat;
+import kha.math.FastVector4;
 // sui
 import sui.layouts.Anchors;
 import sui.core.utils.Math.clamp;
@@ -19,11 +18,6 @@ class Element {
 	public var maxWidth:FastFloat = Math.POSITIVE_INFINITY;
 	public var minHeight:FastFloat = Math.NEGATIVE_INFINITY;
 	public var maxHeight:FastFloat = Math.POSITIVE_INFINITY;
-	// transform
-	public var origin:FastVector2 = {};
-	public var scale:FastVector2 = {x: 1, y: 1};
-	public var rotation:FastFloat = 0;
-	public var translation:FastVector2 = {};
 	// opacity
 	public var opacity:FastFloat = 1;
 	// relations
@@ -35,75 +29,63 @@ class Element {
 	public var clip:Bool = true;
 	// anchors
 	public var anchors:Anchors = {};
+	@:isVar public var left(get, never):AnchorLine = {};
+	@:isVar public var top(get, never):AnchorLine = {};
+	@:isVar public var right(get, never):AnchorLine = {};
+	@:isVar public var bottom(get, never):AnchorLine = {};
+	@:isVar public var horizontalCenter(get, never):AnchorLine = {};
+	@:isVar public var verticalCenter(get, never):AnchorLine = {};
 
 	// final transform
-	public var finalX(get, never):FastFloat;
-	public var finalY(get, never):FastFloat;
-	public var finalW(get, never):FastFloat;
-	public var finalH(get, never):FastFloat;
-	public var centerX(get, never):FastFloat;
-	public var centerY(get, never):FastFloat;
-	public var finalScale(get, never):FastVector2;
 	public var finalEnabled(get, never):Bool;
 	public var finalOpacity(get, never):FastFloat;
-	public var finalRotation(get, never):FastFloat;
 
-	inline function get_centerX():FastFloat {
-		return finalX + finalW / 2;
-	}
-
-	inline function get_centerY():FastFloat {
-		return finalY + finalH / 2;
-	}
-
-	inline function get_finalScale():FastVector2 {
-		return {x: scale.x * parent.finalScale.x, y: scale.y * parent.finalScale.y};
-	}
-
-	inline function get_finalX():FastFloat {
-		var _fill = anchors.fill;
-		var oX = parent == null ? 0 : parent.finalX;
-		if (_fill == null)
-			oX = Math.isNaN(anchors.left.position) ? x : anchors.left.position;
+	inline function get_left():AnchorLine {
+		if (anchors.fill != null)
+			left.position = anchors.fill.left.position;
 		else
-			oX = Math.isNaN(anchors.left.position) ? _fill.finalX : anchors.left.position;
-		oX += Math.isNaN(anchors.leftMargin) ? anchors.margins : anchors.leftMargin;
-		return oX + translation.x;
+			left.position = Math.isNaN(anchors.left.position) ? x : anchors.left.position;
+		left.position += Math.isNaN(anchors.leftMargin) ? anchors.margins : anchors.leftMargin;
+		return left;
 	}
 
-	inline function get_finalY():FastFloat {
-		var _fill = anchors.fill;
-		var oY = parent == null ? 0 : parent.finalY;
-		if (_fill == null)
-			oY = Math.isNaN(anchors.top.position) ? y : anchors.top.position;
+	inline function get_top():AnchorLine {
+		if (anchors.fill != null)
+			top.position = anchors.fill.top.position;
 		else
-			oY = Math.isNaN(anchors.top.position) ? _fill.finalY : anchors.top.position;
-		oY += Math.isNaN(anchors.topMargin) ? anchors.margins : anchors.topMargin;
-		return oY + translation.y;
+			top.position = Math.isNaN(anchors.top.position) ? x : anchors.top.position;
+		top.position += Math.isNaN(anchors.topMargin) ? anchors.margins : anchors.topMargin;
+		return top;
 	}
 
-	inline function get_finalW():FastFloat {
-		var _fill = anchors.fill;
-		var fW = 0.;
-		if (_fill == null)
-			fW = Math.isNaN(anchors.right.position) ? width : anchors.right.position;
+	inline function get_right():AnchorLine {
+		if (anchors.fill != null)
+			right.position = anchors.fill.right.position;
 		else
-			fW = Math.isNaN(anchors.right.position) ? _fill.finalW : anchors.right.position;
-		fW -= Math.isNaN(anchors.leftMargin) ? anchors.margins : anchors.leftMargin;
-		fW -= Math.isNaN(anchors.rightMargin) ? anchors.margins : anchors.rightMargin;
-		return clamp(fW, minWidth, maxWidth);
+			right.position = Math.isNaN(anchors.right.position) ? width : anchors.right.position;
+		right.position -= Math.isNaN(anchors.rightMargin) ? anchors.margins : anchors.rightMargin;
+		right.position = clamp(right.position, minWidth, maxWidth);
+		return right;
 	}
 
-	inline function get_finalH():FastFloat {
-		var _fill = anchors.fill;
-		var fH = 0.;
-		if (_fill == null)
-			fH = Math.isNaN(anchors.bottom.position) ? height : anchors.bottom.position;
+	inline function get_bottom():AnchorLine {
+		if (anchors.fill != null)
+			bottom.position = anchors.fill.bottom.position;
 		else
-			fH = Math.isNaN(anchors.bottom.position) ? _fill.finalH : anchors.bottom.position;
-		fH -= Math.isNaN(anchors.topMargin) ? anchors.margins : anchors.topMargin;
-		fH -= Math.isNaN(anchors.bottomMargin) ? anchors.margins : anchors.bottomMargin;
-		return clamp(fH, minHeight, maxHeight);
+			bottom.position = Math.isNaN(anchors.bottom.position) ? height : anchors.bottom.position;
+		bottom.position -= Math.isNaN(anchors.bottomMargin) ? anchors.margins : anchors.bottomMargin;
+		bottom.position = clamp(bottom.position, minHeight, maxHeight);
+		return bottom;
+	}
+
+	inline function get_horizontalCenter():AnchorLine {
+		horizontalCenter.position = (left.position + right.position) / 2;
+		return horizontalCenter;
+	}
+
+	inline function get_verticalCenter():AnchorLine {
+		verticalCenter.position = (top.position + bottom.position) / 2;
+		return verticalCenter;
 	}
 
 	inline function get_finalEnabled():Bool {
@@ -112,10 +94,6 @@ class Element {
 
 	inline function get_finalOpacity():FastFloat {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
-	}
-
-	inline function get_finalRotation():FastFloat {
-		return rotation + parent.finalRotation;
 	}
 
 	public function resize(w:Int, h:Int) {

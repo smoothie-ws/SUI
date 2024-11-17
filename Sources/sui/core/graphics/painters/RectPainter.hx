@@ -1,5 +1,6 @@
 package sui.core.graphics.painters;
 
+import kha.math.FastVector4;
 import kha.Canvas;
 import kha.arrays.Float32Array;
 import kha.graphics4.Usage;
@@ -10,16 +11,12 @@ import sui.elements.shapes.Rectangle;
 import sui.core.graphics.painters.shaders.PainterShaders;
 
 class RectPainter extends ElementPainter {
-	var transformOrigin:Float32Array;
-	var scaleRotation:Float32Array;
 	var rectBounds:Float32Array;
 	var rectAttrib:Float32Array;
 	var gradColors:Float32Array;
 	var gradAttrib:Float32Array;
 
 	public final inline function setRects() {
-		transformOrigin = new Float32Array(elements.length * 2);
-		scaleRotation = new Float32Array(elements.length * 3);
 		rectBounds = new Float32Array(elements.length * 4);
 		rectAttrib = new Float32Array(elements.length * 2);
 		gradColors = new Float32Array(elements.length * 4 * 2);
@@ -30,17 +27,15 @@ class RectPainter extends ElementPainter {
 		for (i in 0...elements.length) {
 			var rect:Rectangle = cast elements[i];
 
-			transformOrigin[i * 2 + 0] = ((rect.finalX + rect.origin.x) / SUI.scene.width) * 2 - 1;
-			transformOrigin[i * 2 + 1] = ((rect.finalY + rect.origin.y) / SUI.scene.height) * 2 - 1;
-			scaleRotation[i * 3 + 0] = rect.scale.x;
-			scaleRotation[i * 3 + 1] = rect.scale.y;
-			scaleRotation[i * 3 + 2] = rect.rotation;
+			var bounds = new FastVector4(rect.left.position, rect.top.position, rect.right.position, rect.bottom.position);
+			bounds.x = (bounds.x + bounds.z) / 2;
+			bounds.y = (bounds.y + bounds.w) / 2;
 
-			rectBounds[i * 4 + 0] = rect.centerX;
-			rectBounds[i * 4 + 1] = rect.centerY;
-			rectBounds[i * 4 + 2] = rect.finalW;
-			rectBounds[i * 4 + 3] = rect.finalH;
-			rectAttrib[i * 2 + 0] = Math.min(rect.radius, Math.min(rect.finalW, rect.finalH) / 2);
+			rectBounds[i * 4 + 0] = bounds.x;
+			rectBounds[i * 4 + 1] = bounds.y;
+			rectBounds[i * 4 + 2] = bounds.z;
+			rectBounds[i * 4 + 3] = bounds.w;
+			rectAttrib[i * 2 + 0] = Math.min(rect.radius, Math.min(bounds.z, bounds.w) / 2);
 			rectAttrib[i * 2 + 1] = rect.softness;
 
 			if (rect.gradient != null) {
@@ -106,13 +101,6 @@ class RectPainter extends ElementPainter {
 
 	public override function draw(target:Canvas) {
 		setRects();
-		PainterShaders.rectPainterShader.draw(target, vertices, indices, [
-			transformOrigin,
-			scaleRotation,
-			rectBounds,
-			rectAttrib,
-			gradColors,
-			gradAttrib
-		]);
+		PainterShaders.rectPainterShader.draw(target, vertices, indices, [rectBounds, rectAttrib, gradColors, gradAttrib]);
 	}
 }
