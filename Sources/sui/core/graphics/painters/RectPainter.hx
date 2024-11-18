@@ -28,8 +28,10 @@ class RectPainter extends ElementPainter {
 			var rect:Rectangle = cast elements[i];
 
 			var bounds = new FastVector4(rect.left.position, rect.top.position, rect.right.position, rect.bottom.position);
-			bounds.x = (bounds.x + bounds.z) / 2;
-			bounds.y = (bounds.y + bounds.w) / 2;
+			bounds.z -= bounds.x;
+			bounds.w -= bounds.y;
+			bounds.x = bounds.x + bounds.z / 2;
+			bounds.y = bounds.y + bounds.w / 2;
 
 			rectBounds[i * 4 + 0] = bounds.x;
 			rectBounds[i * 4 + 1] = bounds.y;

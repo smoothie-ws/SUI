@@ -7,7 +7,6 @@ import sui.positioning.Alignment;
 import sui.positioning.Direction;
 import sui.positioning.Anchors.AnchorLine;
 
-@:structInit
 class RowLayout extends Element {
 	public var direction:Direction = Direction.TopToBottom;
 	public var alignment:Alignment = Alignment.HCenter | Alignment.VCenter;
