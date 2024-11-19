@@ -1,11 +1,20 @@
 package sui.elements;
 
+import sui.elements.batches.ElementBatch;
 import kha.FastFloat;
 // sui
 import sui.positioning.Anchors;
 
 class Element {
 	public function new() {}
+
+	public var batch:ElementBatch;
+	public var instanceID:Int;
+	public var batchType(get, never):Class<ElementBatch>;
+
+	function get_batchType():Class<ElementBatch> {
+		return null;
+	}
 
 	// anchors
 	public var anchors:Anchors = {};

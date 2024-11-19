@@ -3,10 +3,7 @@ package sui;
 import kha.Image;
 // sui
 import sui.elements.Element;
-import sui.elements.BatchableElement;
 import sui.elements.DrawableElement;
-import sui.elements.shapes.Rectangle;
-import sui.elements.batches.RectBatch;
 
 @:structInit
 class Scene extends DrawableElement {
@@ -14,24 +11,28 @@ class Scene extends DrawableElement {
 
 	var drawQueue:Array<DrawableElement> = [];
 
-	public inline function add(element:Element) {
-		addChild(element);
-		for (c in element.children)
-			add(c);
-
-		if (element is BatchableElement) {
+	inline function add(element:Element) {
+		if (element.batchType != null) {
 			var lastEl = cast drawQueue[drawQueue.length - 1];
 
-			if (element is Rectangle) {
-				if (lastEl is RectBatch && lastEl.children < 128)
-					lastEl.addChild(element);
-				else {
-					var batch = new RectBatch();
-					batch.addChild(element);
-					drawQueue.push(batch);
-				}
+			if (Type.getClass(lastEl) == element.batchType)
+				lastEl.addChild(element);
+			else {
+				var batch = Type.createInstance(element.batchType, null);
+				batch.add(cast element);
+				drawQueue.push(batch);
 			}
-		} else if (element is DrawableElement) {}
+		} else if (element is DrawableElement) {
+			drawQueue.push(cast element);
+		}
+		for (c in element.children)
+			add(c);
+	}
+
+	override inline function addChild(element:Element) {
+		children.push(element);
+		element.parent = this;
+		add(element);
 	};
 
 	override public inline function resize(w:Int, h:Int) {
