@@ -49,22 +49,26 @@ class SUI {
 				samplesPerPixel: samplesPerPixel
 			}
 		}, function(window:Window) {
-			SUI.window = window;
-			SUI.mouse = Mouse.get();
-			SUI.keyboard = Keyboard.get();
-
-			window.notifyOnResize(scene.resize);
-			scene.resize(window.width, window.height);
-			scene.constructTree();
-
+			init(window);
 			Assets.loadEverything(function() {
-				compileShaders();
-				startUpdates();
-
 				System.notifyOnFrames(function(frames:Array<Framebuffer>) {
 					render(frames[0].g2);
 				});
 			});
+		});
+	}
+
+	public static inline function init(window:Window) {
+		SUI.window = window;
+		SUI.mouse = Mouse.get();
+		SUI.keyboard = Keyboard.get();
+
+		window.notifyOnResize(scene.resize);
+		scene.resize(window.width, window.height);
+		scene.constructTree();
+		Assets.loadEverything(function() {
+			compileShaders();
+			startUpdates();
 		});
 	}
 
