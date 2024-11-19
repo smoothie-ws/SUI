@@ -10,6 +10,9 @@ import kha.Framebuffer;
 import kha.input.Mouse;
 import kha.input.Keyboard;
 import kha.graphics2.Graphics;
+#if debug
+import kha.FastFloat;
+#end
 // sui
 import sui.core.graphics.SUIShaders;
 
@@ -21,6 +24,11 @@ class SUI {
 	static var onUpdateListeners = [];
 	static var onRenderListeners = [];
 	static var updateTaskId:Int;
+	#if debug
+	static var fst:FastFloat = 0;
+	static var fpsCounter:Int = 0;
+	static var fps:Int = 0;
+	#end
 
 	static function set_cursor(cursor:MouseCursor):MouseCursor {
 		mouse.setSystemCursor(cursor);
@@ -36,30 +44,27 @@ class SUI {
 			height: height,
 			framebuffer: {samplesPerPixel: samplesPerPixel}
 		}, function(window:Window) {
-			init(window);
-			System.notifyOnFrames(function(frames:Array<Framebuffer>) {
-				render(frames[0].g2);
+			SUI.window = window;
+			SUI.mouse = Mouse.get();
+			SUI.keyboard = Keyboard.get();
+
+			window.notifyOnResize(scene.resize);
+			scene.resize(window.width, window.height);
+			scene.constructTree();
+
+			Assets.loadEverything(function() {
+				compileShaders();
+				startUpdates();
+
+				System.notifyOnFrames(function(frames:Array<Framebuffer>) {
+					render(frames[0].g2);
+				});
 			});
 		});
 	}
 
 	public static inline function stop() {
 		System.stop();
-	}
-
-	public static inline function init(window:Window) {
-		SUI.window = window;
-		SUI.mouse = Mouse.get();
-		SUI.keyboard = Keyboard.get();
-
-		window.notifyOnResize(scene.resize);
-		scene.resize(window.width, window.height);
-		scene.constructTree();
-
-		Assets.loadEverything(function() {
-			compileShaders();
-			startUpdates();
-		});
 	}
 
 	public static inline function render(g2:Graphics, ?clear:Bool = true, clearColor:Color = Color.Transparent) {
@@ -69,6 +74,21 @@ class SUI {
 
 		g2.begin(clear, clearColor);
 		g2.drawImage(scene.backbuffer, 0, 0);
+
+		#if debug
+		++ fpsCounter;
+		var t = System.time;
+		if (t - fst >= 1) {
+			fps = fpsCounter;
+			fpsCounter = 0;
+			fst = t;
+		}
+		g2.color = Color.White;
+		g2.font = Assets.fonts.get("Roboto_Regular");
+		g2.fontSize = 14;
+		g2.drawString('FPS: ${fps}', 5, 5);
+		#end
+
 		g2.end();
 	}
 

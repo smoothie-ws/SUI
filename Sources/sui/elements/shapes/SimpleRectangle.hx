@@ -1,9 +1,13 @@
 package sui.elements.shapes;
 
 import kha.Canvas;
+// sui
+import sui.effects.Border;
 
 class SimpleRectangle extends DrawableElement {
-	override public inline function draw(target:Canvas) {
+	public var border:Border = {};
+
+	override inline function draw(target:Canvas) {
 		var x = left.position;
 		var y = top.position;
 		var width = right.position - x;
@@ -11,5 +15,7 @@ class SimpleRectangle extends DrawableElement {
 
 		target.g2.color = color;
 		target.g2.fillRect(x, y, width, height);
+		target.g2.color = border.color;
+		target.g2.drawRect(x, y, width, height, border.width);
 	}
 }

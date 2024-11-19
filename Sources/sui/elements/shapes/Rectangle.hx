@@ -10,10 +10,4 @@ class Rectangle extends BatchableElement {
 	public var softness:FastFloat = 1;
 	public var radius:FastFloat = 0;
 	public var gradient:Gradient = null;
-
-	override function set_x(value:FastFloat):FastFloat {
-		x = value;
-		left.position = x;
-		return value;
-	}
 }

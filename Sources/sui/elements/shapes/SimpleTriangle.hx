@@ -9,7 +9,7 @@ class Triangle extends DrawableElement {
 	public var v2:FastVector2 = {x: 0., y: 0.}
 	public var v3:FastVector2 = {x: 0., y: 0.}
 
-	override function draw(target:Canvas) {
+	override inline function draw(target:Canvas) {
 		var x = left.position;
 		var y = right.position;
 
