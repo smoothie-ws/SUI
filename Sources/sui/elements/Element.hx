@@ -32,10 +32,10 @@ class Element {
 	}
 
 	// dimensions
-	@:isVar public var x(get, set):FastFloat;
-	@:isVar public var y(get, set):FastFloat;
-	@:isVar public var width(get, set):FastFloat;
-	@:isVar public var height(get, set):FastFloat;
+	@:isVar public var x(get, set):FastFloat = 0;
+	@:isVar public var y(get, set):FastFloat = 0;
+	@:isVar public var width(get, set):FastFloat = 0;
+	@:isVar public var height(get, set):FastFloat = 0;
 
 	inline function get_x():FastFloat {
 		return x;

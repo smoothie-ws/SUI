@@ -1,14 +1,13 @@
 package sui.elements.shapes;
 
-import kha.math.Vector2;
-// sui
-import sui.core.Element;
+import kha.Canvas;
+import kha.math.FastVector2;
 
 @:structInit
-class Polygon extends Element {
-	public var vertices:Array<Vector2> = [{}];
+class Polygon extends DrawableElement {
+	public var vertices:Array<FastVector2> = [{}];
 
-	override function draw() {
+	override function draw(target:Canvas) {
 		var iterator = vertices.iterator();
 
 		if (!iterator.hasNext())
@@ -19,9 +18,10 @@ class Polygon extends Element {
 			return;
 		var v1 = iterator.next();
 
+		target.g2.color = color;
 		while (iterator.hasNext()) {
 			var v2 = iterator.next();
-			SUI.rawbuffer.g2.fillTriangle(v0.x + x, v0.y + y, v1.x + x, v1.y + y, v2.x + x, v2.y + y);
+			target.g2.fillTriangle(v0.x + x, v0.y + y, v1.x + x, v1.y + y, v2.x + x, v2.y + y);
 			v1 = v2;
 		}
 	}
