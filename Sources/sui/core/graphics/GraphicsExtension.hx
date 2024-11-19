@@ -7,7 +7,7 @@ import kha.graphics2.VerTextAlignment;
 import kha.graphics2.HorTextAlignment;
 
 /**
- * Copied directly from kha.graphics2.GraphicsExtension per the suggestions in the @:deprecated metadata.
+ * Copied directly from kha.graphics2.GraphicsExtension.
  */
 /**
  * Static extension functions for Graphics2.

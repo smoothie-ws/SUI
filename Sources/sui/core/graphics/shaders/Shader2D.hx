@@ -1,4 +1,4 @@
-package sui.core.graphics;
+package sui.core.graphics.shaders;
 
 import kha.Canvas;
 import kha.graphics4.PipelineState;
@@ -15,7 +15,7 @@ class Shader2D {
 
 	public function new() {}
 
-	public final inline function compile(vert:VertexShader, frag:FragmentShader) {
+	public inline function compile(vert:VertexShader, frag:FragmentShader) {
 		initStructure();
 		initPipeline(vert, frag);
 		getUniforms();
@@ -42,7 +42,7 @@ class Shader2D {
 
 	function setUniforms(target:Canvas, ?uniforms:Dynamic) {}
 
-	public final inline function draw(target:Canvas, vertices:VertexBuffer, indices:IndexBuffer, ?uniforms:Dynamic):Void {
+	public inline function draw(target:Canvas, vertices:VertexBuffer, indices:IndexBuffer, ?uniforms:Dynamic):Void {
 		target.g4.setPipeline(pipeline);
 		target.g4.setVertexBuffer(vertices);
 		target.g4.setIndexBuffer(indices);

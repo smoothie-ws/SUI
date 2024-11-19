@@ -11,7 +11,7 @@ import kha.input.Mouse;
 import kha.input.Keyboard;
 import kha.graphics2.Graphics;
 // sui
-import sui.core.graphics.painters.shaders.PainterShaders;
+import sui.core.graphics.SUIShaders;
 
 class SUI {
 	public static var window:Window;
@@ -65,7 +65,7 @@ class SUI {
 	public static inline function render(g2:Graphics, ?clear:Bool = true, clearColor:Color = Color.Transparent) {
 		for (f in onRenderListeners)
 			f();
-		scene.draw();
+		scene.draw(null);
 
 		g2.begin(clear, clearColor);
 		g2.drawImage(scene.backbuffer, 0, 0);
@@ -73,7 +73,7 @@ class SUI {
 	}
 
 	public static inline function compileShaders() {
-		PainterShaders.rectPainterShader.compile(Shaders.sui_rect_vert, Shaders.sui_rect_frag);
+		SUIShaders.rectShader.compile(Shaders.sui_rect_vert, Shaders.sui_rect_frag);
 	}
 
 	public static inline function update() {

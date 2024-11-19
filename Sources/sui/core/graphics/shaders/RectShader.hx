@@ -1,11 +1,11 @@
-package sui.core.graphics.painters.shaders;
+package sui.core.graphics.shaders;
 
 import kha.Canvas;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
 import kha.graphics4.ConstantLocation;
 
-class RectPainterShader extends Shader2D {
+class RectShader extends Shader2D {
 	var resolutionCL:ConstantLocation;
 	var rectBoundsCL:ConstantLocation;
 	var rectAttribCL:ConstantLocation;

@@ -1,4 +1,4 @@
-package sui.core.graphics.painters;
+package sui.elements.batches;
 
 import kha.math.FastVector4;
 import kha.Canvas;
@@ -7,25 +7,25 @@ import kha.graphics4.Usage;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.IndexBuffer;
 // sui
+import sui.core.graphics.SUIShaders;
 import sui.elements.shapes.Rectangle;
-import sui.core.graphics.painters.shaders.PainterShaders;
 
-class RectPainter extends ElementPainter {
+class RectBatch extends ElementBatch {
 	var rectBounds:Float32Array;
 	var rectAttrib:Float32Array;
 	var gradColors:Float32Array;
 	var gradAttrib:Float32Array;
 
-	public final inline function setRects() {
-		rectBounds = new Float32Array(elements.length * 4);
-		rectAttrib = new Float32Array(elements.length * 2);
-		gradColors = new Float32Array(elements.length * 4 * 2);
-		gradAttrib = new Float32Array(elements.length * 4);
+	public inline function setRects() {
+		rectBounds = new Float32Array(children.length * 4);
+		rectAttrib = new Float32Array(children.length * 2);
+		gradColors = new Float32Array(children.length * 4 * 2);
+		gradAttrib = new Float32Array(children.length * 4);
 
 		initVertices();
 
-		for (i in 0...elements.length) {
-			var rect:Rectangle = cast elements[i];
+		for (i in 0...children.length) {
+			var rect:Rectangle = cast children[i];
 
 			var bounds = new FastVector4(rect.left.position, rect.top.position, rect.right.position, rect.bottom.position);
 			bounds.z -= bounds.x;
@@ -66,10 +66,10 @@ class RectPainter extends ElementPainter {
 		}
 	}
 
-	final inline function initVertices() {
-		vertices = new VertexBuffer(elements.length * 4, PainterShaders.rectPainterShader.structure, Usage.StaticUsage);
+	inline function initVertices() {
+		vertices = new VertexBuffer(children.length * 4, SUIShaders.rectShader.structure, Usage.StaticUsage);
 		var v = vertices.lock();
-		for (i in 0...elements.length) {
+		for (i in 0...children.length) {
 			v[i * 12 + 0] = -1;
 			v[i * 12 + 1] = -1;
 			v[i * 12 + 2] = i;
@@ -88,9 +88,9 @@ class RectPainter extends ElementPainter {
 		}
 		vertices.unlock();
 
-		indices = new IndexBuffer(elements.length * 6, Usage.StaticUsage);
+		indices = new IndexBuffer(children.length * 6, Usage.StaticUsage);
 		var ind = indices.lock();
-		for (i in 0...elements.length) {
+		for (i in 0...children.length) {
 			ind[i * 6 + 0] = i * 4 + 0;
 			ind[i * 6 + 1] = i * 4 + 1;
 			ind[i * 6 + 2] = i * 4 + 2;
@@ -101,8 +101,8 @@ class RectPainter extends ElementPainter {
 		indices.unlock();
 	}
 
-	public override function draw(target:Canvas) {
+	override public inline function draw(target:Canvas) {
 		setRects();
-		PainterShaders.rectPainterShader.draw(target, vertices, indices, [rectBounds, rectAttrib, gradColors, gradAttrib]);
+		SUIShaders.rectShader.draw(target, vertices, indices, [rectBounds, rectAttrib, gradColors, gradAttrib]);
 	}
 }
