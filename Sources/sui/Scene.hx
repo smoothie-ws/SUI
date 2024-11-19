@@ -40,7 +40,7 @@ class Scene extends DrawableElement {
 		height = h;
 
 		var res = w > h ? w : h;
-		backbuffer = Image.createRenderTarget(res, res);
+		backbuffer = Image.createRenderTarget(res, res, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
 	}
 
 	public inline function update() {};

@@ -10,7 +10,7 @@ using sui.core.graphics.GraphicsExtension;
 class SimpleCircle extends DrawableElement {
 	public var border:Border = {};
 	public var radius:FastFloat = 0;
-	public var segments:Int = 16;
+	public var segments:Int = 64;
 
 	override inline function draw(target:Canvas) {
 		var x = left.position;

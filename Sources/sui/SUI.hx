@@ -17,6 +17,7 @@ import kha.FastFloat;
 import sui.core.graphics.SUIShaders;
 
 class SUI {
+	public static var options:SUIoptions = {samplesPerPixel: 1};
 	public static var window:Window;
 	public static var mouse:Mouse;
 	public static var keyboard:Keyboard;
@@ -37,12 +38,16 @@ class SUI {
 
 	public static var scene:Scene = {};
 
-	public static inline function start(?title:String = "SUI App", ?width:Int = 800, ?height:Int = 600, ?samplesPerPixel:Int = 1) {
+	public static inline function start(?title:String = "SUI App", ?width:Int = 800, ?height:Int = 600, ?vsync:Bool = true, ?samplesPerPixel:Int = 1) {
+		options.samplesPerPixel = samplesPerPixel;
 		System.start({
 			title: title,
 			width: width,
 			height: height,
-			framebuffer: {samplesPerPixel: samplesPerPixel}
+			framebuffer: {
+				verticalSync: vsync,
+				samplesPerPixel: samplesPerPixel
+			}
 		}, function(window:Window) {
 			SUI.window = window;
 			SUI.mouse = Mouse.get();
@@ -83,9 +88,11 @@ class SUI {
 			fpsCounter = 0;
 			fst = t;
 		}
-		g2.color = Color.White;
 		g2.font = Assets.fonts.get("Roboto_Regular");
 		g2.fontSize = 14;
+		g2.color = Color.Black;
+		g2.drawString('FPS: ${fps}', 6, 6);
+		g2.color = Color.White;
 		g2.drawString('FPS: ${fps}', 5, 5);
 		#end
 
@@ -125,4 +132,8 @@ class SUI {
 	public static inline function removeRenderListener(f:Void->Void) {
 		onRenderListeners.remove(f);
 	}
+}
+
+typedef SUIoptions = {
+	var samplesPerPixel:Int;
 }
