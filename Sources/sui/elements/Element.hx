@@ -1,7 +1,9 @@
 package sui.elements;
 
+import kha.math.FastMatrix4;
 import kha.FastFloat;
 import kha.math.FastVector2;
+import kha.arrays.Float32Array;
 // sui
 import sui.positioning.Anchors;
 import sui.elements.batches.ElementBatch;
@@ -88,16 +90,29 @@ class Element {
 
 	// transformation
 	public var origin:FastVector2 = {};
-	public var rotation:FastFloat = 0;
-	public var translation:FastVector2 = {};
-	public var scale:FastVector2 = {x: 1, y: 1};
+	public var transform:FastMatrix4 = new FastMatrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+
+	public function scale(x:FastFloat, y:FastFloat) {
+		transform = transform.multmat(FastMatrix4.translation(-origin.x, -origin.y, 0))
+			.multmat(FastMatrix4.scale(x, y, 1))
+			.multmat(FastMatrix4.translation(origin.x, origin.y, 0));
+	}
+
+	public function rotate(value:FastFloat) {
+		transform = transform.multmat(FastMatrix4.translation(-origin.x, -origin.y, 0))
+			.multmat(FastMatrix4.rotationZ(value))
+			.multmat(FastMatrix4.translation(origin.x, origin.y, 0));
+	}
+
+	public function translate(x:FastFloat, y:FastFloat) {
+		transform = transform.multmat(FastMatrix4.translation(x, y, 0));
+	}
 
 	public var opacity:FastFloat = 1;
 	public var parent:Element = null;
 	public var children:Array<Element> = [];
 	public var visible:Bool = true;
 	public var enabled:Bool = true;
-	public var clip:Bool = true;
 
 	public var finalEnabled(get, never):Bool;
 	public var finalOpacity(get, never):FastFloat;

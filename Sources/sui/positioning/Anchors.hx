@@ -71,7 +71,12 @@ class Anchors {
 
 @:structInit
 class AnchorLine {
-	public var isBinded:Bool = false;
+	@:isVar public var isBinded(get, null):Bool = false;
+
+	inline function get_isBinded():Bool {
+		return isBinded;
+	}
+
 	var _m:Int;
 	var _C:Array<AnchorLine> = [];
 
