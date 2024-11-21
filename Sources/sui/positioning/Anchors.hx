@@ -10,7 +10,7 @@ class Anchors {
 	@:isVar public var left(get, set):AnchorLine = {_m: 1};
 	@:isVar public var right(get, set):AnchorLine = {_m: -1};
 	@:isVar public var bottom(get, set):AnchorLine = {_m: -1};
-	@:isVar public var margins(get, set):Float = 0;
+	@:isVar public var margins(get, set):FastFloat = 0;
 
 	inline function get_top() {
 		return top;
@@ -52,7 +52,7 @@ class Anchors {
 		return margins;
 	}
 
-	public inline function set_margins(value:Float) {
+	public inline function set_margins(value:FastFloat) {
 		margins = value;
 		top.margin = value;
 		left.margin = value;
@@ -72,7 +72,6 @@ class Anchors {
 @:structInit
 class AnchorLine {
 	public var isBinded:Bool = false;
-
 	var _m:Int;
 	var _C:Array<AnchorLine> = [];
 
@@ -84,9 +83,9 @@ class AnchorLine {
 	}
 
 	inline function set_margin(value:FastFloat):FastFloat {
-		margin = value;
 		for (c in _C)
 			c.position += value - margin * _m;
+		margin = value;
 		return value;
 	}
 
@@ -103,6 +102,7 @@ class AnchorLine {
 
 	public inline function bind(c:AnchorLine) {
 		c.isBinded = true;
+		c.position = position;
 		_C.push(c);
 	}
 

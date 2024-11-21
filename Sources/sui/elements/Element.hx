@@ -1,9 +1,10 @@
 package sui.elements;
 
-import sui.elements.batches.ElementBatch;
 import kha.FastFloat;
+import kha.math.FastVector2;
 // sui
 import sui.positioning.Anchors;
+import sui.elements.batches.ElementBatch;
 
 class Element {
 	public function new() {}
@@ -84,6 +85,12 @@ class Element {
 		bottom.position = top.position + height;
 		return value;
 	}
+
+	// transformation
+	public var origin:FastVector2 = {};
+	public var rotation:FastFloat = 0;
+	public var translation:FastVector2 = {};
+	public var scale:FastVector2 = {x: 1, y: 1};
 
 	public var opacity:FastFloat = 1;
 	public var parent:Element = null;

@@ -39,5 +39,4 @@ void main() {
 
     vec4 col = gradCol();
     fragColor = vec4(col.rgb, col.a * rectMask);
-    // fragColor = vec4(fragCoord, 0.0, 1.0);
 }
