@@ -1,6 +1,5 @@
 package sui.elements.batches;
 
-import kha.math.FastVector4;
 import kha.Canvas;
 import kha.arrays.Float32Array;
 import kha.graphics4.Usage;
@@ -8,65 +7,46 @@ import kha.graphics4.VertexBuffer;
 import kha.graphics4.IndexBuffer;
 // sui
 import sui.core.graphics.SUIShaders;
-import sui.elements.shapes.Rectangle;
 
 class RectBatch extends ElementBatch {
-	var rectBounds:Float32Array;
-	var rectAttrib:Float32Array;
-	var gradColors:Float32Array;
-	var gradAttrib:Float32Array;
+	public var rectBounds:Float32Array;
+	public var rectAttrib:Float32Array;
+	public var gradColors:Float32Array;
+	public var gradAttrib:Float32Array;
 
-	public inline function setRects() {
+	override inline function addChild(element:Element) {
+		element.instanceID = children.push(element) - 1;
+
+		var _rectBounds = rectBounds;
+		var _rectAttrib = rectAttrib;
+		var _gradColors = gradColors;
+		var _gradAttrib = gradAttrib;
 		rectBounds = new Float32Array(children.length * 4);
 		rectAttrib = new Float32Array(children.length * 2);
-		gradColors = new Float32Array(children.length * 4 * 2);
+		gradColors = new Float32Array(children.length * 8);
 		gradAttrib = new Float32Array(children.length * 4);
 
-		initVertices();
-
-		for (i in 0...children.length) {
-			var rect:Rectangle = cast children[i];
-
-			var bounds = new FastVector4(rect.left.position, rect.top.position, rect.right.position, rect.bottom.position);
-			bounds.z -= bounds.x;
-			bounds.w -= bounds.y;
-			bounds.x = bounds.x + bounds.z / 2;
-			bounds.y = bounds.y + bounds.w / 2;
-
-			rectBounds[i * 4 + 0] = bounds.x;
-			rectBounds[i * 4 + 1] = bounds.y;
-			rectBounds[i * 4 + 2] = bounds.z;
-			rectBounds[i * 4 + 3] = bounds.w;
-			rectAttrib[i * 2 + 0] = Math.min(rect.radius, Math.min(bounds.z, bounds.w) / 2);
-			rectAttrib[i * 2 + 1] = rect.softness;
-
-			if (rect.gradient != null) {
-				gradColors[i * 4 + 0] = rect.gradient.end.R;
-				gradColors[i * 4 + 1] = rect.gradient.end.G;
-				gradColors[i * 4 + 2] = rect.gradient.end.B;
-				gradColors[i * 4 + 3] = rect.gradient.end.A * rect.finalOpacity;
-				gradColors[i * 4 + 4] = rect.gradient.start.R;
-				gradColors[i * 4 + 5] = rect.gradient.start.G;
-				gradColors[i * 4 + 6] = rect.gradient.start.B;
-				gradColors[i * 4 + 7] = rect.gradient.start.A * rect.finalOpacity;
-				gradAttrib[i * 4 + 0] = rect.gradient.alignByElement ? 1.0 : 2.0;
-				gradAttrib[i * 4 + 1] = rect.gradient.angle;
-				gradAttrib[i * 4 + 2] = rect.gradient.position;
-				gradAttrib[i * 4 + 3] = rect.gradient.scale;
-			} else {
-				gradColors[i * 4 + 0] = rect.color.R;
-				gradColors[i * 4 + 1] = rect.color.G;
-				gradColors[i * 4 + 2] = rect.color.B;
-				gradColors[i * 4 + 3] = rect.color.A * rect.finalOpacity;
-				gradColors[i * 4 + 4] = rect.color.R;
-				gradColors[i * 4 + 5] = rect.color.G;
-				gradColors[i * 4 + 6] = rect.color.B;
-				gradColors[i * 4 + 7] = rect.color.A * rect.finalOpacity;
-			}
+		for (i in 0...children.length - 1) {
+			rectBounds[i * 4 + 0] = _rectBounds[i * 4 + 0];
+			rectBounds[i * 4 + 1] = _rectBounds[i * 4 + 1];
+			rectBounds[i * 4 + 2] = _rectBounds[i * 4 + 2];
+			rectBounds[i * 4 + 3] = _rectBounds[i * 4 + 3];
+			rectAttrib[i * 2 + 0] = _rectAttrib[i * 2 + 0];
+			rectAttrib[i * 2 + 1] = _rectAttrib[i * 2 + 1];
+			gradColors[i * 4 + 0] = _gradColors[i * 4 + 0];
+			gradColors[i * 4 + 1] = _gradColors[i * 4 + 1];
+			gradColors[i * 4 + 2] = _gradColors[i * 4 + 2];
+			gradColors[i * 4 + 3] = _gradColors[i * 4 + 3];
+			gradColors[i * 4 + 4] = _gradColors[i * 4 + 4];
+			gradColors[i * 4 + 5] = _gradColors[i * 4 + 5];
+			gradColors[i * 4 + 6] = _gradColors[i * 4 + 6];
+			gradColors[i * 4 + 7] = _gradColors[i * 4 + 7];
+			gradAttrib[i * 4 + 0] = _gradAttrib[i * 4 + 0];
+			gradAttrib[i * 4 + 1] = _gradAttrib[i * 4 + 1];
+			gradAttrib[i * 4 + 2] = _gradAttrib[i * 4 + 2];
+			gradAttrib[i * 4 + 3] = _gradAttrib[i * 4 + 3];
 		}
-	}
 
-	inline function initVertices() {
 		vertices = new VertexBuffer(children.length * 4, SUIShaders.rectShader.structure, Usage.StaticUsage);
 		var v = vertices.lock();
 		for (i in 0...children.length) {
@@ -102,7 +82,6 @@ class RectBatch extends ElementBatch {
 	}
 
 	override public inline function draw(target:Canvas) {
-		setRects();
 		SUIShaders.rectShader.draw(target, vertices, indices, [rectBounds, rectAttrib, gradColors, gradAttrib]);
 	}
 }

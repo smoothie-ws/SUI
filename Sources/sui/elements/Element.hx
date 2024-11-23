@@ -1,6 +1,5 @@
 package sui.elements;
 
-import kha.math.FastMatrix4;
 import kha.FastFloat;
 import kha.math.FastVector2;
 import kha.arrays.Float32Array;
@@ -9,8 +8,6 @@ import sui.positioning.Anchors;
 import sui.elements.batches.ElementBatch;
 
 class Element {
-	public function new() {}
-
 	public var batch:ElementBatch;
 	public var instanceID:Int;
 	public var batchType(get, never):Class<ElementBatch>;
@@ -20,93 +17,57 @@ class Element {
 	}
 
 	// anchors
-	public var anchors:Anchors = {};
-	@:isVar public var top(get, never):AnchorLine = {_m: 1};
-	@:isVar public var left(get, never):AnchorLine = {_m: 1};
-	@:isVar public var right(get, never):AnchorLine = {_m: -1};
-	@:isVar public var bottom(get, never):AnchorLine = {_m: -1};
-
-	function get_top():AnchorLine {
-		return anchors.top.isBinded ? anchors.top : top;
-	}
-
-	function get_left():AnchorLine {
-		return anchors.left.isBinded ? anchors.left : left;
-	}
-
-	function get_right():AnchorLine {
-		return anchors.right.isBinded ? anchors.right : right;
-	}
-
-	function get_bottom() {
-		return anchors.bottom.isBinded ? anchors.bottom : bottom;
-	}
+	public var anchors:Anchors;
 
 	// dimensions
-	@:isVar public var x(get, set):FastFloat = 0;
-	@:isVar public var y(get, set):FastFloat = 0;
-	@:isVar public var width(get, set):FastFloat = 0;
-	@:isVar public var height(get, set):FastFloat = 0;
+	public var bounds = new Float32Array(4);
+	public var bounds_cache = new Float32Array(8);
+	public var x(get, set):FastFloat;
+	public var y(get, set):FastFloat;
+	public var width(get, set):FastFloat;
+	public var height(get, set):FastFloat;
 
 	function get_x():FastFloat {
-		return x;
+		return anchors.left.position;
 	}
 
 	function set_x(value:FastFloat):FastFloat {
-		x = value;
-		left.position = x;
+		anchors.left.position = x;
 		return value;
 	}
 
 	function get_y():FastFloat {
-		return y;
+		return anchors.top.position;
 	}
 
 	function set_y(value:FastFloat):FastFloat {
-		y = value;
-		top.position = y;
+		anchors.top.position = y;
 		return value;
 	}
 
 	function get_width():FastFloat {
-		return width;
+		return anchors.right.position - x;
 	}
 
 	function set_width(value:FastFloat):FastFloat {
-		width = value;
-		right.position = left.position + width;
+		anchors.right.position = x + value;
 		return value;
 	}
 
 	function get_height():FastFloat {
-		return height;
+		return anchors.bottom.position - y;
 	}
 
 	function set_height(value:FastFloat):FastFloat {
-		height = value;
-		bottom.position = top.position + height;
+		anchors.bottom.position = y + value;
 		return value;
 	}
 
 	// transformation
 	public var origin:FastVector2 = {};
-	public var transform:FastMatrix4 = new FastMatrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-
-	public function scale(x:FastFloat, y:FastFloat) {
-		transform = transform.multmat(FastMatrix4.translation(-origin.x, -origin.y, 0))
-			.multmat(FastMatrix4.scale(x, y, 1))
-			.multmat(FastMatrix4.translation(origin.x, origin.y, 0));
-	}
-
-	public function rotate(value:FastFloat) {
-		transform = transform.multmat(FastMatrix4.translation(-origin.x, -origin.y, 0))
-			.multmat(FastMatrix4.rotationZ(value))
-			.multmat(FastMatrix4.translation(origin.x, origin.y, 0));
-	}
-
-	public function translate(x:FastFloat, y:FastFloat) {
-		transform = transform.multmat(FastMatrix4.translation(x, y, 0));
-	}
+	public var scale:FastVector2 = {x: 1, y: 1};
+	public var rotation:FastFloat = 0;
+	public var translation:FastVector2 = {};
 
 	public var opacity:FastFloat = 1;
 	public var parent:Element = null;
@@ -123,6 +84,27 @@ class Element {
 
 	function get_finalOpacity():FastFloat {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
+	}
+
+	public function new() {
+		anchors = new Anchors(this);
+	}
+
+	public inline function rebuildBounds() {
+		var rotCos = Math.cos(rotation);
+		var rotSin = Math.sin(rotation);
+
+		bounds_cache[0] = (bounds[0] - origin.x) * scale.x + origin.x + translation.x;
+		bounds_cache[1] = (bounds[1] - origin.y) * scale.y + origin.y + translation.y;
+
+		bounds_cache[2] = (bounds[2] - origin.x) * scale.x + origin.x + translation.x;
+		bounds_cache[3] = (bounds[1] - origin.y) * scale.y + origin.y + translation.y;
+
+		bounds_cache[4] = (bounds[2] - origin.x) * scale.x + origin.x + translation.x;
+		bounds_cache[5] = (bounds[3] - origin.y) * scale.y + origin.y + translation.y;
+
+		bounds_cache[6] = (bounds[0] - origin.x) * scale.x + origin.x + translation.x;
+		bounds_cache[7] = (bounds[3] - origin.y) * scale.y + origin.y + translation.y;
 	}
 
 	public function resize(w:Int, h:Int) {

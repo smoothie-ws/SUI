@@ -11,6 +11,12 @@ class Scene extends DrawableElement {
 
 	var drawQueue:Array<DrawableElement> = [];
 
+	override inline function addChild(element:Element) {
+		children.push(element);
+		element.parent = this;
+		add(element);
+	};
+
 	inline function add(element:Element) {
 		if (element.batchType != null) {
 			var lastEl = cast drawQueue[drawQueue.length - 1];
@@ -19,7 +25,7 @@ class Scene extends DrawableElement {
 				lastEl.addChild(element);
 			else {
 				var batch = Type.createInstance(element.batchType, null);
-				batch.add(cast element);
+				batch.addChild(element);
 				drawQueue.push(batch);
 			}
 		} else if (element is DrawableElement) {
@@ -28,12 +34,6 @@ class Scene extends DrawableElement {
 		for (c in element.children)
 			add(c);
 	}
-
-	override inline function addChild(element:Element) {
-		children.push(element);
-		element.parent = this;
-		add(element);
-	};
 
 	override public inline function resize(w:Int, h:Int) {
 		width = w;

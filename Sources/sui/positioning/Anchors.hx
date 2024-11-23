@@ -6,10 +6,24 @@ import sui.elements.Element;
 
 @:structInit
 class Anchors {
-	@:isVar public var top(get, set):AnchorLine = {_m: 1};
-	@:isVar public var left(get, set):AnchorLine = {_m: 1};
-	@:isVar public var right(get, set):AnchorLine = {_m: -1};
-	@:isVar public var bottom(get, set):AnchorLine = {_m: -1};
+	var _el:Element;
+
+	public inline function new(element:Element) {
+		_el = element;
+	}
+
+	@:isVar public var top(get, set):AnchorLine = {
+		_m: 1
+	};
+	@:isVar public var left(get, set):AnchorLine = {
+		_m: 1
+	};
+	@:isVar public var right(get, set):AnchorLine = {
+		_m: -1
+	};
+	@:isVar public var bottom(get, set):AnchorLine = {
+		_m: -1
+	};
 	@:isVar public var margins(get, set):FastFloat = 0;
 
 	inline function get_top() {
@@ -17,7 +31,7 @@ class Anchors {
 	}
 
 	inline function set_top(value:AnchorLine) {
-		value.bind(top);
+		top.bindTo(value);
 		return value;
 	}
 
@@ -26,7 +40,7 @@ class Anchors {
 	}
 
 	inline function set_left(value:AnchorLine) {
-		value.bind(left);
+		left.bindTo(value);
 		return value;
 	}
 
@@ -35,7 +49,7 @@ class Anchors {
 	}
 
 	inline function set_right(value:AnchorLine) {
-		value.bind(right);
+		right.bindTo(value);
 		return value;
 	}
 
@@ -44,7 +58,7 @@ class Anchors {
 	}
 
 	inline function set_bottom(value:AnchorLine) {
-		value.bind(bottom);
+		bottom.bindTo(value);
 		return value;
 	}
 
@@ -62,21 +76,16 @@ class Anchors {
 	}
 
 	public inline function fill(element:Element) {
-		top = element.top;
-		left = element.left;
-		right = element.right;
-		bottom = element.bottom;
+		top = element.anchors.top;
+		left = element.anchors.left;
+		right = element.anchors.right;
+		bottom = element.anchors.bottom;
 	}
 }
 
 @:structInit
 class AnchorLine {
-	@:isVar public var isBinded(get, null):Bool = false;
-
-	inline function get_isBinded():Bool {
-		return isBinded;
-	}
-
+	var _p:AnchorLine = null;
 	var _m:Int;
 	var _C:Array<AnchorLine> = [];
 
@@ -89,7 +98,7 @@ class AnchorLine {
 
 	inline function set_margin(value:FastFloat):FastFloat {
 		for (c in _C)
-			c.position += value - margin * _m;
+			c.position += (value - margin) * _m;
 		margin = value;
 		return value;
 	}
@@ -105,14 +114,19 @@ class AnchorLine {
 		return value;
 	}
 
+	public inline function bindTo(p:AnchorLine) {
+		p.bind(this);
+	}
+
 	public inline function bind(c:AnchorLine) {
-		c.isBinded = true;
 		c.position = position;
+		c._p = this;
 		_C.push(c);
 	}
 
-	public inline function unBind(c:AnchorLine) {
-		c.isBinded = false;
-		_C.remove(c);
+	public inline function unbind() {
+		if (_p != null)
+			_p._C.remove(this);
+		_p = null;
 	}
 }
