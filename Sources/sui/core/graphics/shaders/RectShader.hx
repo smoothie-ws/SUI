@@ -9,8 +9,7 @@ class RectShader extends Shader2D {
 	var resolutionCL:ConstantLocation;
 	var rectBoundsCL:ConstantLocation;
 	var rectAttribCL:ConstantLocation;
-	var gradColorsCL:ConstantLocation;
-	var gradAttribCL:ConstantLocation;
+	var rectColorsCL:ConstantLocation;
 
 	override inline function initStructure() {
 		structure = new VertexStructure();
@@ -21,15 +20,13 @@ class RectShader extends Shader2D {
 		resolutionCL = pipeline.getConstantLocation("uResolution");
 		rectBoundsCL = pipeline.getConstantLocation("uRectBounds");
 		rectAttribCL = pipeline.getConstantLocation("uRectAttrib");
-		gradColorsCL = pipeline.getConstantLocation("uGradColors");
-		gradAttribCL = pipeline.getConstantLocation("uGradAttrib");
+		rectColorsCL = pipeline.getConstantLocation("uRectColors");
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
 		target.g4.setFloat4(resolutionCL, target.width, target.height, SUI.scene.width, SUI.scene.height);
 		target.g4.setFloats(rectBoundsCL, uniforms[0]);
 		target.g4.setFloats(rectAttribCL, uniforms[1]);
-		target.g4.setFloats(gradColorsCL, uniforms[2]);
-		target.g4.setFloats(gradAttribCL, uniforms[3]);
+		target.g4.setFloats(rectColorsCL, uniforms[2]);
 	}
 }

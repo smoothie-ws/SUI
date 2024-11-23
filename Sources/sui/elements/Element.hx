@@ -1,5 +1,6 @@
 package sui.elements;
 
+import kha.math.FastVector4;
 import kha.FastFloat;
 import kha.math.FastVector2;
 // sui
@@ -19,17 +20,27 @@ class Element {
 	public var anchors:Anchors;
 
 	// dimensions
+	public var bounds(get, never):FastVector4;
 	public var x(get, set):FastFloat;
 	public var y(get, set):FastFloat;
 	public var width(get, set):FastFloat;
 	public var height(get, set):FastFloat;
+
+	function get_bounds():FastVector4 {
+		return {
+			x: anchors.left.position,
+			y: anchors.top.position,
+			z: anchors.right.position,
+			w: anchors.bottom.position
+		};
+	}
 
 	function get_x():FastFloat {
 		return anchors.left.position;
 	}
 
 	function set_x(value:FastFloat):FastFloat {
-		anchors.left.position = x;
+		anchors.left.position = value;
 		return value;
 	}
 
@@ -38,7 +49,7 @@ class Element {
 	}
 
 	function set_y(value:FastFloat):FastFloat {
-		anchors.top.position = y;
+		anchors.top.position = value;
 		return value;
 	}
 

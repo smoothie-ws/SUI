@@ -7,25 +7,45 @@ import kha.graphics4.VertexBuffer;
 import kha.graphics4.IndexBuffer;
 // sui
 import sui.core.graphics.SUIShaders;
+import sui.elements.shapes.Rectangle;
 
 class RectBatch extends ElementBatch {
 	public var rectBounds:Float32Array;
 	public var rectAttrib:Float32Array;
-	public var gradColors:Float32Array;
-	public var gradAttrib:Float32Array;
+	public var rectColors:Float32Array;
+
+	inline function pushRect(rect:Rectangle) {
+		var i = rect.instanceID;
+		var o = rect.finalOpacity;
+		var b = rect.bounds;
+		b.z -= b.x;
+		b.w -= b.y;
+		b.x += b.z / 2;
+		b.y += b.w / 2;
+
+		rectBounds[i * 4 + 0] = b.x;
+		rectBounds[i * 4 + 1] = b.y;
+		rectBounds[i * 4 + 2] = b.z;
+		rectBounds[i * 4 + 3] = b.w;
+		rectAttrib[i * 2 + 0] = rect.radius;
+		rectAttrib[i * 2 + 1] = rect.softness;
+		rectColors[i * 4 + 0] = rect.color.R;
+		rectColors[i * 4 + 1] = rect.color.G;
+		rectColors[i * 4 + 2] = rect.color.B;
+		rectColors[i * 4 + 3] = rect.color.A * o;
+	}
 
 	override inline function addChild(element:Element) {
-		element.batch = this;
-		element.instanceID = children.push(element) - 1;
+		var rect:Rectangle = cast element;
+		rect.batch = this;
+		rect.instanceID = children.push(element) - 1;
 
 		var _rectBounds = rectBounds;
 		var _rectAttrib = rectAttrib;
-		var _gradColors = gradColors;
-		var _gradAttrib = gradAttrib;
+		var _rectColors = rectColors;
 		rectBounds = new Float32Array(children.length * 4);
 		rectAttrib = new Float32Array(children.length * 2);
-		gradColors = new Float32Array(children.length * 8);
-		gradAttrib = new Float32Array(children.length * 4);
+		rectColors = new Float32Array(children.length * 4);
 
 		for (i in 0...children.length - 1) {
 			rectBounds[i * 4 + 0] = _rectBounds[i * 4 + 0];
@@ -34,19 +54,13 @@ class RectBatch extends ElementBatch {
 			rectBounds[i * 4 + 3] = _rectBounds[i * 4 + 3];
 			rectAttrib[i * 2 + 0] = _rectAttrib[i * 2 + 0];
 			rectAttrib[i * 2 + 1] = _rectAttrib[i * 2 + 1];
-			gradColors[i * 4 + 0] = _gradColors[i * 4 + 0];
-			gradColors[i * 4 + 1] = _gradColors[i * 4 + 1];
-			gradColors[i * 4 + 2] = _gradColors[i * 4 + 2];
-			gradColors[i * 4 + 3] = _gradColors[i * 4 + 3];
-			gradColors[i * 4 + 4] = _gradColors[i * 4 + 4];
-			gradColors[i * 4 + 5] = _gradColors[i * 4 + 5];
-			gradColors[i * 4 + 6] = _gradColors[i * 4 + 6];
-			gradColors[i * 4 + 7] = _gradColors[i * 4 + 7];
-			gradAttrib[i * 4 + 0] = _gradAttrib[i * 4 + 0];
-			gradAttrib[i * 4 + 1] = _gradAttrib[i * 4 + 1];
-			gradAttrib[i * 4 + 2] = _gradAttrib[i * 4 + 2];
-			gradAttrib[i * 4 + 3] = _gradAttrib[i * 4 + 3];
+			rectColors[i * 4 + 0] = _rectColors[i * 4 + 0];
+			rectColors[i * 4 + 1] = _rectColors[i * 4 + 1];
+			rectColors[i * 4 + 2] = _rectColors[i * 4 + 2];
+			rectColors[i * 4 + 3] = _rectColors[i * 4 + 3];
 		}
+
+		pushRect(rect);
 	}
 
 	override public inline function draw(target:Canvas) {
@@ -83,6 +97,7 @@ class RectBatch extends ElementBatch {
 		}
 		indices.unlock();
 
-		SUIShaders.rectShader.draw(target, vertices, indices, [rectBounds, rectAttrib, gradColors, gradAttrib]);
+		trace(rectBounds[0], rectBounds[1], rectBounds[2], rectBounds[3]);
+		SUIShaders.rectShader.draw(target, vertices, indices, [rectBounds, rectAttrib, rectColors]);
 	}
 }

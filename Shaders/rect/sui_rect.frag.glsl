@@ -4,9 +4,8 @@
 
 uniform vec4 uResolution;
 uniform vec4 uRectBounds[BATCH_SIZE];
-uniform vec2 uRectAttrib[BATCH_SIZE]; // [radius, softness]
-uniform vec4 uGradColors[BATCH_SIZE * 2];
-uniform vec4 uGradAttrib[BATCH_SIZE]; // [align_by_element, angle, offset, scale]
+uniform vec2 uRectAttrib[BATCH_SIZE]; // packed values: [radius, softness]
+uniform vec4 uRectColors[BATCH_SIZE];
 
 in vec2 fragCoord;
 flat in int ID;
@@ -15,17 +14,6 @@ out vec4 fragColor;
 float sdf(vec2 cp, vec2 si, float ra) {
     vec2 q = abs(cp) - si + ra;
     return min(max(q.x, q.y), 0) + length(max(q, 0)) - ra;
-}
-
-vec4 gradCol() {
-    vec2 c = fragCoord * (uResolution.xy / uResolution.zw);
-    if (uGradAttrib[ID][0] == 1.0) {
-        c -= (uRectBounds[ID].xy - uRectBounds[ID].zw / 2) / uResolution.zw;
-        c /= uRectBounds[ID].zw / uResolution.zw;
-    }
-    c -= uGradAttrib[ID][2];
-    float m = uGradAttrib[ID][2] + uGradAttrib[ID][3] * length(c) * cos(atan(c.y, -c.x) + radians(uGradAttrib[ID][1]));
-    return mix(uGradColors[ID], uGradColors[ID + 1], m);
 }
 
 void main() {
@@ -37,6 +25,5 @@ void main() {
     float rectDist = sdf(cp, si, uRectAttrib[ID][0]);
     float rectMask = 1.0 - smoothstep(-uRectAttrib[ID][1], uRectAttrib[ID][1], rectDist);
 
-    vec4 col = gradCol();
-    fragColor = vec4(col.rgb, col.a * rectMask);
+    fragColor = vec4(uRectColors[ID].rgb, uRectColors[ID].a * rectMask);
 }
