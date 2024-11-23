@@ -15,6 +15,7 @@ class RectBatch extends ElementBatch {
 	public var gradAttrib:Float32Array;
 
 	override inline function addChild(element:Element) {
+		element.batch = this;
 		element.instanceID = children.push(element) - 1;
 
 		var _rectBounds = rectBounds;
@@ -46,7 +47,9 @@ class RectBatch extends ElementBatch {
 			gradAttrib[i * 4 + 2] = _gradAttrib[i * 4 + 2];
 			gradAttrib[i * 4 + 3] = _gradAttrib[i * 4 + 3];
 		}
+	}
 
+	override public inline function draw(target:Canvas) {
 		vertices = new VertexBuffer(children.length * 4, SUIShaders.rectShader.structure, Usage.StaticUsage);
 		var v = vertices.lock();
 		for (i in 0...children.length) {
@@ -79,9 +82,7 @@ class RectBatch extends ElementBatch {
 			ind[i * 6 + 5] = i * 4 + 0;
 		}
 		indices.unlock();
-	}
 
-	override public inline function draw(target:Canvas) {
 		SUIShaders.rectShader.draw(target, vertices, indices, [rectBounds, rectAttrib, gradColors, gradAttrib]);
 	}
 }

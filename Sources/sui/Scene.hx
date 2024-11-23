@@ -5,11 +5,13 @@ import kha.Image;
 import sui.elements.Element;
 import sui.elements.DrawableElement;
 
+using sui.core.utils.ArrayExtension;
+
 @:structInit
 class Scene extends DrawableElement {
 	public var backbuffer:Image = null;
 
-	var drawQueue:Array<DrawableElement> = [];
+	public var drawQueue:Array<DrawableElement> = [];
 
 	override inline function addChild(element:Element) {
 		children.push(element);
@@ -17,10 +19,9 @@ class Scene extends DrawableElement {
 		add(element);
 	};
 
-	inline function add(element:Element) {
+	function add(element:Element) {
 		if (element.batchType != null) {
-			var lastEl = cast drawQueue[drawQueue.length - 1];
-
+			var lastEl = cast drawQueue.last();
 			if (Type.getClass(lastEl) == element.batchType)
 				lastEl.addChild(element);
 			else {

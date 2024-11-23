@@ -92,4 +92,32 @@ class Rectangle extends Element {
 
 		return gradient;
 	}
+
+	override inline function set_x(value:FastFloat):FastFloat {
+		var b = cast batch;
+		b.rectBounds[instanceID * 4 + 0] = value;
+		anchors.left.position = x;
+		return value;
+	}
+
+	override inline function set_y(value:FastFloat):FastFloat {
+		var b = cast batch;
+		b.rectBounds[instanceID * 4 + 1] = value;
+		anchors.top.position = y;
+		return value;
+	}
+
+	override inline function set_width(value:FastFloat):FastFloat {
+		var b = cast batch;
+		b.rectBounds[instanceID * 4 + 2] = value;
+		anchors.right.position = x + value;
+		return value;
+	}
+
+	override inline function set_height(value:FastFloat):FastFloat {
+		var b = cast batch;
+		b.rectBounds[instanceID * 4 + 3] = value;
+		anchors.bottom.position = y + value;
+		return value;
+	}
 }

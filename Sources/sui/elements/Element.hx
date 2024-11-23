@@ -2,7 +2,6 @@ package sui.elements;
 
 import kha.FastFloat;
 import kha.math.FastVector2;
-import kha.arrays.Float32Array;
 // sui
 import sui.positioning.Anchors;
 import sui.elements.batches.ElementBatch;
@@ -20,8 +19,6 @@ class Element {
 	public var anchors:Anchors;
 
 	// dimensions
-	public var bounds = new Float32Array(4);
-	public var bounds_cache = new Float32Array(8);
 	public var x(get, set):FastFloat;
 	public var y(get, set):FastFloat;
 	public var width(get, set):FastFloat;
@@ -88,23 +85,6 @@ class Element {
 
 	public function new() {
 		anchors = new Anchors(this);
-	}
-
-	public inline function rebuildBounds() {
-		var rotCos = Math.cos(rotation);
-		var rotSin = Math.sin(rotation);
-
-		bounds_cache[0] = (bounds[0] - origin.x) * scale.x + origin.x + translation.x;
-		bounds_cache[1] = (bounds[1] - origin.y) * scale.y + origin.y + translation.y;
-
-		bounds_cache[2] = (bounds[2] - origin.x) * scale.x + origin.x + translation.x;
-		bounds_cache[3] = (bounds[1] - origin.y) * scale.y + origin.y + translation.y;
-
-		bounds_cache[4] = (bounds[2] - origin.x) * scale.x + origin.x + translation.x;
-		bounds_cache[5] = (bounds[3] - origin.y) * scale.y + origin.y + translation.y;
-
-		bounds_cache[6] = (bounds[0] - origin.x) * scale.x + origin.x + translation.x;
-		bounds_cache[7] = (bounds[3] - origin.y) * scale.y + origin.y + translation.y;
 	}
 
 	public function resize(w:Int, h:Int) {

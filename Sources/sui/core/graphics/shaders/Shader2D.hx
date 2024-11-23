@@ -13,12 +13,8 @@ class Shader2D {
 	public var pipeline:PipelineState;
 	public var structure:VertexStructure;
 
-	public function new() {}
-
-	public inline function compile(vert:VertexShader, frag:FragmentShader) {
+	public inline function new() {
 		initStructure();
-		initPipeline(vert, frag);
-		getUniforms();
 	}
 
 	function initStructure() {
@@ -26,7 +22,7 @@ class Shader2D {
 		structure.add("vertCoord", VertexData.Float32_2X);
 	}
 
-	function initPipeline(vert:VertexShader, frag:FragmentShader) {
+	public inline function compile(vert:VertexShader, frag:FragmentShader) {
 		pipeline = new PipelineState();
 		pipeline.inputLayout = [structure];
 		pipeline.vertexShader = vert;
@@ -36,6 +32,7 @@ class Shader2D {
 		pipeline.blendSource = SourceAlpha;
 		pipeline.blendDestination = InverseSourceAlpha;
 		pipeline.compile();
+		getUniforms();
 	}
 
 	function getUniforms() {}

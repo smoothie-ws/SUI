@@ -17,7 +17,7 @@ import kha.FastFloat;
 import sui.core.graphics.SUIShaders;
 
 class SUI {
-	public static var options:SUIoptions = {samplesPerPixel: 1};
+	public static var options:SUIoptions = {vsync: true, samplesPerPixel: 1};
 	public static var window:Window;
 	public static var mouse:Mouse;
 	public static var keyboard:Keyboard;
@@ -39,6 +39,7 @@ class SUI {
 	public static var scene:Scene = {};
 
 	public static inline function start(?title:String = "SUI App", ?width:Int = 800, ?height:Int = 600, ?vsync:Bool = true, ?samplesPerPixel:Int = 1) {
+		options.vsync = vsync;
 		options.samplesPerPixel = samplesPerPixel;
 		System.start({
 			title: title,
@@ -139,5 +140,6 @@ class SUI {
 }
 
 typedef SUIoptions = {
+	var vsync:Bool;
 	var samplesPerPixel:Int;
 }
