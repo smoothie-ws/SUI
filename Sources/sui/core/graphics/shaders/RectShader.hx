@@ -24,7 +24,7 @@ class RectShader extends Shader2D {
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
-		target.g4.setFloat4(resolutionCL, target.width, target.height, SUI.scene.width, SUI.scene.height);
+		target.g4.setFloat2(resolutionCL, target.width, target.height);
 		target.g4.setFloats(rectBoundsCL, uniforms[0]);
 		target.g4.setFloats(rectAttribCL, uniforms[1]);
 		target.g4.setFloats(rectColorsCL, uniforms[2]);

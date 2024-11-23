@@ -47,40 +47,40 @@ class Element {
 	public var width(get, set):Float;
 	public var height(get, set):Float;
 
-	function get_x():Float {
+	inline function get_x():Float {
 		return left.position;
 	}
 
-	function set_x(value:Float):Float {
+	inline function set_x(value:Float):Float {
 		right.position += value - left.position;
 		left.position = value;
 		return value;
 	}
 
-	function get_y():Float {
+	inline function get_y():Float {
 		return top.position;
 	}
 
-	function set_y(value:Float):Float {
+	inline function set_y(value:Float):Float {
 		bottom.position += value - top.position;
 		top.position = value;
 		return value;
 	}
 
-	function get_width():Float {
+	inline function get_width():Float {
 		return right.position - x;
 	}
 
-	function set_width(value:Float):Float {
+	inline function set_width(value:Float):Float {
 		right.position = x + value;
 		return value;
 	}
 
-	function get_height():Float {
+	inline function get_height():Float {
 		return bottom.position - y;
 	}
 
-	function set_height(value:Float):Float {
+	inline function set_height(value:Float):Float {
 		bottom.position = y + value;
 		return value;
 	}

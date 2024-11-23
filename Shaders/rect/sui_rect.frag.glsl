@@ -2,7 +2,7 @@
 
 #define BATCH_SIZE 128
 
-uniform vec4 uResolution;
+uniform vec2 uResolution;
 uniform vec4 uRectBounds[BATCH_SIZE];
 uniform vec2 uRectAttrib[BATCH_SIZE]; // packed values: [radius, softness]
 uniform vec4 uRectColors[BATCH_SIZE];
@@ -17,7 +17,7 @@ float sdf(vec2 cp, vec2 si, float ra) {
 }
 
 void main() {
-    vec2 uv = fragCoord.xy * uResolution.xy;
+    vec2 uv = fragCoord.xy * uResolution;
     vec4 bounds = uRectBounds[ID];
     bounds.z -= bounds.x; 
     bounds.w -= bounds.y;
