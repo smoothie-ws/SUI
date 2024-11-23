@@ -10,6 +10,50 @@ class Rectangle extends Element {
 		return RectBatch;
 	}
 
+	inline function setLeft(value:FastFloat) {
+		if (batch != null) {
+			var b:RectBatch = cast batch;
+
+			b.rectBounds[instanceID * 4 + 0] = value;
+		}
+	}
+
+	inline function setTop(value:FastFloat) {
+		if (batch != null) {
+			var b:RectBatch = cast batch;
+
+			b.rectBounds[instanceID * 4 + 1] = value;
+		}
+	}
+
+	inline function setRight(value:FastFloat) {
+		if (batch != null) {
+			var b:RectBatch = cast batch;
+
+			b.rectBounds[instanceID * 4 + 2] = value;
+		}
+	}
+
+	inline function setBottom(value:FastFloat) {
+		if (batch != null) {
+			var b:RectBatch = cast batch;
+
+			b.rectBounds[instanceID * 4 + 3] = value;
+		}
+	}
+
+	override public function new() {
+		super();
+		left.onPositionChanged = setLeft;
+		top.onPositionChanged = setTop;
+		right.onPositionChanged = setRight;
+		bottom.onPositionChanged = setBottom;
+		anchors.left.onPositionChanged = setLeft;
+		anchors.top.onPositionChanged = setTop;
+		anchors.right.onPositionChanged = setRight;
+		anchors.bottom.onPositionChanged = setBottom;
+	}
+
 	@:isVar public var color(get, set):Color = Color.White;
 	@:isVar public var softness(get, set):FastFloat = 1;
 	@:isVar public var radius(get, set):FastFloat = 0;
@@ -60,41 +104,5 @@ class Rectangle extends Element {
 			b.rectAttrib[instanceID * 2 + 0] = radius;
 		}
 		return radius;
-	}
-
-	override inline function set_x(value:FastFloat):FastFloat {
-		if (batch != null) {
-			var b:RectBatch = cast batch;
-			b.rectBounds[instanceID * 4 + 0] = value + b.rectBounds[instanceID * 4 + 2] / 2;
-		}
-		left.position = value;
-		return value;
-	}
-
-	override inline function set_y(value:FastFloat):FastFloat {
-		if (batch != null) {
-			var b:RectBatch = cast batch;
-			b.rectBounds[instanceID * 4 + 1] = value + b.rectBounds[instanceID * 4 + 3] / 2;
-		}
-		top.position = value;
-		return value;
-	}
-
-	override inline function set_width(value:FastFloat):FastFloat {
-		if (batch != null) {
-			var b:RectBatch = cast batch;
-			b.rectBounds[instanceID * 4 + 2] = value;
-		}
-		right.position = x + value;
-		return value;
-	}
-
-	override inline function set_height(value:FastFloat):FastFloat {
-		if (batch != null) {
-			var b:RectBatch = cast batch;
-			b.rectBounds[instanceID * 4 + 3] = value;
-		}
-		bottom.position = y + value;
-		return value;
 	}
 }

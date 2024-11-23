@@ -16,6 +16,8 @@ class Element {
 		return null;
 	}
 
+	public function new() {}
+
 	// anchors
 	public var anchors:Anchors = {};
 	@:isVar public var top(get, never):AnchorLine = {_m: 1};
@@ -50,6 +52,7 @@ class Element {
 	}
 
 	function set_x(value:Float):Float {
+		right.position += value - left.position;
 		left.position = value;
 		return value;
 	}
@@ -59,6 +62,7 @@ class Element {
 	}
 
 	function set_y(value:Float):Float {
+		bottom.position += value - top.position;
 		top.position = value;
 		return value;
 	}
@@ -103,8 +107,6 @@ class Element {
 	function get_finalOpacity():FastFloat {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
 	}
-
-	public function new() {}
 
 	public function resize(w:Int, h:Int) {
 		width = w;

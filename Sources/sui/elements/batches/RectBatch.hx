@@ -18,19 +18,11 @@ class RectBatch extends ElementBatch {
 	inline function pushRect(rect:Rectangle) {
 		var i = rect.instanceID;
 		var o = rect.finalOpacity;
-		var b:FastVector4 = {
-			x: rect.x,
-			y: rect.y,
-			z: rect.width,
-			w: rect.height
-		};
-		b.x += b.z / 2;
-		b.y += b.w / 2;
 
-		rectBounds[i * 4 + 0] = b.x;
-		rectBounds[i * 4 + 1] = b.y;
-		rectBounds[i * 4 + 2] = b.z;
-		rectBounds[i * 4 + 3] = b.w;
+		rectBounds[i * 4 + 0] = rect.left.position;
+		rectBounds[i * 4 + 1] = rect.top.position;
+		rectBounds[i * 4 + 2] = rect.right.position;
+		rectBounds[i * 4 + 3] = rect.bottom.position;
 		rectAttrib[i * 2 + 0] = rect.radius;
 		rectAttrib[i * 2 + 1] = rect.softness;
 		rectColors[i * 4 + 0] = rect.color.R;

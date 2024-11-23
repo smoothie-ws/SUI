@@ -58,6 +58,7 @@ class AnchorLine {
 	@:isVar public var margin(get, set):FastFloat = 0;
 	@:isVar public var padding(get, set):FastFloat = 0;
 	@:isVar public var position(get, set):FastFloat = 0;
+	public var onPositionChanged:(FastFloat) -> Void = function(_) {};
 
 	inline function get_margin():FastFloat {
 		return margin;
@@ -89,6 +90,7 @@ class AnchorLine {
 		position = value;
 		for (c in _C)
 			c.position = position + padding * _m;
+		onPositionChanged(position);
 		return value;
 	}
 
