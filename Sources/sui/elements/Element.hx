@@ -17,57 +17,67 @@ class Element {
 	}
 
 	// anchors
-	public var anchors:Anchors;
+	public var anchors:Anchors = {};
+	@:isVar public var top(get, never):AnchorLine = {_m: 1};
+	@:isVar public var left(get, never):AnchorLine = {_m: 1};
+	@:isVar public var right(get, never):AnchorLine = {_m: -1};
+	@:isVar public var bottom(get, never):AnchorLine = {_m: -1};
+
+	inline function get_top() {
+		return anchors.top.isBinded ? anchors.top : top;
+	}
+
+	inline function get_left() {
+		return anchors.left.isBinded ? anchors.left : left;
+	}
+
+	inline function get_right() {
+		return anchors.right.isBinded ? anchors.right : right;
+	}
+
+	inline function get_bottom() {
+		return anchors.bottom.isBinded ? anchors.bottom : bottom;
+	}
 
 	// dimensions
-	public var bounds(get, never):FastVector4;
-	public var x(get, set):FastFloat;
-	public var y(get, set):FastFloat;
-	public var width(get, set):FastFloat;
-	public var height(get, set):FastFloat;
+	public var x(get, set):Float;
+	public var y(get, set):Float;
+	public var width(get, set):Float;
+	public var height(get, set):Float;
 
-	function get_bounds():FastVector4 {
-		return {
-			x: anchors.left.position,
-			y: anchors.top.position,
-			z: anchors.right.position,
-			w: anchors.bottom.position
-		};
+	function get_x():Float {
+		return left.position;
 	}
 
-	function get_x():FastFloat {
-		return anchors.left.position;
-	}
-
-	function set_x(value:FastFloat):FastFloat {
-		anchors.left.position = value;
+	function set_x(value:Float):Float {
+		left.position = value;
 		return value;
 	}
 
-	function get_y():FastFloat {
-		return anchors.top.position;
+	function get_y():Float {
+		return top.position;
 	}
 
-	function set_y(value:FastFloat):FastFloat {
-		anchors.top.position = value;
+	function set_y(value:Float):Float {
+		top.position = value;
 		return value;
 	}
 
-	function get_width():FastFloat {
-		return anchors.right.position - x;
+	function get_width():Float {
+		return right.position - x;
 	}
 
-	function set_width(value:FastFloat):FastFloat {
-		anchors.right.position = x + value;
+	function set_width(value:Float):Float {
+		right.position = x + value;
 		return value;
 	}
 
-	function get_height():FastFloat {
-		return anchors.bottom.position - y;
+	function get_height():Float {
+		return bottom.position - y;
 	}
 
-	function set_height(value:FastFloat):FastFloat {
-		anchors.bottom.position = y + value;
+	function set_height(value:Float):Float {
+		bottom.position = y + value;
 		return value;
 	}
 
@@ -94,9 +104,7 @@ class Element {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
 	}
 
-	public function new() {
-		anchors = new Anchors(this);
-	}
+	public function new() {}
 
 	public function resize(w:Int, h:Int) {
 		width = w;

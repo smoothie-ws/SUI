@@ -1,6 +1,7 @@
 package sui.elements.batches;
 
 import kha.Canvas;
+import kha.math.FastVector4;
 import kha.arrays.Float32Array;
 import kha.graphics4.Usage;
 import kha.graphics4.VertexBuffer;
@@ -17,9 +18,12 @@ class RectBatch extends ElementBatch {
 	inline function pushRect(rect:Rectangle) {
 		var i = rect.instanceID;
 		var o = rect.finalOpacity;
-		var b = rect.bounds;
-		b.z -= b.x;
-		b.w -= b.y;
+		var b:FastVector4 = {
+			x: rect.x,
+			y: rect.y,
+			z: rect.width,
+			w: rect.height
+		};
 		b.x += b.z / 2;
 		b.y += b.w / 2;
 
@@ -97,7 +101,6 @@ class RectBatch extends ElementBatch {
 		}
 		indices.unlock();
 
-		trace(rectBounds[0], rectBounds[1], rectBounds[2], rectBounds[3]);
 		SUIShaders.rectShader.draw(target, vertices, indices, [rectBounds, rectAttrib, rectColors]);
 	}
 }

@@ -65,18 +65,18 @@ class Rectangle extends Element {
 	override inline function set_x(value:FastFloat):FastFloat {
 		if (batch != null) {
 			var b:RectBatch = cast batch;
-			b.rectBounds[instanceID * 4 + 0] = value;
+			b.rectBounds[instanceID * 4 + 0] = value + b.rectBounds[instanceID * 4 + 2] / 2;
 		}
-		anchors.left.position = value;
+		left.position = value;
 		return value;
 	}
 
 	override inline function set_y(value:FastFloat):FastFloat {
 		if (batch != null) {
 			var b:RectBatch = cast batch;
-			b.rectBounds[instanceID * 4 + 1] = value;
+			b.rectBounds[instanceID * 4 + 1] = value + b.rectBounds[instanceID * 4 + 3] / 2;
 		}
-		anchors.top.position = value;
+		top.position = value;
 		return value;
 	}
 
@@ -85,7 +85,7 @@ class Rectangle extends Element {
 			var b:RectBatch = cast batch;
 			b.rectBounds[instanceID * 4 + 2] = value;
 		}
-		anchors.right.position = x + value;
+		right.position = x + value;
 		return value;
 	}
 
@@ -94,7 +94,7 @@ class Rectangle extends Element {
 			var b:RectBatch = cast batch;
 			b.rectBounds[instanceID * 4 + 3] = value;
 		}
-		anchors.bottom.position = y + value;
+		bottom.position = y + value;
 		return value;
 	}
 }
