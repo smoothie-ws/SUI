@@ -44,14 +44,10 @@ class Rectangle extends Element {
 
 	override public function new() {
 		super();
-		left.onPositionChanged = setLeft;
-		top.onPositionChanged = setTop;
-		right.onPositionChanged = setRight;
-		bottom.onPositionChanged = setBottom;
-		anchors.left.onPositionChanged = setLeft;
-		anchors.top.onPositionChanged = setTop;
-		anchors.right.onPositionChanged = setRight;
-		anchors.bottom.onPositionChanged = setBottom;
+		left.addListener(setLeft);
+		top.addListener(setTop);
+		right.addListener(setRight);
+		bottom.addListener(setBottom);
 	}
 
 	@:isVar public var color(get, set):Color = Color.White;

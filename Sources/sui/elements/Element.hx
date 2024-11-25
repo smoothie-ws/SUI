@@ -16,72 +16,58 @@ class Element {
 		return null;
 	}
 
-	public function new() {}
+	public function new() {
+		anchors = new Anchors(this);
+	}
 
 	// anchors
-	public var anchors:Anchors = {};
-	@:isVar public var top(get, never):AnchorLine = {_m: 1};
-	@:isVar public var left(get, never):AnchorLine = {_m: 1};
-	@:isVar public var right(get, never):AnchorLine = {_m: -1};
-	@:isVar public var bottom(get, never):AnchorLine = {_m: -1};
+	public var anchors:Anchors;
+	@:isVar public var left(default, never):AnchorLine = {};
+	@:isVar public var top(default, never):AnchorLine = {};
+	@:isVar public var right(default, never):AnchorLine = {};
+	@:isVar public var bottom(default, never):AnchorLine = {};
 
-	inline function get_top() {
-		return anchors.top.isBinded ? anchors.top : top;
-	}
-
-	inline function get_left() {
-		return anchors.left.isBinded ? anchors.left : left;
-	}
-
-	inline function get_right() {
-		return anchors.right.isBinded ? anchors.right : right;
-	}
-
-	inline function get_bottom() {
-		return anchors.bottom.isBinded ? anchors.bottom : bottom;
-	}
-
-	// dimensions
+	// positioning
 	public var x(get, set):Float;
 	public var y(get, set):Float;
 	public var width(get, set):Float;
 	public var height(get, set):Float;
 
-	inline function get_x():Float {
-		return left.position;
-	}
-
-	inline function set_x(value:Float):Float {
+	function set_x(value:Float):Float {
 		right.position += value - left.position;
 		left.position = value;
 		return value;
 	}
 
-	inline function get_y():Float {
-		return top.position;
+	function get_x():Float {
+		return left.position;
 	}
 
-	inline function set_y(value:Float):Float {
+	function set_y(value:Float):Float {
 		bottom.position += value - top.position;
 		top.position = value;
 		return value;
 	}
 
-	inline function get_width():Float {
-		return right.position - x;
+	function get_y():Float {
+		return top.position;
 	}
 
-	inline function set_width(value:Float):Float {
-		right.position = x + value;
+	function get_width():Float {
+		return right.position - left.position;
+	}
+
+	function set_width(value:Float):Float {
+		right.position = left.position + value;
 		return value;
 	}
 
-	inline function get_height():Float {
-		return bottom.position - y;
+	function get_height():Float {
+		return bottom.position - top.position;
 	}
 
-	inline function set_height(value:Float):Float {
-		bottom.position = y + value;
+	function set_height(value:Float):Float {
+		bottom.position = top.position + value;
 		return value;
 	}
 

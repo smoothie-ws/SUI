@@ -9,17 +9,22 @@ using sui.core.utils.ArrayExtension;
 
 @:structInit
 class Scene extends DrawableElement {
-	public var backbuffer:Image = null;
-
 	public var drawQueue:Array<DrawableElement> = [];
+	public var backbuffer:Image = null;
 
 	override inline function addChild(element:Element) {
 		children.push(element);
 		element.parent = this;
-		add(element);
+		if (SUI.initialized)
+			add(element);
 	};
 
-	function add(element:Element) {
+	override inline function construct() {
+		for (c in children)
+			add(c);
+	}
+
+	inline function add(element:Element) {
 		if (element.batchType != null) {
 			var lastEl = cast drawQueue.last();
 			if (Type.getClass(lastEl) == element.batchType)
@@ -36,7 +41,7 @@ class Scene extends DrawableElement {
 			add(c);
 	}
 
-	override public inline function resize(w:Int, h:Int) {
+	override inline function resize(w:Int, h:Int) {
 		width = w;
 		height = h;
 
@@ -46,7 +51,7 @@ class Scene extends DrawableElement {
 
 	public inline function update() {};
 
-	override public inline function draw(_) {
+	override inline function draw(_) {
 		backbuffer.g2.begin(true, color);
 		for (element in drawQueue)
 			element.draw(backbuffer);
