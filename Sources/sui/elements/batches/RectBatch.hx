@@ -56,11 +56,11 @@ class RectBatch extends ElementBatch {
 			var rotRad = Math.PI * rect.rotation / 180;
 			var rotCos = Math.cos(rotRad);
 			var rotSin = Math.sin(rotRad);
-			var o = rect.mapToGlobal({x: rect.originX, y: rect.originY});
-			var rox = o.x / SUI.scene.backbuffer.width;
-			var roy = o.y / SUI.scene.backbuffer.height;
-			var rtx = rect.translationX / SUI.scene.backbuffer.width;
-			var rty = rect.translationY / SUI.scene.backbuffer.height;
+			var o = rect.mapToGlobal({x: rect.originX / SUI.scene.resolution, y: rect.originY / SUI.scene.resolution});
+			var rox = o.x * 2 - 1;
+			var roy = o.y * 2;
+			var rtx = rect.translationX / SUI.scene.resolution;
+			var rty = rect.translationY / SUI.scene.resolution;
 			var ox = 1 - rox;
 			var oy = 1 - roy;
 			var ox_m = ox - 2;

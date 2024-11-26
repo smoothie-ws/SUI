@@ -9,6 +9,7 @@ using sui.core.utils.ArrayExt;
 
 @:structInit
 class Scene extends DrawableElement {
+	public var resolution:Int = 0;
 	public var backbuffer:Image = null;
 
 	public inline function add(element:Element) {
@@ -32,8 +33,8 @@ class Scene extends DrawableElement {
 		width = w;
 		height = h;
 
-		var res = w > h ? w : h;
-		backbuffer = Image.createRenderTarget(res, res, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		resolution = w > h ? w : h;
+		backbuffer = Image.createRenderTarget(resolution, resolution, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
 	}
 
 	public inline function update() {};

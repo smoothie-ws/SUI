@@ -156,7 +156,7 @@ class Rectangle extends Element {
 	override inline function set_translationX(value:FastFloat) {
 		if (batch != null) {
 			var b:RectBatch = cast batch;
-			var d = (value - translationX) / SUI.scene.backbuffer.width;
+			var d = (value - translationX) / SUI.scene.resolution;
 
 			var vert = b.vertices.lock();
 			vert[instanceID * 20 + 0] += d;
@@ -172,7 +172,7 @@ class Rectangle extends Element {
 	override inline function set_translationY(value:FastFloat) {
 		if (batch != null) {
 			var b:RectBatch = cast batch;
-			var d = (value - translationY) / SUI.scene.backbuffer.height;
+			var d = (value - translationY) / SUI.scene.resolution;
 
 			var vert = b.vertices.lock();
 			vert[instanceID * 20 + 1] += d;
