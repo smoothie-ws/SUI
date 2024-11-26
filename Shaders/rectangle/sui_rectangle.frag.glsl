@@ -28,4 +28,5 @@ void main() {
     float rectMask = 1.0 - smoothstep(-uRectAttrib[ID][1], uRectAttrib[ID][1], rectDist);
 
     fragColor = vec4(uRectColors[ID].rgb, uRectColors[ID].a * rectMask);
+    fragColor = vec4(fragCoord, 0.0, rectMask);
 }

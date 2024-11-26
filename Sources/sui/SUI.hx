@@ -115,7 +115,7 @@ class SUI {
 	}
 
 	public static inline function compileShaders() {
-		SUIShaders.rectShader.compile(Shaders.sui_rect_vert, Shaders.sui_rect_frag);
+		SUIShaders.rectShader.compile(Shaders.sui_rectangle_vert, Shaders.sui_rectangle_frag);
 	}
 
 	public static inline function update() {

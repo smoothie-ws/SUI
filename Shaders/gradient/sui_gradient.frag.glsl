@@ -4,8 +4,8 @@
 
 uniform vec4 uResolution;
 uniform vec4 uGradBounds[BATCH_SIZE];
-uniform vec4 uGradColors[BATCH_SIZE * 2];
 uniform vec4 uGradAttrib[BATCH_SIZE]; // packed values: [align_by_element, angle, offset, scale]
+uniform vec4 uGradColors[BATCH_SIZE * 2];
 
 in vec2 fragCoord;
 flat in int ID;
