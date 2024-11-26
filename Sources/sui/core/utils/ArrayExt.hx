@@ -8,7 +8,14 @@ class ArrayExt {
 	public static inline function min(a:Array<Float>) {
 		var m = a[0];
 		for (x in a)
-			m = x < m ? x : m;
+			m = Math.min(x, m);
+		return m;
+	}
+
+	public static inline function max(a:Array<Float>) {
+		var m = a[0];
+		for (x in a)
+			m = Math.max(x, m);
 		return m;
 	}
 }

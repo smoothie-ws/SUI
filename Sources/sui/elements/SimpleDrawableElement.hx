@@ -6,7 +6,7 @@ class SimpleDrawableElement extends DrawableElement {
 	function simpleDraw(target:Canvas) {}
 
 	override inline function draw(target:Canvas) {
-		var o = mapToGlobal({x: originX, y: originY});
+		var o = mapToGlobal(origin);
 
 		target.g2.pushTranslation(-o.x, -o.y);
 		target.g2.pushScale(scaleX, scaleY);

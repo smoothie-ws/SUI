@@ -129,23 +129,12 @@ class Element {
 	}
 
 	// transformation
-	@:isVar public var originX(default, set):FastFloat = 0;
-	@:isVar public var originY(default, set):FastFloat = 0;
+	public var origin:FastVector2 = {};
 	@:isVar public var scaleX(default, set):FastFloat = 1;
 	@:isVar public var scaleY(default, set):FastFloat = 1;
 	@:isVar public var rotation(default, set):FastFloat = 0;
 	@:isVar public var translationX(default, set):FastFloat = 0;
 	@:isVar public var translationY(default, set):FastFloat = 0;
-
-	function set_originX(value:FastFloat):FastFloat {
-		originX = value;
-		return value;
-	}
-
-	function set_originY(value:FastFloat):FastFloat {
-		originY = value;
-		return value;
-	}
 
 	function set_scaleX(value:FastFloat):FastFloat {
 		scaleX = value;
@@ -172,22 +161,30 @@ class Element {
 		return value;
 	}
 
-	public var opacity:FastFloat = 1;
+	public inline function scale(?x:FastFloat = 1, ?y:FastFloat = 1) {
+		scaleX *= x;
+		scaleY *= y;
+	}
+
+	public inline function rotate(angle:FastFloat = 0) {
+		rotation += angle;
+	}
+
+	public inline function translate(?x:FastFloat = 0, ?y:FastFloat = 0) {
+		translationX += x;
+		translationY += y;
+	}
+
 	public var parent:Element = null;
 	public var children:Array<Element> = [];
-	public var visible:Bool = true;
 	public var enabled:Bool = true;
 
 	public var finalEnabled(get, never):Bool;
-	public var finalOpacity(get, never):FastFloat;
 
 	function get_finalEnabled():Bool {
 		return parent == null ? enabled : parent.finalEnabled && enabled;
 	}
 
-	function get_finalOpacity():FastFloat {
-		return parent == null ? opacity : parent.finalOpacity * opacity;
-	}
 
 	public var batch:ElementBatch;
 	public var instanceID:Int;
