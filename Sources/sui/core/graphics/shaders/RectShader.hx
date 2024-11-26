@@ -14,6 +14,7 @@ class RectShader extends Shader2D {
 	override inline function initStructure() {
 		structure = new VertexStructure();
 		structure.add("vertPos", VertexData.Float32_3X);
+		structure.add("vertCoord", VertexData.Float32_2X);
 	}
 
 	override inline function getUniforms() {

@@ -1,15 +1,21 @@
 package sui.elements.batches;
 
+import sui.elements.Element;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.IndexBuffer;
 
+@:allow(sui.elements.Element)
 class ElementBatch extends DrawableElement {
-	var indices:IndexBuffer;
+	public var indices:IndexBuffer;
+
 	var vertices:VertexBuffer;
 
-	public inline function add(element:Element) {
+	function add(element:Element) {}
+
+	override inline function addChild(element:Element) {
 		element.instanceID = children.length;
 		element.batch = this;
 		children.push(element);
+		add(element);
 	};
 }

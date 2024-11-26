@@ -129,10 +129,48 @@ class Element {
 	}
 
 	// transformation
-	public var origin:FastVector2 = {};
-	public var scale:FastVector2 = {x: 1, y: 1};
-	public var rotation:FastFloat = 0;
-	public var translation:FastVector2 = {};
+	@:isVar public var originX(default, set):FastFloat = 0;
+	@:isVar public var originY(default, set):FastFloat = 0;
+	@:isVar public var scaleX(default, set):FastFloat = 1;
+	@:isVar public var scaleY(default, set):FastFloat = 1;
+	@:isVar public var rotation(default, set):FastFloat = 0;
+	@:isVar public var translationX(default, set):FastFloat = 0;
+	@:isVar public var translationY(default, set):FastFloat = 0;
+
+	function set_originX(value:FastFloat):FastFloat {
+		originX = value;
+		return value;
+	}
+
+	function set_originY(value:FastFloat):FastFloat {
+		originY = value;
+		return value;
+	}
+
+	function set_scaleX(value:FastFloat):FastFloat {
+		scaleX = value;
+		return value;
+	}
+
+	function set_scaleY(value:FastFloat):FastFloat {
+		scaleY = value;
+		return value;
+	}
+
+	function set_rotation(value:FastFloat):FastFloat {
+		rotation = value;
+		return value;
+	}
+
+	function set_translationX(value:FastFloat):FastFloat {
+		translationX = value;
+		return value;
+	}
+
+	function set_translationY(value:FastFloat):FastFloat {
+		translationY = value;
+		return value;
+	}
 
 	public var opacity:FastFloat = 1;
 	public var parent:Element = null;
