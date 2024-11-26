@@ -1,7 +1,6 @@
 package sui.elements.batches;
 
 import kha.Canvas;
-import kha.math.FastVector4;
 import kha.arrays.Float32Array;
 import kha.graphics4.Usage;
 import kha.graphics4.VertexBuffer;

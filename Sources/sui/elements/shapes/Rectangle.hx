@@ -13,7 +13,6 @@ class Rectangle extends Element {
 	inline function setLeft(value:FastFloat) {
 		if (batch != null) {
 			var b:RectBatch = cast batch;
-
 			b.rectBounds[instanceID * 4 + 0] = value;
 		}
 	}
@@ -21,7 +20,6 @@ class Rectangle extends Element {
 	inline function setTop(value:FastFloat) {
 		if (batch != null) {
 			var b:RectBatch = cast batch;
-
 			b.rectBounds[instanceID * 4 + 1] = value;
 		}
 	}
@@ -29,7 +27,6 @@ class Rectangle extends Element {
 	inline function setRight(value:FastFloat) {
 		if (batch != null) {
 			var b:RectBatch = cast batch;
-
 			b.rectBounds[instanceID * 4 + 2] = value;
 		}
 	}
@@ -37,26 +34,21 @@ class Rectangle extends Element {
 	inline function setBottom(value:FastFloat) {
 		if (batch != null) {
 			var b:RectBatch = cast batch;
-
 			b.rectBounds[instanceID * 4 + 3] = value;
 		}
 	}
 
 	override public function new() {
 		super();
-		left.addListener(setLeft);
-		top.addListener(setTop);
-		right.addListener(setRight);
-		bottom.addListener(setBottom);
+		left.addPositionListener(setLeft);
+		top.addPositionListener(setTop);
+		right.addPositionListener(setRight);
+		bottom.addPositionListener(setBottom);
 	}
 
-	@:isVar public var color(get, set):Color = Color.White;
-	@:isVar public var softness(get, set):FastFloat = 1;
-	@:isVar public var radius(get, set):FastFloat = 0;
-
-	inline function get_color() {
-		return color;
-	}
+	@:isVar public var color(default, set):Color = Color.White;
+	@:isVar public var softness(default, set):FastFloat = 1;
+	@:isVar public var radius(default, set):FastFloat = 0;
 
 	inline function set_color(value:Color) {
 		color = value;
@@ -73,10 +65,6 @@ class Rectangle extends Element {
 		return color;
 	}
 
-	inline function get_softness() {
-		return softness;
-	}
-
 	inline function set_softness(value:FastFloat) {
 		softness = value;
 
@@ -86,10 +74,6 @@ class Rectangle extends Element {
 		}
 
 		return softness;
-	}
-
-	inline function get_radius() {
-		return radius;
 	}
 
 	inline function set_radius(value:FastFloat) {

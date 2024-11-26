@@ -1,78 +1,94 @@
 package sui.elements;
 
+import kha.math.FastVector2;
+// sui
 import sui.elements.Element;
 
-@:structInit
+using sui.core.utils.ArrayExt;
+
 class MouseArea extends Element {
-	var onDown:(button:Int, x:Int, y:Int) -> Void = function(button:Int, x:Int, y:Int) {};
-	var onUp:(button:Int, x:Int, y:Int) -> Void = function(button:Int, x:Int, y:Int) {};
-	var onEnter:(x:Int, y:Int) -> Void = function(x:Int, y:Int) {};
-	var onExit:(x:Int, y:Int) -> Void = function(x:Int, y:Int) {};
-	var onMove:(x:Int, y:Int, moveX:Int, moveY:Int) -> Void = function(x:Int, y:Int, moveX:Int, moveY:Int) {};
-	var onWheel:(delta:Int) -> Void = function(delta:Int) {};
+	var downListeners:Array<(button:Int, x:Int, y:Int) -> Void> = [];
+	var upListeners:Array<(button:Int, x:Int, y:Int) -> Void> = [];
+	var enterListeners:Array<(x:Int, y:Int) -> Void> = [];
+	var exitListeners:Array<(x:Int, y:Int) -> Void> = [];
+	var moveListeners:Array<(x:Int, y:Int, moveX:Int, moveY:Int) -> Void> = [];
+	var wheelListeners:Array<(delta:Int) -> Void> = [];
 
 	public var mouseX:Int = 0;
 	public var mouseY:Int = 0;
 
 	var _focused:Bool = false;
-	var focused(get, never):Bool;
+	var focused:Bool;
 
-	function get_focused():Bool {
-		final xBounded = mouseX >= finalX && mouseX <= finalX + finalW;
-		final yBounded = mouseY >= finalY && mouseY <= finalY + finalH;
-		return xBounded && yBounded;
+	public function new() {
+		super();
+		SUI.mouse.notify(null, null, function(x:Int, y:Int, moveX:Int, moveY:Int) {
+			mouseX = x;
+			mouseY = y;
+
+			var intersections = 0;
+			var rayEnd = new FastVector2(1e9, y);
+
+			for (i in 0...4)
+				if (intersect({x: x, y: y}, rayEnd, rectBounds[i], rectBounds[(i + 1) % rectBounds.length]))
+					intersections++;
+
+			focused = intersections % 2 != 0;
+		}, null);
 	}
 
 	public inline function notifyOnDown(f:(button:Int, x:Int, y:Int) -> Void) {
-		onDown = f;
+		downListeners.push(f);
 	}
 
 	public inline function notifyOnUp(f:(button:Int, x:Int, y:Int) -> Void) {
-		onUp = f;
+		upListeners.push(f);
 	}
 
 	public inline function notifyOnEnter(f:(x:Int, y:Int) -> Void) {
-		onEnter = f;
+		enterListeners.push(f);
 	}
 
 	public inline function notifyOnExit(f:(x:Int, y:Int) -> Void) {
-		onExit = f;
+		exitListeners.push(f);
 	}
 
 	public inline function notifyOnMove(f:(x:Int, y:Int, moveX:Int, moveY:Int) -> Void) {
-		onMove = f;
+		moveListeners.push(f);
 	}
 
 	public inline function notifyOnWheel(f:(delta:Int) -> Void) {
-		onWheel = f;
+		wheelListeners.push(f);
 	}
 
 	override public inline function construct() {
 		SUI.mouse.notify(function(button:Int, x:Int, y:Int) {
 			if (focused)
-				onDown(button, x, y);
+				for (f in downListeners)
+					f(button, x, y);
 		}, function(button:Int, x:Int, y:Int) {
 			if (focused)
-				onUp(button, x, y);
+				for (f in upListeners)
+					f(button, x, y);
 		}, function(x:Int, y:Int, moveX:Int, moveY:Int) {
 			mouseX = x;
 			mouseY = y;
 
-			if (focused && !_focused) {
-				if (onEnter != null)
-					onEnter(x, y);
-			} else if (!focused && _focused) {
-				if (onExit != null)
-					onExit(x, y);
-			}
+			if (focused) {
+				for (f in moveListeners)
+					f(x, y, moveX, moveY);
+				if (!_focused)
+					for (f in enterListeners)
+						f(x, y);
+			} else if (!focused && _focused)
+				for (f in exitListeners)
+					f(x, y);
 
 			_focused = focused;
-
-			if (focused && onMove != null)
-				onMove(x, y, moveX, moveY);
 		}, function(delta:Int) {
-			if (focused && onWheel != null)
-				onWheel(delta);
+			if (focused)
+				for (f in wheelListeners)
+					f(delta);
 		});
 	}
 }

@@ -1,6 +1,6 @@
 package sui.elements;
 
-import kha.math.FastVector4;
+import sui.core.utils.Math.clamp;
 import kha.FastFloat;
 import kha.math.FastVector2;
 // sui
@@ -8,14 +8,6 @@ import sui.positioning.Anchors;
 import sui.elements.batches.ElementBatch;
 
 class Element {
-	public var batch:ElementBatch;
-	public var instanceID:Int;
-	public var batchType(get, never):Class<ElementBatch>;
-
-	function get_batchType():Class<ElementBatch> {
-		return null;
-	}
-
 	public function new() {
 		anchors = new Anchors(this);
 	}
@@ -26,48 +18,113 @@ class Element {
 	@:isVar public var top(default, never):AnchorLine = {};
 	@:isVar public var right(default, never):AnchorLine = {};
 	@:isVar public var bottom(default, never):AnchorLine = {};
+	@:isVar public var horizontalCenter(default, never):AnchorLine = {};
+	@:isVar public var verticalCenter(default, never):AnchorLine = {};
 
 	// positioning
-	public var x(get, set):Float;
-	public var y(get, set):Float;
-	public var width(get, set):Float;
-	public var height(get, set):Float;
+	public var x(get, set):FastFloat;
+	public var y(get, set):FastFloat;
+	public var z:FastFloat;
+	public var centerX(get, set):FastFloat;
+	public var centerY(get, set):FastFloat;
+	public var width(get, set):FastFloat;
+	public var height(get, set):FastFloat;
+	@:isVar public var minWidth(default, set):FastFloat = Math.NEGATIVE_INFINITY;
+	@:isVar public var maxWidth(default, set):FastFloat = Math.POSITIVE_INFINITY;
+	@:isVar public var minHeight(default, set):FastFloat = Math.NEGATIVE_INFINITY;
+	@:isVar public var maxHeight(default, set):FastFloat = Math.POSITIVE_INFINITY;
 
-	function set_x(value:Float):Float {
-		right.position += value - left.position;
-		left.position = value;
-		return value;
-	}
-
-	function get_x():Float {
+	inline function get_x():FastFloat {
 		return left.position;
 	}
 
-	function set_y(value:Float):Float {
-		bottom.position += value - top.position;
-		top.position = value;
+	inline function set_x(value:FastFloat):FastFloat {
+		var d = value - x;
+		left.position = value;
+		horizontalCenter.position += d / 2;
+		right.position += d;
 		return value;
 	}
 
-	function get_y():Float {
+	inline function get_y():FastFloat {
 		return top.position;
 	}
 
-	function get_width():Float {
-		return right.position - left.position;
-	}
-
-	function set_width(value:Float):Float {
-		right.position = left.position + value;
+	inline function set_y(value:FastFloat):FastFloat {
+		var d = value - y;
+		top.position = value;
+		verticalCenter.position += d / 2;
+		bottom.position += d;
 		return value;
 	}
 
-	function get_height():Float {
-		return bottom.position - top.position;
+	inline function get_centerX():FastFloat {
+		return horizontalCenter.position;
 	}
 
-	function set_height(value:Float):Float {
-		bottom.position = top.position + value;
+	inline function set_centerX(value:FastFloat):FastFloat {
+		var d = value - centerX;
+		left.position += d;
+		horizontalCenter.position = value;
+		right.position += d;
+		return value;
+	}
+
+	inline function get_centerY():FastFloat {
+		return verticalCenter.position;
+	}
+
+	inline function set_centerY(value:FastFloat):FastFloat {
+		var d = value - centerY;
+		top.position += d;
+		verticalCenter.position = value;
+		bottom.position += d;
+		return value;
+	}
+
+	inline function get_width():FastFloat {
+		return right.position - x;
+	}
+
+	inline function set_width(value:FastFloat):FastFloat {
+		value = clamp(value, minWidth, maxWidth);
+		horizontalCenter.position = x + value / 2;
+		right.position = x + value;
+		return value;
+	}
+
+	inline function get_height():FastFloat {
+		return bottom.position - y;
+	}
+
+	inline function set_height(value:FastFloat):FastFloat {
+		value = clamp(value, minHeight, maxHeight);
+		verticalCenter.position = y + value / 2;
+		bottom.position = y + value;
+		return value;
+	}
+
+	inline function set_minWidth(value:FastFloat):FastFloat {
+		minWidth = value;
+		width = width;
+		return value;
+	}
+
+	inline function set_maxWidth(value:FastFloat):FastFloat {
+		maxWidth = value;
+		width = width;
+		return value;
+	}
+
+	inline function set_minHeight(value:FastFloat):FastFloat {
+		minHeight = value;
+		height = height;
+		return value;
+	}
+
+	inline function set_maxHeight(value:FastFloat):FastFloat {
+		maxHeight = value;
+		height = height;
 		return value;
 	}
 
@@ -94,12 +151,20 @@ class Element {
 		return parent == null ? opacity : parent.finalOpacity * opacity;
 	}
 
+	public var batch:ElementBatch;
+	public var instanceID:Int;
+	public var batchType(get, never):Class<ElementBatch>;
+
+	function get_batchType():Class<ElementBatch> {
+		return null;
+	}
+
 	public function resize(w:Int, h:Int) {
 		width = w;
 		height = h;
 	}
 
-	public function resizeTree(w:Int, h:Int) {
+	public inline function resizeTree(w:Int, h:Int) {
 		resize(w, h);
 		for (child in children)
 			child.resizeTree(w, h);
@@ -135,9 +200,25 @@ class Element {
 
 	public function construct() {}
 
-	public function constructTree() {
+	public inline function constructTree() {
 		construct();
 		for (child in children)
 			child.constructTree();
+	}
+
+	public inline function mapFromGlobal(point:FastVector2):FastVector2 {
+		return {x: point.x - x, y: point.y - y};
+	}
+
+	public inline function mapToGlobal(point:FastVector2):FastVector2 {
+		return {x: point.x + x, y: point.y + y};
+	}
+
+	public static inline function mapFromElement(element:Element, point:FastVector2):FastVector2 {
+		return element.mapToGlobal(point);
+	}
+
+	public static inline function mapToElement(element:Element, point:FastVector2):FastVector2 {
+		return element.mapFromGlobal(point);
 	}
 }

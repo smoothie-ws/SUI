@@ -5,7 +5,7 @@ import kha.Image;
 import sui.elements.Element;
 import sui.elements.DrawableElement;
 
-using sui.core.utils.ArrayExtension;
+using sui.core.utils.ArrayExt;
 
 @:structInit
 class Scene extends DrawableElement {

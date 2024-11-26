@@ -4,10 +4,10 @@ import kha.Canvas;
 // sui
 import sui.effects.Border;
 
-class SimpleRectangle extends DrawableElement {
+class SimpleRectangle extends SimpleDrawableElement {
 	public var border:Border = {};
 
-	override inline function draw(target:Canvas) {
+	override inline function simpleDraw(target:Canvas) {
 		var x = left.position;
 		var y = top.position;
 		var width = right.position - x;

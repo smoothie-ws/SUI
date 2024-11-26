@@ -4,12 +4,12 @@ import kha.Canvas;
 import kha.math.FastVector2;
 
 @:structInit
-class Triangle extends DrawableElement {
+class Triangle extends SimpleDrawableElement {
 	public var v1:FastVector2 = {x: 0., y: 0.}
 	public var v2:FastVector2 = {x: 0., y: 0.}
 	public var v3:FastVector2 = {x: 0., y: 0.}
 
-	override inline function draw(target:Canvas) {
+	override inline function simpleDraw(target:Canvas) {
 		var x = left.position;
 		var y = right.position;
 

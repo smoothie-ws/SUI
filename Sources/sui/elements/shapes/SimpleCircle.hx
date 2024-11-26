@@ -7,12 +7,12 @@ import sui.effects.Border;
 
 using sui.core.graphics.GraphicsExtension;
 
-class SimpleCircle extends DrawableElement {
+class SimpleCircle extends SimpleDrawableElement {
 	public var border:Border = {};
 	public var radius:FastFloat = 0;
 	public var segments:Int = 64;
 
-	override inline function draw(target:Canvas) {
+	override inline function simpleDraw(target:Canvas) {
 		var x = left.position;
 		var y = top.position;
 

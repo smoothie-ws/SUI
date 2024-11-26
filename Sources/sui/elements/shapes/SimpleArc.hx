@@ -8,7 +8,7 @@ import sui.effects.Border;
 using sui.core.graphics.GraphicsExtension;
 
 @:structInit
-class SimpleArc extends DrawableElement {
+class SimpleArc extends SimpleDrawableElement {
 	public var border:Border = {};
 	public var radius:FastFloat = 0;
 	public var sAngle:FastFloat = 90;
@@ -16,7 +16,7 @@ class SimpleArc extends DrawableElement {
 	public var clockwise:Bool = false;
 	public var segments:Int = 16;
 
-	override inline function draw(target:Canvas) {
+	override inline function simpleDraw(target:Canvas) {
 		var x = left.position;
 		var y = top.position;
 

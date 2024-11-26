@@ -5,12 +5,12 @@ import kha.FastFloat;
 import kha.math.FastVector2;
 
 @:structInit
-class SimpleLine extends DrawableElement {
+class SimpleLine extends SimpleDrawableElement {
 	public var lineWidth:FastFloat = 1;
 	public var start:FastVector2 = {x: 0, y: 0}
 	public var end:FastVector2 = {x: 0, y: 0}
 
-	override inline function draw(target:Canvas) {
+	override inline function simpleDraw(target:Canvas) {
 		var x = left.position;
 		var y = right.position;
 		
