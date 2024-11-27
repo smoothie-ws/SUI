@@ -26,14 +26,7 @@ class MouseArea extends Element {
 			mouseX = x;
 			mouseY = y;
 
-			var intersections = 0;
-			var rayEnd = new FastVector2(1e9, y);
-
-			for (i in 0...4)
-				if (intersect({x: x, y: y}, rayEnd, rectBounds[i], rectBounds[(i + 1) % rectBounds.length]))
-					intersections++;
-
-			focused = intersections % 2 != 0;
+			focused = (x >= left.position && x <= right.position && y >= top.position && y <= bottom.position);
 		}, null);
 	}
 

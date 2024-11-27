@@ -9,9 +9,9 @@ import sui.core.graphics.SUIShaders;
 import sui.elements.shapes.Rectangle;
 
 class RectBatch extends ElementBatch {
-	public var rectBounds:Float32Array;
-	public var rectAttrib:Float32Array;
-	public var rectColors:Float32Array;
+	public var rectBounds:Float32Array = new Float32Array(4);
+	public var rectAttrib:Float32Array = new Float32Array(2);
+	public var rectColors:Float32Array = new Float32Array(4);
 
 	override inline function add(element:Element) {
 		var rect:Rectangle = cast element;

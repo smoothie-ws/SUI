@@ -22,9 +22,9 @@ class Scene extends DrawableElement {
 				batch.addChild(element);
 				addChild(batch);
 			}
-		} else if (element is DrawableElement) {
+		} else
 			addChild(element);
-		}
+
 		for (c in element.children)
 			add(c);
 	}

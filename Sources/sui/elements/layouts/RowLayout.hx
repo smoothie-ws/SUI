@@ -5,34 +5,31 @@ import kha.FastFloat;
 import sui.elements.Element;
 import sui.positioning.Alignment;
 import sui.positioning.Direction;
-import sui.positioning.Anchors.AnchorLine;
+
+using sui.core.utils.ArrayExt;
 
 class RowLayout extends Element {
+	public var spacing:FastFloat = 0.;
 	public var direction:Direction = Direction.TopToBottom;
 	public var alignment:Alignment = Alignment.HCenter | Alignment.VCenter;
-	public var spacing:FastFloat = 0.;
 
-	var anchorLines(get, never):Array<AnchorLine>;
-
-	inline function get_anchorLines():Array<AnchorLine> {
-		var al:Array<AnchorLine> = [];
-		var h = (bottom.position - top.position) / children.length;
-
-		for (i in 1...children.length)
-			al.push({
-				position: i * h
-			});
-
-		return al;
-	}
-
-	override inline public function construct() {
+	override inline function construct() {
 		if (direction == Direction.BottomToTop)
 			children.reverse();
-		var al = anchorLines;
-		children[0].anchors.set(left, top, right, al[0]);
-		for (i in 1...children.length - 1)
-			children[i].anchors.set(left, al[i - 1], right, al[i]);
-		children[children.length - 1].anchors.set(left, al[al.length - 1], right, bottom);
+
+		var h = height / children.length;
+
+		children[0].anchors.top = top;
+		children[0].height = h;
+		if ((alignment & Alignment.VCenter) != 0)
+			children[0].anchors.verticalCenter = verticalCenter;
+
+		for (i in 1...children.length) {
+			children[i].anchors.top = children[i - 1].top;
+			children[i].anchors.topMargin = spacing;
+			children[i].height = h;
+			if ((alignment & Alignment.VCenter) != 0)
+				children[i].anchors.verticalCenter = verticalCenter;
+		}
 	}
 }

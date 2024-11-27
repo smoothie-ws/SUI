@@ -23,33 +23,33 @@ class Anchors {
 
 	public function new(el:Element) {
 		_el = el;
-		
+
 		propagateLeft = {
 			ID: 0,
 			f: _propagateLeft
 		};
 		propagateTop = {
 			ID: 0,
-			f: _propagateLeft
+			f: _propagateTop
 		};
 
 		propagateRight = {
 			ID: 0,
-			f: _propagateLeft
+			f: _propagateRight
 		};
 
 		propagateBottom = {
 			ID: 0,
-			f: _propagateLeft
+			f: _propagateBottom
 		};
 		propagateHorizontalCenter = {
 			ID: 0,
-			f: _propagateLeft
+			f: _propagateHorizontalCenter
 		};
 
 		propagateVerticalCenter = {
 			ID: 0,
-			f: _propagateLeft
+			f: _propagateVerticalCenter
 		};
 	}
 
@@ -128,37 +128,37 @@ class Anchors {
 	}
 
 	inline function set_leftMargin(value:Float):Float {
-		_el.left.position += value - leftMargin;
+		_el.x += value - leftMargin;
 		leftMargin = value;
 		return value;
 	}
 
 	inline function set_topMargin(value:Float):Float {
-		_el.top.position += value - topMargin;
+		_el.y += value - topMargin;
 		topMargin = value;
 		return value;
 	}
 
 	inline function set_rightMargin(value:Float):Float {
-		_el.right.position -= value - rightMargin;
+		_el.width -= value - rightMargin;
 		rightMargin = value;
 		return value;
 	}
 
 	inline function set_bottomMargin(value:Float):Float {
-		_el.bottom.position -= value - bottomMargin;
+		_el.height -= value - bottomMargin;
 		bottomMargin = value;
 		return value;
 	}
 
 	inline function set_horizontalCenterOffset(value:Float):Float {
-		_el.horizontalCenter.position += value - horizontalCenterOffset;
+		_el.centerX += value - horizontalCenterOffset;
 		horizontalCenterOffset = value;
 		return value;
 	}
 
 	inline function set_verticalCenterOffset(value:Float):Float {
-		_el.verticalCenter.position += value - verticalCenterOffset;
+		_el.centerY += value - verticalCenterOffset;
 		verticalCenterOffset = value;
 		return value;
 	}

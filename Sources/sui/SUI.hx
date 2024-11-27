@@ -1,5 +1,6 @@
 package sui;
 
+import kha.Display;
 import kha.Color;
 import kha.Shaders;
 import kha.Assets;
