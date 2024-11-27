@@ -23,64 +23,99 @@ class Anchors {
 
 	public function new(el:Element) {
 		_el = el;
+		
+		propagateLeft = {
+			ID: 0,
+			f: _propagateLeft
+		};
+		propagateTop = {
+			ID: 0,
+			f: _propagateLeft
+		};
+
+		propagateRight = {
+			ID: 0,
+			f: _propagateLeft
+		};
+
+		propagateBottom = {
+			ID: 0,
+			f: _propagateLeft
+		};
+		propagateHorizontalCenter = {
+			ID: 0,
+			f: _propagateLeft
+		};
+
+		propagateVerticalCenter = {
+			ID: 0,
+			f: _propagateLeft
+		};
 	}
 
-	inline function propagate_left(position:Float) {
+	inline function _propagateLeft(position:Float) {
 		_el.x = position + leftMargin;
 	}
 
-	inline function propagate_top(position:Float) {
+	inline function _propagateTop(position:Float) {
 		_el.y = position + topMargin;
 	}
 
-	inline function propagate_right(position:Float) {
+	inline function _propagateRight(position:Float) {
 		_el.width = position - rightMargin - _el.x;
 	}
 
-	inline function propagate_bottom(position:Float) {
+	inline function _propagateBottom(position:Float) {
 		_el.height = position - bottomMargin - _el.y;
 	}
 
-	inline function propagate_horizontalCenter(position:Float) {
+	inline function _propagateHorizontalCenter(position:Float) {
 		_el.centerX = position + horizontalCenterOffset;
 	}
 
-	inline function propagate_verticalCenter(position:Float) {
+	inline function _propagateVerticalCenter(position:Float) {
 		_el.centerY = position + verticalCenterOffset;
 	}
 
-	inline function setAnchorLine(anchorLine:AnchorLine, listener:Float->Void, value:AnchorLine) {
+	var propagateLeft:AnchorLineListener;
+	var propagateTop:AnchorLineListener;
+	var propagateRight:AnchorLineListener;
+	var propagateBottom:AnchorLineListener;
+	var propagateHorizontalCenter:AnchorLineListener;
+	var propagateVerticalCenter:AnchorLineListener;
+
+	inline function setAnchorLine(anchorLine:AnchorLine, listener:AnchorLineListener, value:AnchorLine) {
 		if (value == null && anchorLine != null)
-			anchorLine.removePositionListener(listener);
+			anchorLine.removePositionListener(listener.ID);
 		else
-			value.addPositionListener(listener);
+			listener.ID = value.addPositionListener(listener.f);
 
 		anchorLine = value;
 		return value;
 	}
 
 	inline function set_left(value:AnchorLine):AnchorLine {
-		return setAnchorLine(left, propagate_left, value);
+		return setAnchorLine(left, propagateLeft, value);
 	}
 
 	inline function set_top(value:AnchorLine):AnchorLine {
-		return setAnchorLine(top, propagate_top, value);
+		return setAnchorLine(top, propagateTop, value);
 	}
 
 	inline function set_right(value:AnchorLine):AnchorLine {
-		return setAnchorLine(right, propagate_right, value);
+		return setAnchorLine(right, propagateRight, value);
 	}
 
 	inline function set_bottom(value:AnchorLine):AnchorLine {
-		return setAnchorLine(bottom, propagate_bottom, value);
+		return setAnchorLine(bottom, propagateBottom, value);
 	}
 
 	inline function set_horizontalCenter(value:AnchorLine):AnchorLine {
-		return setAnchorLine(horizontalCenter, propagate_horizontalCenter, value);
+		return setAnchorLine(horizontalCenter, propagateHorizontalCenter, value);
 	}
 
 	inline function set_verticalCenter(value:AnchorLine):AnchorLine {
-		return setAnchorLine(verticalCenter, propagate_verticalCenter, value);
+		return setAnchorLine(verticalCenter, propagateVerticalCenter, value);
 	}
 
 	inline function set_margins(value:Float) {
@@ -142,24 +177,12 @@ class Anchors {
 }
 
 @:structInit
+@:build(sui.core.macro.SUIMacro.build())
 class AnchorLine {
-	@:isVar public var position(default, set):FastFloat = 0;
+	@observable public var position:FastFloat = 0;
+}
 
-	var positionListeners:Array<FastFloat->Void> = [];
-
-	inline function set_position(value:FastFloat):FastFloat {
-		position = value;
-		for (f in positionListeners)
-			f(position);
-		return value;
-	}
-
-	public inline function addPositionListener(f:FastFloat->Void) {
-		positionListeners.push(f);
-		f(position);
-	}
-
-	public inline function removePositionListener(f:FastFloat->Void) {
-		positionListeners.remove(f);
-	}
+private typedef AnchorLineListener = {
+	public var ID:Int;
+	public var f:FastFloat->Void;
 }

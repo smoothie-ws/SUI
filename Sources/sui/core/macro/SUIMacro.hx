@@ -10,36 +10,76 @@ using sui.core.utils.StringExt;
 class SUIMacro {
 	public static function build():Array<Field> {
 		var fields:Array<Field> = Context.getBuildFields();
-
 		for (field in fields)
 			if (field.meta != null)
-				for (meta in field.meta)
-					if (meta.name == "bindable")
+				for (meta in field.meta) {
+					if (meta.name == "readonly")
 						switch (field.kind) {
 							case FVar(varType, e):
 								field.meta.push({name: ":isVar", pos: Context.currentPos()});
-								// make variable be property
-								field.kind = FieldType.FProp("default", "set", varType, e);
-								// add variable listener
+								field.kind = FProp("default", "never", varType, e);
+							case _:
+								null;
+						}
+					if (meta.name == "observable")
+						switch (field.kind) {
+							case FVar(varType, e):
+								field.meta.push({name: ":isVar", pos: Context.currentPos()});
+								field.kind = FProp("default", "set", varType, e);
+
+								var listenersName = '${field.name}Listeners';
 								fields.push({
 									pos: Context.currentPos(),
-									name: 'on${field.name.capitalize()}Changed',
+									name: listenersName,
+									access: [APrivate],
+									kind: FVar(macro :Array<$varType->Void>, macro [])
+								});
+
+								var listenersRef = listenersName.resolve();
+								fields.push({
+									pos: Context.currentPos(),
+									name: 'add${field.name.capitalize()}Listener',
 									kind: FFun({
-										args: [],
-										expr: macro null
+										ret: macro :Int,
+										args: [
+											{
+												name: 'f',
+												type: macro :$varType->Void,
+												opt: false
+											}
+										],
+										expr: macro {
+											$listenersRef.push($i{'f'});
+											return $listenersRef.length - 1;
+										}
 									}),
 									access: [ADynamic, APublic]
 								});
-								// add variable setter
-								var variableRef = field.name.resolve();
-								var listenerRef = 'on${field.name.capitalize()}Changed'.resolve();
 
+								fields.push({
+									pos: Context.currentPos(),
+									name: 'remove${field.name.capitalize()}Listener',
+									kind: FFun({
+										args: [
+											{
+												name: 'listenerID',
+												type: macro :Int,
+												opt: false
+											}
+										],
+										expr: macro {
+											$listenersRef.splice(listenerID, 1);
+										}
+									}),
+									access: [ADynamic, APublic]
+								});
+
+								var variableRef = field.name.resolve();
 								var setterBody = macro {
 									var from = $variableRef;
 									$variableRef = v;
-									if ($variableRef != from) {
-										$listenerRef();
-									}
+									for (f in $listenersRef)
+										f(v);
 									return $variableRef;
 								};
 								fields.push({
@@ -47,7 +87,7 @@ class SUIMacro {
 									name: 'set_${field.name}',
 									access: [APrivate],
 									meta: [],
-									kind: FieldType.FFun({
+									kind: FFun({
 										ret: varType,
 										params: [],
 										expr: setterBody,
@@ -65,6 +105,7 @@ class SUIMacro {
 							case _:
 								null;
 						}
+				}
 
 		return fields;
 	}

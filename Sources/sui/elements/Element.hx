@@ -7,6 +7,7 @@ import kha.math.FastVector2;
 import sui.positioning.Anchors;
 import sui.elements.batches.ElementBatch;
 
+@:autoBuild(sui.core.macro.SUIMacro.build())
 class Element {
 	public function new() {
 		anchors = new Anchors(this);
@@ -14,12 +15,12 @@ class Element {
 
 	// anchors
 	public var anchors:Anchors;
-	@:isVar public var left(default, never):AnchorLine = {};
-	@:isVar public var top(default, never):AnchorLine = {};
-	@:isVar public var right(default, never):AnchorLine = {};
-	@:isVar public var bottom(default, never):AnchorLine = {};
-	@:isVar public var horizontalCenter(default, never):AnchorLine = {};
-	@:isVar public var verticalCenter(default, never):AnchorLine = {};
+	@readonly public var left:AnchorLine = {};
+	@readonly public var top:AnchorLine = {};
+	@readonly public var right:AnchorLine = {};
+	@readonly public var bottom:AnchorLine = {};
+	@readonly public var horizontalCenter:AnchorLine = {};
+	@readonly public var verticalCenter:AnchorLine = {};
 
 	// positioning
 	public var x(get, set):FastFloat;
@@ -184,7 +185,6 @@ class Element {
 	function get_finalEnabled():Bool {
 		return parent == null ? enabled : parent.finalEnabled && enabled;
 	}
-
 
 	public var batch:ElementBatch;
 	public var instanceID:Int;
