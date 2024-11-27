@@ -75,7 +75,7 @@ class SUIMacro {
 		switch (field.kind) {
 			case FVar(varType, e):
 				field.meta.push({name: ":isVar", pos: Context.currentPos()});
-				field.kind = FProp("default", "never", varType, e);
+				field.kind = FProp("default", "null", varType, e);
 			case _:
 				null;
 		}
