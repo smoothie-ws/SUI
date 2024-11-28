@@ -88,9 +88,10 @@ class SUI {
 		SUI.mouse = Mouse.get();
 		SUI.keyboard = Keyboard.get();
 
-		window.notifyOnResize(scene.resize);
-		scene.resize(window.width, window.height);
+		SUI.window.notifyOnResize(scene.resize);
+		scene.createBackbuffer(window.width, window.height);
 		scene.constructTree();
+
 		Assets.loadEverything(function() {
 			compileShaders();
 			startUpdates();

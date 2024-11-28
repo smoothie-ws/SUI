@@ -92,11 +92,11 @@ class Rectangle extends DrawableElement {
 			var o = mapToGlobal(origin);
 			var ox = o.x / SUI.scene.resolution * 2 - 1;
 
+			var ioffset = instanceID * 20;
+
 			var vert = b.vertices.lock();
-			vert[instanceID * 20 + 0] = (vert[instanceID * 20 + 0] - ox) * d + ox;
-			vert[instanceID * 20 + 5] = (vert[instanceID * 20 + 5] - ox) * d + ox;
-			vert[instanceID * 20 + 10] = (vert[instanceID * 20 + 10] - ox) * d + ox;
-			vert[instanceID * 20 + 15] = (vert[instanceID * 20 + 15] - ox) * d + ox;
+			for (i in 0...4)
+				vert[ioffset + i * 5] = (vert[ioffset + i * 5] - ox) * d + ox;
 			b.vertices.unlock();
 		}
 		scaleX = value;
@@ -108,13 +108,13 @@ class Rectangle extends DrawableElement {
 			var b:RectBatch = cast batch;
 			var d = value / scaleY;
 			var o = mapToGlobal(origin);
-			var oy = 1 - o.x / SUI.scene.resolution * 2;
+			var oy = 1 - o.y / SUI.scene.resolution * 2;
+
+			var ioffset = instanceID * 20;
 
 			var vert = b.vertices.lock();
-			vert[instanceID * 20 + 1] = (vert[instanceID * 20 + 1] - oy) * d + oy;
-			vert[instanceID * 20 + 6] = (vert[instanceID * 20 + 6] - oy) * d + oy;
-			vert[instanceID * 20 + 11] = (vert[instanceID * 20 + 11] - oy) * d + oy;
-			vert[instanceID * 20 + 16] = (vert[instanceID * 20 + 16] - oy) * d + oy;
+			for (i in 0...4)
+				vert[ioffset + i * 5 + 1] = (vert[ioffset + i * 5 + 1] - oy) * d + oy;
 			b.vertices.unlock();
 		}
 		scaleY = value;
@@ -132,27 +132,16 @@ class Rectangle extends DrawableElement {
 			var rotCos = Math.cos(rotRad);
 			var rotSin = Math.sin(rotRad);
 
+			var ioffset = instanceID * 20;
+
 			var vert = b.vertices.lock();
-
-			var _x = vert[instanceID * 20 + 0] - ox;
-			var _y = vert[instanceID * 20 + 1] - oy;
-			vert[instanceID * 20 + 0] = _x * rotCos - _y * rotSin + ox;
-			vert[instanceID * 20 + 1] = _x * rotSin + _y * rotCos + oy;
-
-			_x = vert[instanceID * 20 + 5] - ox;
-			_y = vert[instanceID * 20 + 6] - oy;
-			vert[instanceID * 20 + 5] = _x * rotCos - _y * rotSin + ox;
-			vert[instanceID * 20 + 6] = _x * rotSin + _y * rotCos + oy;
-
-			_x = vert[instanceID * 20 + 10] - ox;
-			_y = vert[instanceID * 20 + 11] - oy;
-			vert[instanceID * 20 + 10] = _x * rotCos - _y * rotSin + ox;
-			vert[instanceID * 20 + 11] = _x * rotSin + _y * rotCos + oy;
-
-			_x = vert[instanceID * 20 + 15] - ox;
-			_y = vert[instanceID * 20 + 16] - oy;
-			vert[instanceID * 20 + 15] = _x * rotCos - _y * rotSin + ox;
-			vert[instanceID * 20 + 16] = _x * rotSin + _y * rotCos + oy;
+			for (i in 0...4) {
+				var j = i * 5;
+				var _x = vert[ioffset + j] - ox;
+				var _y = vert[ioffset + j + 1] - oy;
+				vert[ioffset + j] = _x * rotCos - _y * rotSin + ox;
+				vert[ioffset + j + 1] = _x * rotSin + _y * rotCos + oy;
+			}
 			b.vertices.unlock();
 		}
 		rotation = value;
@@ -164,11 +153,11 @@ class Rectangle extends DrawableElement {
 			var b:RectBatch = cast batch;
 			var d = (value - translationX) / SUI.scene.resolution;
 
+			var ioffset = instanceID * 20;
+
 			var vert = b.vertices.lock();
-			vert[instanceID * 20 + 0] += d;
-			vert[instanceID * 20 + 5] += d;
-			vert[instanceID * 20 + 10] += d;
-			vert[instanceID * 20 + 15] += d;
+			for (i in 0...4)
+				vert[ioffset + i * 5] += d;
 			b.vertices.unlock();
 		}
 		translationX = value;
@@ -180,11 +169,11 @@ class Rectangle extends DrawableElement {
 			var b:RectBatch = cast batch;
 			var d = (value - translationY) / SUI.scene.resolution;
 
+			var ioffset = instanceID * 20;
+
 			var vert = b.vertices.lock();
-			vert[instanceID * 20 + 1] += d;
-			vert[instanceID * 20 + 6] += d;
-			vert[instanceID * 20 + 11] += d;
-			vert[instanceID * 20 + 16] += d;
+			for (i in 0...4)
+				vert[ioffset + i * 5 + 1] += d;
 			b.vertices.unlock();
 		}
 		translationY = value;

@@ -1,4 +1,4 @@
-package sui;
+package sui.utils;
 
 import kha.FastFloat;
 
