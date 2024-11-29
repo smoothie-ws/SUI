@@ -9,6 +9,8 @@ import sui.elements.batches.ElementBatch;
 
 @:autoBuild(sui.core.macro.SUIMacro.build())
 class Element {
+	var components = [];
+
 	public function new() {
 		anchors = new Anchors(this);
 	}

@@ -25,6 +25,8 @@ class Scene extends DrawableElement {
 		} else
 			addChild(element);
 
+		for (c in element.components)
+			add(c);
 		for (c in element.children)
 			add(c);
 	}

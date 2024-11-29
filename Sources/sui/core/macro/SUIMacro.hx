@@ -12,17 +12,14 @@ class SUIMacro {
 		var fields:Array<Field> = Context.getBuildFields();
 		for (field in fields)
 			if (field.meta != null)
-				for (meta in field.meta)
-					switch (meta.name) {
-						case "alias":
-							buildAlias(field, fields);
-						case "readonly":
-							buildReadonly(field, fields);
-						case "observable":
-							buildObservable(field, fields);
-						case _:
-							null;
-					}
+				for (meta in field.meta) {
+					if (meta.name == "alias")
+						buildAlias(field, fields);
+					if (meta.name == "readonly")
+						buildReadonly(field, fields);
+					if (meta.name == "observable")
+						buildObservable(field, fields);
+				}
 
 		return fields;
 	}
