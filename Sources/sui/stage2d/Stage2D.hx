@@ -49,7 +49,7 @@ class Stage2D extends DrawableElement {
 			var indData:Array<Int> = [];
 			var indOffset = 0;
 			for (mesh in meshes) {
-				var shadowTriangles = mesh.castShadows(light);
+				var shadowTriangles = light.castShadows(mesh);
 				for (vert in shadowTriangles.vertices)
 					vertData.push(vert);
 				for (ind in shadowTriangles.indices)

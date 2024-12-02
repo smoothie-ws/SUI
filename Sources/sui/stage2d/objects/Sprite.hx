@@ -1,31 +1,17 @@
 package sui.stage2d.objects;
 
-import kha.FastFloat;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.VertexStructure;
 
-@:structInit
-class MeshObject extends Object {
-	@readonly public var indices:IndexBuffer;
-	@readonly public var vertices:VertexBuffer;
-	@readonly public var vertexCount:Int;
-	@readonly public var structLength:Int;
-
-	public var opacity:FastFloat = 1.0;
-	public var isCastingShadows:Bool = true;
-
-	public function new(vertexCount:Int) {
-		super();
-		this.vertexCount = vertexCount;
-	}
-
-	function init() {
+class Sprite extends MeshObject {
+	override inline function init() {
 		var structure = new VertexStructure();
 		structure.add("vertCoord", VertexData.Float32_3X);
-		structLength = 3;
-
+		structure.add("vertUV", VertexData.Float32_2X);
+		structLength = 5;
+        
 		vertices = new VertexBuffer(vertexCount, structure, StaticUsage);
 		indices = new IndexBuffer((vertexCount - 2) * 3, StaticUsage);
 
