@@ -3,6 +3,6 @@ package sui.stage2d.lighting;
 import kha.FastFloat;
 
 @:structInit
-class SunLight extends PointLight {
+class SunLight extends Light {
 	public var angle:FastFloat = 90;
 }
