@@ -33,10 +33,15 @@ class Stage2D extends DrawableElement {
 		var lights:Array<Light> = [];
 
 		for (object in objects) {
-			if (object is MeshObject)
-				meshes.push(cast object);
-			else if (object is Light)
-				lights.push(cast object);
+			if (object is MeshObject) {
+				var mesh:MeshObject = cast object;
+				if (mesh.isCastingShadows)
+					meshes.push(mesh);
+			} else if (object is Light) {
+				var light:Light = cast object;
+				if (light.isCastingShadows)
+					lights.push(light);
+			}
 		}
 
 		for (light in lights) {
