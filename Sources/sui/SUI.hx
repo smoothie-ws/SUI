@@ -118,6 +118,8 @@ class SUI {
 
 	public static inline function compileShaders() {
 		SUIShaders.rectShader.compile(Shaders.sui_rectangle_vert, Shaders.sui_rectangle_frag);
+		SUIShaders.colorDrawer.compile(Shaders.sui_color_vert, Shaders.sui_color_frag);
+		SUIShaders.imageDrawer.compile(Shaders.sui_image_vert, Shaders.sui_image_frag);
 		SUIShaders.shadowCaster.compile(Shaders.sui_shadow_mask_vert, Shaders.sui_shadow_mask_frag);
 	}
 

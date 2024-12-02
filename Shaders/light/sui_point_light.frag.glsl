@@ -37,31 +37,6 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
            geometrySchlickGGX(max(dot(N, L), 0.0), k);
 }
 
-const vec3 viewDir = vec3(0.0, 0.0, 1.0); // 2D camera
-const float PI = 3.14159;
-
-vec3 fresnelSchlick(float cosTheta, vec3 F0) {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
-}
-
-float distributionGGX(vec3 N, vec3 H, float roughness) {
-    float a = roughness * roughness;
-    float a2 = a * a;
-    float NdotH = max(dot(N, H), 0.0);
-    float denom = (NdotH * (a2 - 1.0) + 1.0);
-    return a2 / (PI * denom * denom);
-}
-
-float geometrySchlickGGX(float NdotX, float k) {
-    return NdotX / (NdotX * (1.0 - k) + k);
-}
-
-float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
-    float k = pow(roughness + 1.0, 2.0) / 8.0;
-    return geometrySchlickGGX(max(dot(N, V), 0.0), k) *
-           geometrySchlickGGX(max(dot(N, L), 0.0), k);
-}
-
 void main() {
     vec2 uv = fragCoord.xy;
 

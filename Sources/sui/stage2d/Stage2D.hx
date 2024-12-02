@@ -10,45 +10,74 @@ import sui.elements.DrawableElement;
 import sui.stage2d.objects.Object;
 import sui.stage2d.objects.MeshObject;
 import sui.stage2d.lighting.Light;
+import sui.stage2d.objects.Sprite;
 
 class Stage2D extends DrawableElement {
-	var gbuffer:GBuffer;
-	var backbuffer:Image;
+	public var backbuffer:Image = null;
+	public var gbuffer:GBuffer = {};
 
-	public var objects:Array<Object> = [];
+	var meshes:Array<MeshObject> = [];
+	var lights:Array<Light> = [];
 
 	public function new() {
 		super();
-		gbuffer = new GBuffer(Std.int(width), Std.int(height));
 	}
 
-	override inline function resize(width:Int, heigth:Int) {
-		this.width = width;
-		this.height = height;
-		gbuffer.resize(width, heigth);
+	public inline function add(object:Object) {
+		if (object is MeshObject) {
+			var mesh:MeshObject = cast object;
+			var added = false;
+			for (i in 0...meshes.length)
+				if (meshes[i].z > object.z) {
+					meshes.insert(i, mesh);
+					added = true;
+					break;
+				}
+			if (!added)
+				meshes.push(mesh);
+		} else if (object is Light) {
+			var light:Light = cast object;
+			if (light.isCastingShadows)
+				lights.push(light);
+		}
 	}
+
+	override inline function resize(w:Int, h:Int) {
+		width = w;
+		height = h;
+
+		backbuffer = Image.createRenderTarget(w, h, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		gbuffer.createBuffers(w, h);
+	}
+
+	override public function construct() {
+		resize(Std.int(width), Std.int(height));
+		for (mesh in meshes)
+			mesh.init();
+	}
+
+	public inline function update() {};
 
 	override inline function draw(target:Canvas) {
-		var meshes:Array<MeshObject> = [];
-		var lights:Array<Light> = [];
+		target.g2.end();
 
-		for (object in objects) {
-			if (object is MeshObject) {
-				var mesh:MeshObject = cast object;
-				if (mesh.isCastingShadows)
-					meshes.push(mesh);
-			} else if (object is Light) {
-				var light:Light = cast object;
-				if (light.isCastingShadows)
-					lights.push(light);
-			}
+		gbuffer.clear();
+
+		for (mesh in meshes) {
+			if (!mesh.shaded)
+				continue;
+			gbuffer.drawMesh(mesh);
 		}
 
 		for (light in lights) {
 			var vertData:Array<Float> = [];
 			var indData:Array<Int> = [];
 			var indOffset = 0;
+
 			for (mesh in meshes) {
+				if (!mesh.isCastingShadows)
+					continue;
+
 				var shadowTriangles = light.castShadows(mesh);
 				for (vert in shadowTriangles.vertices)
 					vertData.push(vert);
@@ -56,38 +85,97 @@ class Stage2D extends DrawableElement {
 					indData.push(indOffset + ind);
 				indOffset += Std.int(shadowTriangles.vertices.length / 3);
 			}
-			var vertices = new VertexBuffer(Std.int(vertData.length / 3), SUIShaders.shadowCaster.structure, StaticUsage);
-			var vert = vertices.lock();
-			for (i in 0...vertData.length)
-				vert[i] = vertData[i];
-			vertices.unlock();
 
-			var indices = new IndexBuffer(indData.length, StaticUsage);
-			var ind = indices.lock();
-			for (i in 0...indData.length)
-				ind[i] = indData[i];
-			indices.unlock();
-
-			SUIShaders.shadowCaster.draw(gbuffer.shadowMap, vertices, indices);
+			if (!(vertData.length == 0 || indData.length == 0))
+				gbuffer.drawShadows(vertData, indData);
 		}
+
+		target.g2.begin(false);
+		target.g2.drawScaledImage(backbuffer, x, y, width, height);
+		target.g2.end();
+
+		target.g2.begin(false);
 	}
 }
 
+@:structInit
 private class GBuffer {
-	public var shadowMap:Image;
-	public var albedo:Image;
-	public var emission:Image;
-	public var normal:Image;
-	public var ormd:Image; // [occlusion, metalness, roughness, depth]
+	public var albedo:Image = null;
+	public var emission:Image = null;
+	public var normal:Image = null;
+	public var ormd:Image = null; // [occlusion, metalness, roughness, depth]
+	public var shadowMap:Image = null;
 
-	public inline function new(width:Int, heigth:Int) {
-		resize(width, heigth);
+	public inline function clear() {
+		albedo.g4.clear();
+		emission.g4.clear();
+		normal.g4.clear();
+		ormd.g4.clear();
+		shadowMap.g4.clear();
 	}
 
-	public inline function resize(width:Int, heigth:Int) {
-		albedo = Image.createRenderTarget(width, heigth);
-		emission = Image.createRenderTarget(width, heigth);
-		normal = Image.createRenderTarget(width, heigth);
-		ormd = Image.createRenderTarget(width, heigth);
+	public inline function createBuffers(w:Int, h:Int) {
+		albedo = Image.createRenderTarget(w, h, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		emission = Image.createRenderTarget(w, h, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		normal = Image.createRenderTarget(w, h, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		ormd = Image.createRenderTarget(w, h, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		shadowMap = Image.createRenderTarget(w, h, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
+	}
+
+	inline function createPixel(color:Int):Image {
+		var image = Image.createRenderTarget(1, 1);
+		image.g1.begin();
+		image.g1.setPixel(0, 0, color);
+		image.g1.end();
+		return image;
+	}
+
+	public inline function drawMesh(mesh:MeshObject) {
+		if (mesh is Sprite) {
+			var sprite:Sprite = cast mesh;
+			albedo.g2.begin(false);
+			SUIShaders.imageDrawer.draw(albedo, mesh.vertices, mesh.indices, [sprite.albedoMap]);
+			albedo.g2.end();
+			emission.g2.begin(false);
+			SUIShaders.imageDrawer.draw(emission, mesh.vertices, mesh.indices, [sprite.emissionMap]);
+			emission.g2.end();
+			normal.g2.begin(false);
+			SUIShaders.imageDrawer.draw(normal, mesh.vertices, mesh.indices, [sprite.normalMap]);
+			normal.g2.end();
+			ormd.g2.begin(false);
+			SUIShaders.imageDrawer.draw(ormd, mesh.vertices, mesh.indices, [sprite.ormMap]);
+			ormd.g2.end();
+		} else {
+			albedo.g2.begin(false);
+			SUIShaders.imageDrawer.draw(albedo, mesh.vertices, mesh.indices, [mesh.albedo]);
+			albedo.g2.end();
+			emission.g2.begin(false);
+			SUIShaders.imageDrawer.draw(emission, mesh.vertices, mesh.indices, [mesh.emission]);
+			emission.g2.end();
+			normal.g2.begin(false);
+			SUIShaders.imageDrawer.draw(normal, mesh.vertices, mesh.indices, [mesh.normal]);
+			normal.g2.end();
+			ormd.g2.begin(false);
+			SUIShaders.imageDrawer.draw(ormd, mesh.vertices, mesh.indices, [mesh.orm]);
+			ormd.g2.end();
+		}
+	}
+
+	public inline function drawShadows(vertData:Array<Float>, indData:Array<Int>) {
+		var vertices = new VertexBuffer(Std.int(vertData.length / 3), SUIShaders.shadowCaster.structure, StaticUsage);
+		var vert = vertices.lock();
+		for (i in 0...vertData.length)
+			vert[i] = vertData[i];
+		vertices.unlock();
+
+		var indices = new IndexBuffer(indData.length, StaticUsage);
+		var ind = indices.lock();
+		for (i in 0...indData.length)
+			ind[i] = indData[i];
+		indices.unlock();
+
+		shadowMap.g2.begin(false);
+		SUIShaders.shadowCaster.draw(shadowMap, vertices, indices);
+		shadowMap.g2.end();
 	}
 }
