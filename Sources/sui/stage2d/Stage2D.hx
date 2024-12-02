@@ -1,5 +1,6 @@
 package sui.stage2d;
 
+import kha.FastFloat;
 import kha.Image;
 import kha.Canvas;
 import kha.graphics4.IndexBuffer;
@@ -13,14 +14,48 @@ import sui.stage2d.lighting.Light;
 import sui.stage2d.objects.Sprite;
 
 class Stage2D extends DrawableElement {
-	public var backbuffer:Image = null;
 	public var gbuffer:GBuffer = {};
+
+	var indices:IndexBuffer;
+	var vertices:VertexBuffer;
 
 	var meshes:Array<MeshObject> = [];
 	var lights:Array<Light> = [];
 
 	public function new() {
 		super();
+	}
+
+	inline function setLeft(value:FastFloat) {
+		var v = vertices.lock();
+		var _x = (value / SUI.scene.backbuffer.width) * 2 - 1;
+		v[0] = _x;
+		v[6] = _x;
+		vertices.unlock();
+	}
+
+	inline function setTop(value:FastFloat) {
+		var v = vertices.lock();
+		var _y = (value / SUI.scene.backbuffer.height) * 2 - 1;
+		v[1] = _y;
+		v[7] = _y;
+		vertices.unlock();
+	}
+
+	inline function setRight(value:FastFloat) {
+		var v = vertices.lock();
+		var _x = (value / SUI.scene.backbuffer.width) * 2 - 1;
+		v[2] = _x;
+		v[4] = _x;
+		vertices.unlock();
+	}
+
+	inline function setBottom(value:FastFloat) {
+		var v = vertices.lock();
+		var _y = (value / SUI.scene.backbuffer.height) * 2 - 1;
+		v[3] = _y;
+		v[5] = _y;
+		vertices.unlock();
 	}
 
 	public inline function add(object:Object) {
@@ -45,15 +80,30 @@ class Stage2D extends DrawableElement {
 	override inline function resize(w:Int, h:Int) {
 		width = w;
 		height = h;
-
-		backbuffer = Image.createRenderTarget(w, h, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
 		gbuffer.createBuffers(w, h);
 	}
 
 	override public function construct() {
-		resize(Std.int(width), Std.int(height));
+		vertices = new VertexBuffer(4, SUIShaders.deferredRenderer.structure, StaticUsage);
+		indices = new IndexBuffer(6, StaticUsage);
+		var ind = indices.lock();
+		ind[0] = 0;
+		ind[1] = 1;
+		ind[2] = 2;
+		ind[3] = 3;
+		ind[4] = 2;
+		ind[5] = 0;
+		indices.unlock();
+
+		left.addPositionListener(setLeft);
+		top.addPositionListener(setTop);
+		right.addPositionListener(setRight);
+		bottom.addPositionListener(setBottom);
+
 		for (mesh in meshes)
 			mesh.init();
+
+		gbuffer.createBuffers(Std.int(width), Std.int(height));
 	}
 
 	public inline function update() {};
@@ -88,6 +138,22 @@ class Stage2D extends DrawableElement {
 
 			if (!(vertData.length == 0 || indData.length == 0))
 				gbuffer.drawShadows(vertData, indData);
+
+			SUIShaders.deferredRenderer.draw(target, vertices, indices, [
+				gbuffer.ormd,
+				gbuffer.albedo,
+				gbuffer.normal,
+				gbuffer.shadowMap,
+				gbuffer.emission,
+				light.x,
+				light.y,
+				light.z,
+				light.color.R,
+				light.color.G,
+				light.color.B,
+				light.strength,
+				light.radius
+			]);
 		}
 
 		for (mesh in meshes) {
@@ -96,19 +162,15 @@ class Stage2D extends DrawableElement {
 
 			if (mesh is Sprite) {
 				var sprite:Sprite = cast mesh;
-				backbuffer.g2.begin(false);
-				SUIShaders.imageDrawer.draw(backbuffer, sprite.vertices, sprite.indices, [sprite.albedoMap]);
-				backbuffer.g2.end();
+				target.g2.begin(false);
+				SUIShaders.imageDrawer.draw(target, sprite.vertices, sprite.indices, [sprite.albedoMap]);
+				target.g2.end();
 			} else {
-				backbuffer.g2.begin(false);
-				SUIShaders.colorDrawer.draw(backbuffer, mesh.vertices, mesh.indices, [mesh.albedo]);
-				backbuffer.g2.end();
+				target.g2.begin(false);
+				SUIShaders.colorDrawer.draw(target, mesh.vertices, mesh.indices, [mesh.albedo]);
+				target.g2.end();
 			}
 		}
-
-		target.g2.begin(false);
-		target.g2.drawScaledImage(backbuffer, x, y, width, height);
-		target.g2.end();
 
 		target.g2.begin(false);
 	}
@@ -182,7 +244,7 @@ private class GBuffer {
 			ind[i] = indData[i];
 		indices.unlock();
 
-		shadowMap.g2.begin(false);
+		shadowMap.g2.begin(true);
 		SUIShaders.shadowCaster.draw(shadowMap, vertices, indices);
 		shadowMap.g2.end();
 	}

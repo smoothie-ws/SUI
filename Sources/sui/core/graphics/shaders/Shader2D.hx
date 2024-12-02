@@ -22,7 +22,7 @@ class Shader2D {
 		structure.add("vertCoord", VertexData.Float32_2X);
 	}
 
-	public inline function compile(vert:VertexShader, frag:FragmentShader) {
+	public function compile(vert:VertexShader, frag:FragmentShader) {
 		pipeline = new PipelineState();
 		pipeline.inputLayout = [structure];
 		pipeline.vertexShader = vert;
