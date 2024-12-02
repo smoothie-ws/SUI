@@ -90,6 +90,22 @@ class Stage2D extends DrawableElement {
 				gbuffer.drawShadows(vertData, indData);
 		}
 
+		for (mesh in meshes) {
+			if (mesh.shaded)
+				continue;
+
+			if (mesh is Sprite) {
+				var sprite:Sprite = cast mesh;
+				backbuffer.g2.begin(false);
+				SUIShaders.imageDrawer.draw(backbuffer, sprite.vertices, sprite.indices, [sprite.albedoMap]);
+				backbuffer.g2.end();
+			} else {
+				backbuffer.g2.begin(false);
+				SUIShaders.colorDrawer.draw(backbuffer, mesh.vertices, mesh.indices, [mesh.albedo]);
+				backbuffer.g2.end();
+			}
+		}
+
 		target.g2.begin(false);
 		target.g2.drawScaledImage(backbuffer, x, y, width, height);
 		target.g2.end();
@@ -122,14 +138,6 @@ private class GBuffer {
 		shadowMap = Image.createRenderTarget(w, h, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
 	}
 
-	inline function createPixel(color:Int):Image {
-		var image = Image.createRenderTarget(1, 1);
-		image.g1.begin();
-		image.g1.setPixel(0, 0, color);
-		image.g1.end();
-		return image;
-	}
-
 	public inline function drawMesh(mesh:MeshObject) {
 		if (mesh is Sprite) {
 			var sprite:Sprite = cast mesh;
@@ -147,16 +155,16 @@ private class GBuffer {
 			ormd.g2.end();
 		} else {
 			albedo.g2.begin(false);
-			SUIShaders.imageDrawer.draw(albedo, mesh.vertices, mesh.indices, [mesh.albedo]);
+			SUIShaders.colorDrawer.draw(albedo, mesh.vertices, mesh.indices, [mesh.albedo]);
 			albedo.g2.end();
 			emission.g2.begin(false);
-			SUIShaders.imageDrawer.draw(emission, mesh.vertices, mesh.indices, [mesh.emission]);
+			SUIShaders.colorDrawer.draw(emission, mesh.vertices, mesh.indices, [mesh.emission]);
 			emission.g2.end();
 			normal.g2.begin(false);
-			SUIShaders.imageDrawer.draw(normal, mesh.vertices, mesh.indices, [mesh.normal]);
+			SUIShaders.colorDrawer.draw(normal, mesh.vertices, mesh.indices, [mesh.normal]);
 			normal.g2.end();
 			ormd.g2.begin(false);
-			SUIShaders.imageDrawer.draw(ormd, mesh.vertices, mesh.indices, [mesh.orm]);
+			SUIShaders.colorDrawer.draw(ormd, mesh.vertices, mesh.indices, [mesh.orm]);
 			ormd.g2.end();
 		}
 	}
