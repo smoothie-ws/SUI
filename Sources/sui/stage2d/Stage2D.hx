@@ -13,7 +13,6 @@ import sui.stage2d.objects.MeshObject;
 import sui.stage2d.objects.Light;
 
 class Stage2D extends DrawableElement {
-	public var gMaps:Image = null;
 	public var gbuffer:GeometryMap = GeometryMap.createBlank(1, 1);
 
 	var indices:IndexBuffer;
@@ -111,8 +110,8 @@ class Stage2D extends DrawableElement {
 		}
 
 		drawMeshes(meshes);
-
-		target.g2.drawScaledImage(meshes[0].geometryMap.image, x, y, width, height);
+		
+		target.g2.drawScaledImage(gbuffer.image, x, y, width, height);
 		target.g2.begin(false);
 	}
 
@@ -133,6 +132,7 @@ class Stage2D extends DrawableElement {
 			gMapsArray.push(mesh.geometryMap);
 			var w = mesh.geometryMap.mapWidth;
 			var h = mesh.geometryMap.mapHeight;
+
 			maxW = w > maxW ? w : maxW;
 			maxH = h > maxH ? h : maxH;
 
@@ -167,16 +167,20 @@ class Stage2D extends DrawableElement {
 			ind[i] = indData[i];
 		indices.unlock();
 
-		if (maxW * maxH > 0) {
-			gMaps = Image.createRenderTarget(maxW * 4, maxH * meshCount);
-			gMaps.g2.begin();
-			for (i in 0...gMapsArray.length)
-				gMaps.g2.drawScaledImage(gMapsArray[i].image, 0, i * maxH, maxW, maxH);
-			gMaps.g2.end();
+		if (maxW * maxH <= 0)
+			return;
 
-			gbuffer.g2.begin(false);
-			DeferredRenderer.geometry.draw(gbuffer.image, vertices, indices, [gMaps, meshCount]);
-			gbuffer.g2.end();
-		}
+		var gMaps = Image.createRenderTarget(maxW * 4, maxH * meshCount);
+		gMaps.g2.begin();
+		for (i in 0...gMapsArray.length)
+			gMaps.g2.drawScaledImage(gMapsArray[i].image, 0, i * maxH, maxW * 4, maxH);
+		gMaps.g2.end();
+
+		if (gMaps == null)
+			return;
+
+		gbuffer.g2.begin(true);
+		DeferredRenderer.geometry.draw(gbuffer.image, vertices, indices, [gMaps, meshCount]);
+		gbuffer.g2.end();
 	}
 }

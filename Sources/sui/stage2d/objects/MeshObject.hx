@@ -13,7 +13,12 @@ typedef Vertex = {
 @:structInit
 @:allow(sui.stage2d.Stage2D)
 class MeshObject extends Object {
-	public var vertices:Array<Vertex> = [];
+	public var vertices:Array<Vertex> = [
+		{pos: {x: -0.5, y: -0.5}, uv: {x: 0, y: 0}},
+		{pos: {x: -0.5, y: 0.5}, uv: {x: 0, y: 1}},
+		{pos: {x: 0.5, y: 0.5}, uv: {x: 1, y: 1}},
+		{pos: {x: 0.5, y: -0.5}, uv: {x: 1, y: 0}}
+	];
 	public var opacity:FastFloat = 1.0;
 	public var isShaded:Bool = true;
 	public var isCastingShadows:Bool = true;
@@ -23,6 +28,10 @@ class MeshObject extends Object {
 	public inline function new() {
 		super();
 		geometryMap = GeometryMap.createBlank(1, 1);
+		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
+		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
+		normalColor = Color.fromFloats(0.5, 0.5, 1.0);
+		ormColor = Color.fromFloats(1.0, 0.0, 0.25);
 	}
 
 	@:isVar public var albedoColor(default, set):Color;

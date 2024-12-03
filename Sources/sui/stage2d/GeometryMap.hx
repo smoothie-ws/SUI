@@ -63,7 +63,7 @@ abstract GeometryMap(Image) {
 	}
 
 	inline function get_mapHeight():Int {
-		return Std.int(this.height / 4);
+		return Std.int(this.height);
 	}
 
 	inline function set_mapHeight(value:Int):Int {
@@ -121,7 +121,8 @@ abstract GeometryMap(Image) {
 	}
 
 	inline function getMapRect(mapOffset:Int):Array<Int> {
-		return [this.width * mapOffset, 0, this.width * (mapOffset + 1), this.height];
+		var w = mapWidth;
+		return [w * mapOffset, 0, w, mapHeight];
 	}
 
 	inline function setMapColor(mapOffset:Int = 0, color:Color):Void {
