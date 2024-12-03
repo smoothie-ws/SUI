@@ -62,7 +62,7 @@ class SUI {
 	static var onRenderListeners:Array<Void->Void> = [];
 	static var updateTaskId:Int;
 
-	public static inline function start(?title:String = "SUI App", ?width:Int = 800, ?height:Int = 600, ?vsync:Bool = true, ?samplesPerPixel:Int = 1) {
+	public static inline function start(title:String, width:Int, height:Int, vsync:Bool, samplesPerPixel) {
 		options.vsync = vsync;
 		options.samplesPerPixel = samplesPerPixel;
 		System.start({
@@ -91,7 +91,6 @@ class SUI {
 
 		SUI.window.notifyOnResize(scene.resize);
 		scene.createBackbuffer(window.width, window.height);
-		scene.constructTree();
 
 		Assets.loadEverything(function() {
 			compileShaders();

@@ -13,9 +13,6 @@ class Light extends Object {
 	public var strength:FastFloat = 1;
 	public var radius:FastFloat = 0;
 	public var isCastingShadows:Bool = true;
-	public var shadowMap:Image = null;
 
-	public function castShadows(mesh:MeshObject):Image {
-		return shadowMap;
-	}
+	public function drawShadows(shadowMap:Image, meshes:Array<MeshObject>):Void {}
 }

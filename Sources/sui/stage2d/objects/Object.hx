@@ -54,7 +54,7 @@ class Object {
 		for (c in children)
 			c.translate(x, y);
 	}
-
+	
 	public function addChild(child:Object) {
 		children.push(child);
 		child.parent = this;

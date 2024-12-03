@@ -235,14 +235,6 @@ class Element {
 		parent.removeChild(this);
 	}
 
-	public function construct() {}
-
-	public inline function constructTree() {
-		construct();
-		for (child in children)
-			child.constructTree();
-	}
-
 	public inline function mapFromGlobal(point:FastVector2):FastVector2 {
 		return {x: point.x - x, y: point.y - y};
 	}

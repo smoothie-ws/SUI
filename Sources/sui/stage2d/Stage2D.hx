@@ -6,25 +6,39 @@ import kha.Canvas;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.VertexBuffer;
 // sui
-import sui.core.graphics.SUIShaders;
 import sui.core.graphics.DeferredRenderer;
 import sui.elements.DrawableElement;
 import sui.stage2d.objects.Object;
 import sui.stage2d.objects.MeshObject;
-import sui.stage2d.objects.Sprite;
 import sui.stage2d.objects.Light;
 
 class Stage2D extends DrawableElement {
-	public var gbuffer:Image = null; // [albedo, normal, orm, emission]
+	public var gMaps:Image = null;
+	public var gbuffer:GeometryMap = GeometryMap.createBlank(1, 1);
 
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;
 
-	var meshes:Array<MeshObject> = [];
-	var lights:Array<Light> = [];
+	var objects:Array<Object> = [];
 
 	public function new() {
 		super();
+
+		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
+		indices = new IndexBuffer(6, StaticUsage);
+		var ind = indices.lock();
+		ind[0] = 0;
+		ind[1] = 1;
+		ind[2] = 2;
+		ind[3] = 3;
+		ind[4] = 2;
+		ind[5] = 0;
+		indices.unlock();
+
+		left.addPositionListener(setLeft);
+		top.addPositionListener(setTop);
+		right.addPositionListener(setRight);
+		bottom.addPositionListener(setBottom);
 	}
 
 	inline function setLeft(value:FastFloat) {
@@ -60,49 +74,14 @@ class Stage2D extends DrawableElement {
 	}
 
 	public inline function add(object:Object) {
-		if (object is MeshObject) {
-			var mesh:MeshObject = cast object;
-			var added = false;
-			for (i in 0...meshes.length)
-				if (meshes[i].z > object.z) {
-					meshes.insert(i, mesh);
-					added = true;
-					break;
-				}
-			if (!added)
-				meshes.push(mesh);
-		} else if (object is Light) {
-			var light:Light = cast object;
-			if (light.isCastingShadows)
-				lights.push(light);
-		}
+		objects.push(object);
 	}
 
 	override inline function resize(w:Int, h:Int) {
 		width = w;
 		height = h;
 
-		gbuffer = Image.createRenderTarget(Std.int(width * 4), Std.int(height), null, SUI.options.samplesPerPixel);
-	}
-
-	override public function construct() {
-		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
-		indices = new IndexBuffer(6, StaticUsage);
-		var ind = indices.lock();
-		ind[0] = 0;
-		ind[1] = 1;
-		ind[2] = 2;
-		ind[3] = 3;
-		ind[4] = 2;
-		ind[5] = 0;
-		indices.unlock();
-
-		left.addPositionListener(setLeft);
-		top.addPositionListener(setTop);
-		right.addPositionListener(setRight);
-		bottom.addPositionListener(setBottom);
-
-		gbuffer = Image.createRenderTarget(Std.int(width * 4), Std.int(height), null, DepthOnly, SUI.options.samplesPerPixel);
+		gbuffer.resize(w, h);
 	}
 
 	public inline function update() {};
@@ -110,65 +89,52 @@ class Stage2D extends DrawableElement {
 	override inline function draw(target:Canvas) {
 		target.g2.end();
 
-		gbuffer.g4.clear();
-		drawMeshes();
+		var meshes:Array<MeshObject> = [];
+		var lights:Array<Light> = [];
 
-		// for (light in lights) {
-		// 	var vertData:Array<Float> = [];
-		// 	var indData:Array<Int> = [];
-		// 	var indOffset = 0;
+		for (object in objects) {
+			if (object is MeshObject) {
+				var mesh:MeshObject = cast object;
+				var added = false;
+				for (i in 0...meshes.length)
+					if (meshes[i].z > object.z) {
+						meshes.insert(i, mesh);
+						added = true;
+						break;
+					}
+				if (!added)
+					meshes.push(mesh);
+			} else if (object is Light) {
+				var light:Light = cast object;
+				lights.push(light);
+			}
+		}
 
-		// 	for (mesh in meshes) {
-		// 		if (!mesh.isCastingShadows)
-		// 			continue;
+		drawMeshes(meshes);
 
-		// 		var shadowTriangles = light.castShadows(mesh);
-		// 		for (vert in shadowTriangles.vertices)
-		// 			vertData.push(vert);
-		// 		for (ind in shadowTriangles.indices)
-		// 			indData.push(indOffset + ind);
-		// 		indOffset += Std.int(shadowTriangles.vertices.length / 3);
-		// 	}
-
-		// 	if (!(vertData.length == 0 || indData.length == 0))
-		// 		drawShadows(vertData, indData);
-
-		// 	DeferredRenderer.draw(target, vertices, indices, [
-		// 		gbuffer.ormd,
-		// 		gbuffer.albedo,
-		// 		gbuffer.normal,
-		// 		gbuffer.shadows,
-		// 		gbuffer.emission,
-		// 		light.x,
-		// 		light.y,
-		// 		light.z,
-		// 		light.color.R,
-		// 		light.color.G,
-		// 		light.color.B,
-		// 		light.strength,
-		// 		light.radius
-		// 	]);
-		// }
-
+		target.g2.drawScaledImage(meshes[0].geometryMap.image, x, y, width, height);
 		target.g2.begin(false);
 	}
 
-	public inline function drawMeshes() {
+	inline function drawMeshes(meshes:Array<MeshObject>) {
 		var meshCount = 0;
 		var vertCount = 0;
 		var vertData:Array<Float> = [];
 		var indData:Array<Int> = [];
 
-		var gMapsArray:Array<Image> = [];
+		var gMapsArray:Array<GeometryMap> = [];
 		var maxW = 0;
 		var maxH = 0;
 
 		for (mesh in meshes) {
 			if (!mesh.isShaded)
 				continue;
+
 			gMapsArray.push(mesh.geometryMap);
-			maxW = mesh.width > maxW ? mesh.width : maxW;
-			maxH = mesh.height > maxH ? mesh.height : maxH;
+			var w = mesh.geometryMap.mapWidth;
+			var h = mesh.geometryMap.mapHeight;
+			maxW = w > maxW ? w : maxW;
+			maxH = h > maxH ? h : maxH;
 
 			var vCount = mesh.vertices.length;
 			for (i in 0...vCount) {
@@ -201,14 +167,16 @@ class Stage2D extends DrawableElement {
 			ind[i] = indData[i];
 		indices.unlock();
 
-		var gMaps = Image.create(maxW * 4, maxH * meshCount);
-		gMaps.g2.begin();
-		for (i in 0...gMapsArray.length)
-			gMaps.g2.drawScaledImage(gMapsArray[i], 0, i * maxH, maxW, maxH);
-		gMaps.g2.end();
+		if (maxW * maxH > 0) {
+			gMaps = Image.createRenderTarget(maxW * 4, maxH * meshCount);
+			gMaps.g2.begin();
+			for (i in 0...gMapsArray.length)
+				gMaps.g2.drawScaledImage(gMapsArray[i].image, 0, i * maxH, maxW, maxH);
+			gMaps.g2.end();
 
-		gbuffer.g2.begin(false);
-		DeferredRenderer.geometry.draw(gbuffer, vertices, indices, [gMaps, meshCount]);
-		gbuffer.g2.end();
+			gbuffer.g2.begin(false);
+			DeferredRenderer.geometry.draw(gbuffer.image, vertices, indices, [gMaps, meshCount]);
+			gbuffer.g2.end();
+		}
 	}
 }

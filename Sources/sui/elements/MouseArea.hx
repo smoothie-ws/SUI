@@ -28,33 +28,7 @@ class MouseArea extends Element {
 
 			focused = (x >= left.position && x <= right.position && y >= top.position && y <= bottom.position);
 		}, null);
-	}
-
-	public inline function notifyOnDown(f:(button:Int, x:Int, y:Int) -> Void) {
-		downListeners.push(f);
-	}
-
-	public inline function notifyOnUp(f:(button:Int, x:Int, y:Int) -> Void) {
-		upListeners.push(f);
-	}
-
-	public inline function notifyOnEnter(f:(x:Int, y:Int) -> Void) {
-		enterListeners.push(f);
-	}
-
-	public inline function notifyOnExit(f:(x:Int, y:Int) -> Void) {
-		exitListeners.push(f);
-	}
-
-	public inline function notifyOnMove(f:(x:Int, y:Int, moveX:Int, moveY:Int) -> Void) {
-		moveListeners.push(f);
-	}
-
-	public inline function notifyOnWheel(f:(delta:Int) -> Void) {
-		wheelListeners.push(f);
-	}
-
-	override public inline function construct() {
+		
 		SUI.mouse.notify(function(button:Int, x:Int, y:Int) {
 			if (focused)
 				for (f in downListeners)
@@ -83,5 +57,29 @@ class MouseArea extends Element {
 				for (f in wheelListeners)
 					f(delta);
 		});
+	}
+
+	public inline function notifyOnDown(f:(button:Int, x:Int, y:Int) -> Void) {
+		downListeners.push(f);
+	}
+
+	public inline function notifyOnUp(f:(button:Int, x:Int, y:Int) -> Void) {
+		upListeners.push(f);
+	}
+
+	public inline function notifyOnEnter(f:(x:Int, y:Int) -> Void) {
+		enterListeners.push(f);
+	}
+
+	public inline function notifyOnExit(f:(x:Int, y:Int) -> Void) {
+		exitListeners.push(f);
+	}
+
+	public inline function notifyOnMove(f:(x:Int, y:Int, moveX:Int, moveY:Int) -> Void) {
+		moveListeners.push(f);
+	}
+
+	public inline function notifyOnWheel(f:(delta:Int) -> Void) {
+		wheelListeners.push(f);
 	}
 }

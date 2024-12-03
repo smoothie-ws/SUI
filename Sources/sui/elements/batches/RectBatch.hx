@@ -14,8 +14,16 @@ class RectBatch extends ElementBatch {
 	public var rectColors:Float32Array;
 
 	override inline function add(element:Element) {
-		if (SUI.initialized)
-			construct();
+		var n = children.length;
+
+		rectBounds = new Float32Array(n * 4);
+		rectAttrib = new Float32Array(n * 2);
+		rectColors = new Float32Array(n * 4);
+		indices = new IndexBuffer(n * 6, StaticUsage);
+		vertices = new VertexBuffer(n * 4, SUIShaders.rectShader.structure, StaticUsage);
+
+		for (c in children)
+			copyRect(cast(c, Rectangle));
 	}
 
 	inline function copyRect(rect:Rectangle) {
@@ -83,19 +91,6 @@ class RectBatch extends ElementBatch {
 		vert[i * 20 + 18] = 1;
 		vert[i * 20 + 19] = 0;
 		vertices.unlock();
-	}
-
-	override inline function construct() {
-		var n = children.length;
-
-		rectBounds = new Float32Array(n * 4);
-		rectAttrib = new Float32Array(n * 2);
-		rectColors = new Float32Array(n * 4);
-		indices = new IndexBuffer(n * 6, StaticUsage);
-		vertices = new VertexBuffer(n * 4, SUIShaders.rectShader.structure, StaticUsage);
-
-		for (c in children)
-			copyRect(cast(c, Rectangle));
 	}
 
 	override public inline function draw(target:Canvas) {
