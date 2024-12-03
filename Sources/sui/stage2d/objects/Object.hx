@@ -6,7 +6,9 @@ import kha.math.FastVector2;
 @:structInit
 @:autoBuild(sui.core.macro.SUIMacro.build())
 class Object {
-	public function new() {}
+	public var uid:Int = 0;
+
+	public inline function new() {}
 
 	@:isVar public var x(default, set):FastFloat = 0.0;
 	@:isVar public var y(default, set):FastFloat = 0.0;

@@ -1,4 +1,4 @@
-package sui.core.graphics.shaders;
+package sui.core.graphics.shaders.deferred;
 
 import kha.Canvas;
 import kha.graphics4.PipelineState;
@@ -7,11 +7,11 @@ import kha.graphics4.FragmentShader;
 import kha.graphics4.TextureUnit;
 import kha.graphics4.ConstantLocation;
 
-class DeferredRenderer extends Shader2D {
+class GeometryPass extends Shader2D {
 	static var ormdTU:TextureUnit;
 	static var albedoTU:TextureUnit;
 	static var normalTU:TextureUnit;
-	static var shadowTU:TextureUnit;
+	static var shadowsTU:TextureUnit;
 	static var emissionTU:TextureUnit;
 
 	static var lightPosCL:ConstantLocation;
@@ -34,7 +34,7 @@ class DeferredRenderer extends Shader2D {
 		ormdTU = pipeline.getTextureUnit("ormdMap");
 		normalTU = pipeline.getTextureUnit("normalMap");
 		albedoTU = pipeline.getTextureUnit("albedoMap");
-		shadowTU = pipeline.getTextureUnit("shadowMap");
+		shadowsTU = pipeline.getTextureUnit("shadowMap");
 		emissionTU = pipeline.getTextureUnit("emissionMap");
 
 		lightPosCL = pipeline.getConstantLocation("lightPos");
@@ -46,7 +46,7 @@ class DeferredRenderer extends Shader2D {
 		target.g4.setTexture(ormdTU, uniforms[0]);
 		target.g4.setTexture(albedoTU, uniforms[1]);
 		target.g4.setTexture(normalTU, uniforms[2]);
-		target.g4.setTexture(shadowTU, uniforms[3]);
+		target.g4.setTexture(shadowsTU, uniforms[3]);
 		target.g4.setTexture(emissionTU, uniforms[4]);
 		target.g4.setVector3(lightPosCL, uniforms[5]);
 		target.g4.setFloat3(lightColorCL, uniforms[6], uniforms[7], uniforms[8]);
