@@ -27,7 +27,7 @@ class MeshObject extends Object {
 
 	public inline function new() {
 		super();
-		geometryMap = GeometryMap.createBlank(1, 1);
+		geometryMap = new GeometryMap(1, 1);
 		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
 		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
 		normalColor = Color.fromFloats(0.5, 0.5, 1.0);

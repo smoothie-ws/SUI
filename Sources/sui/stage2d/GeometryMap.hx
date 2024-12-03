@@ -3,165 +3,80 @@ package sui.stage2d;
 import kha.Color;
 import kha.Image;
 
-abstract GeometryMap(Image) {
-	public var image(get, set):Image;
+class GeometryMap {
+	public var albedoMap:Image = null;
+	public var emissionMap:Image = null;
+	public var normalMap:Image = null;
+	public var ormMap:Image = null;
 
-	inline function get_image():Image {
-		return this;
+	public inline function new(width:Int, height:Int) {
+		resize(width, height);
 	}
 
-	inline function set_image(value:Image):Image {
-		this = value;
+	public var composite(get, never):Image;
+
+	inline function get_composite():Image {
+		var img = Image.createRenderTarget(width * 4, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		img.g2.begin();
+		img.g2.drawImage(albedoMap, 0, 0);
+		img.g2.drawImage(emissionMap, width, 0);
+		img.g2.drawImage(normalMap, width * 2, 0);
+		img.g2.drawImage(ormMap, width * 3, 0);
+		img.g2.end();
+		return img;
+	}
+
+	@:isVar public var width(default, set):Int = 1;
+	@:isVar public var height(default, set):Int = 1;
+
+	inline function set_width(value:Int):Int {
+		width = value;
+		resize(width, height);
 		return value;
 	}
 
-	inline function new(image:Image) {
-		this = image;
-	}
-
-	public static inline function createBlank(mapWidth:Int, mapHeight:Int):GeometryMap {
-		return new GeometryMap(Image.createRenderTarget(mapWidth * 4, mapHeight, null, SUI.options.samplesPerPixel));
-	}
-
-	public var g1(get, never):kha.graphics1.Graphics;
-	public var g2(get, never):kha.graphics2.Graphics;
-	public var g4(get, never):kha.graphics4.Graphics;
-
-	inline function get_g1() {
-		return this.g1;
-	}
-
-	inline function get_g2() {
-		return this.g2;
-	}
-
-	inline function get_g4() {
-		return this.g4;
-	}
-
-	public var width(get, never):Int;
-	public var height(get, never):Int;
-
-	inline function get_width():Int {
-		return this.width;
-	}
-
-	inline function get_height():Int {
-		return this.height;
-	}
-
-	public var mapWidth(get, set):Int;
-	public var mapHeight(get, set):Int;
-
-	inline function get_mapWidth():Int {
-		return Std.int(this.width / 4);
-	}
-
-	inline function set_mapWidth(value:Int):Int {
-		resize(value * 4, this.height);
+	inline function set_height(value:Int):Int {
+		height = value;
+		resize(width, height);
 		return value;
 	}
 
-	inline function get_mapHeight():Int {
-		return Std.int(this.height);
-	}
+	inline function resizeMap(map:Image, mapWidth:Int, mapHeight:Int) {
+		var img = Image.createRenderTarget(mapWidth, mapHeight, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		img.g2.begin();
+		img.g2.drawScaledImage(map, 0, 0, img.width, img.height);
+		img.g2.end();
 
-	inline function set_mapHeight(value:Int):Int {
-		resize(this.width, value);
-		return value;
+		map = img;
 	}
 
 	public inline function resize(mapWidth:Int, mapHeight:Int):Void {
-		var img = GeometryMap.createBlank(mapWidth, mapHeight).image;
-		img.g2.begin();
-		img.g2.drawScaledImage(this, 0, 0, img.width, img.height);
-		img.g2.end();
-		this = img;
+		resizeMap(albedoMap, mapWidth, mapHeight);
+		resizeMap(emissionMap, mapWidth, mapHeight);
+		resizeMap(normalMap, mapWidth, mapHeight);
+		resizeMap(ormMap, mapWidth, mapHeight);
 	}
 
-	public var albedoMap(get, set):Image;
-	public var emissionMap(get, set):Image;
-	public var normalMap(get, set):Image;
-	public var ormMap(get, set):Image;
-
-	inline function get_albedoMap():Image {
-		return getMap(0);
-	}
-
-	inline function set_albedoMap(value:Image):Image {
-		setMap(0, value);
-		return value;
-	}
-
-	inline function get_emissionMap():Image {
-		return getMap(1);
-	}
-
-	inline function set_emissionMap(value:Image):Image {
-		setMap(1, value);
-		return value;
-	}
-
-	inline function get_normalMap():Image {
-		return getMap(2);
-	}
-
-	inline function set_normalMap(value:Image):Image {
-		setMap(2, value);
-		return value;
-	}
-
-	inline function get_ormMap():Image {
-		return getMap(3);
-	}
-
-	inline function set_ormMap(value:Image):Image {
-		setMap(3, value);
-		return value;
-	}
-
-	inline function getMapRect(mapOffset:Int):Array<Int> {
-		var w = mapWidth;
-		return [w * mapOffset, 0, w, mapHeight];
-	}
-
-	inline function setMapColor(mapOffset:Int = 0, color:Color):Void {
-		var mapRect = getMapRect(mapOffset);
-		this.g2.begin(false);
-		this.g2.color = color;
-		this.g2.fillRect(mapRect[0], mapRect[1], mapRect[2], mapRect[3]);
-		this.g2.end();
+	inline function setMapColor(map:Image, color:Color):Void {
+		map.g2.begin(false);
+		map.g2.color = color;
+		map.g2.fillRect(0, 0, map.width, map.height);
+		map.g2.end();
 	}
 
 	public inline function setAlbedoColor(value:Color):Void {
-		setMapColor(0, value);
+		setMapColor(albedoMap, value);
 	}
 
 	public inline function setEmissionColor(value:Color):Void {
-		setMapColor(1, value);
+		setMapColor(emissionMap, value);
 	}
 
 	public inline function setNormalColor(value:Color):Void {
-		setMapColor(2, value);
+		setMapColor(normalMap, value);
 	}
 
 	public inline function setORMColor(value:Color):Void {
-		setMapColor(3, value);
-	}
-
-	inline function setMap(mapOffset:Int = 0, map:Image):Void {
-		var mapRect = getMapRect(mapOffset);
-		this.g2.begin(false);
-		this.g2.drawScaledImage(map, mapRect[0], mapRect[1], mapRect[2], mapRect[3]);
-		this.g2.end();
-	}
-
-	inline function getMap(mapOffset:Int = 0):Image {
-		var mapRect = getMapRect(mapOffset);
-		var map = Image.createRenderTarget(this.width, this.height);
-		map.g2.begin(false);
-		map.g2.drawSubImage(this, 0, 0, mapRect[0], mapRect[1], mapRect[2], mapRect[3]);
-		map.g2.end();
-		return map;
+		setMapColor(ormMap, value);
 	}
 }

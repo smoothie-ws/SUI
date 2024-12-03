@@ -14,7 +14,7 @@ import sui.stage2d.objects.MeshObject;
 import sui.stage2d.objects.Light;
 
 class Stage2D extends DrawableElement {
-	public var gbuffer:GeometryMap = GeometryMap.createBlank(1, 1);
+	public var gbuffer:GeometryMap = new GeometryMap(1, 1);
 	public var batches:Array<MeshBatch>;
 
 	var indices:IndexBuffer;
@@ -48,6 +48,9 @@ class Stage2D extends DrawableElement {
 		v[0] = _x;
 		v[6] = _x;
 		vertices.unlock();
+
+		if (width != 0 && height != 0)
+			gbuffer.resize(Std.int(width), Std.int(height));
 	}
 
 	inline function setTop(value:FastFloat) {
@@ -56,6 +59,9 @@ class Stage2D extends DrawableElement {
 		v[1] = _y;
 		v[7] = _y;
 		vertices.unlock();
+
+		if (width != 0 && height != 0)
+			gbuffer.resize(Std.int(width), Std.int(height));
 	}
 
 	inline function setRight(value:FastFloat) {
@@ -64,6 +70,9 @@ class Stage2D extends DrawableElement {
 		v[2] = _x;
 		v[4] = _x;
 		vertices.unlock();
+
+		if (width != 0 && height != 0)
+			gbuffer.resize(Std.int(width), Std.int(height));
 	}
 
 	inline function setBottom(value:FastFloat) {
@@ -72,6 +81,9 @@ class Stage2D extends DrawableElement {
 		v[3] = _y;
 		v[5] = _y;
 		vertices.unlock();
+
+		if (width != 0 && height != 0)
+			gbuffer.resize(Std.int(width), Std.int(height));
 	}
 
 	public inline function add(object:Object) {
@@ -81,8 +93,6 @@ class Stage2D extends DrawableElement {
 	override inline function resize(w:Int, h:Int) {
 		width = w;
 		height = h;
-
-		gbuffer.resize(w, h);
 	}
 
 	public inline function update() {};
@@ -113,7 +123,7 @@ class Stage2D extends DrawableElement {
 
 		drawMeshes(meshes);
 
-		target.g2.drawScaledImage(gbuffer.image, x, y, width, height);
+		target.g2.drawScaledImage(gbuffer.albedoMap, x, y, width, height);
 		target.g2.begin(false);
 	}
 
@@ -132,8 +142,8 @@ class Stage2D extends DrawableElement {
 				continue;
 
 			gMapsArray.push(mesh.geometryMap);
-			var w = mesh.geometryMap.mapWidth;
-			var h = mesh.geometryMap.mapHeight;
+			var w = mesh.geometryMap.width;
+			var h = mesh.geometryMap.height;
 
 			maxW = w > maxW ? w : maxW;
 			maxH = h > maxH ? h : maxH;
@@ -175,14 +185,14 @@ class Stage2D extends DrawableElement {
 		var gMaps = Image.createRenderTarget(maxW * 4, maxH * meshCount);
 		gMaps.g2.begin();
 		for (i in 0...gMapsArray.length)
-			gMaps.g2.drawScaledImage(gMapsArray[i].image, 0, i * maxH, maxW * 4, maxH);
+			gMaps.g2.drawScaledImage(gMapsArray[i].composite, 0, i * maxH, maxW * 4, maxH);
 		gMaps.g2.end();
 
 		if (gMaps == null)
 			return;
 
-		gbuffer.g2.begin(true);
-		DeferredRenderer.geometry.draw(gbuffer.image, vertices, indices, [gMaps, meshCount]);
-		gbuffer.g2.end();
+		gbuffer.albedoMap.g4.begin([gbuffer.emissionMap, gbuffer.normalMap, gbuffer.ormMap]);
+		DeferredRenderer.geometry.draw(gbuffer.albedoMap, vertices, indices, [gMaps, meshCount]);
+		gbuffer.albedoMap.g4.end();
 	}
 }
