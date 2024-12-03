@@ -6,7 +6,7 @@ import kha.math.FastVector2;
 @:structInit
 @:autoBuild(sui.core.macro.SUIMacro.build())
 class Object {
-	public var uid:Int = 0;
+	public var instanceID:Int = 0;
 
 	public inline function new() {}
 
@@ -54,7 +54,7 @@ class Object {
 		for (c in children)
 			c.translate(x, y);
 	}
-	
+
 	public function addChild(child:Object) {
 		children.push(child);
 		child.parent = this;

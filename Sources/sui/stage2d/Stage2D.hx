@@ -8,12 +8,14 @@ import kha.graphics4.VertexBuffer;
 // sui
 import sui.core.graphics.DeferredRenderer;
 import sui.elements.DrawableElement;
+import sui.stage2d.batches.MeshBatch;
 import sui.stage2d.objects.Object;
 import sui.stage2d.objects.MeshObject;
 import sui.stage2d.objects.Light;
 
 class Stage2D extends DrawableElement {
 	public var gbuffer:GeometryMap = GeometryMap.createBlank(1, 1);
+	public var batches:Array<MeshBatch>;
 
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;
@@ -110,7 +112,7 @@ class Stage2D extends DrawableElement {
 		}
 
 		drawMeshes(meshes);
-		
+
 		target.g2.drawScaledImage(gbuffer.image, x, y, width, height);
 		target.g2.begin(false);
 	}
