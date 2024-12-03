@@ -1,4 +1,4 @@
-package sui.stage2d.lighting;
+package sui.stage2d.objects;
 
 import kha.FastFloat;
 

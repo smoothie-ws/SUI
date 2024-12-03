@@ -5,25 +5,44 @@ import kha.Color;
 import kha.FastFloat;
 import kha.math.FastVector2;
 
+typedef Vertex = {
+	var pos:FastVector2;
+	var uv:FastVector2;
+}
+
 @:structInit
 @:allow(sui.stage2d.Stage2D)
 class MeshObject extends Object {
-	public var vertices:Array<FastVector2> = [];
+	public var vertices:Array<Vertex> = [];
 	public var opacity:FastFloat = 1.0;
 	public var isShaded:Bool = true;
 	public var isCastingShadows:Bool = true;
 
-	@:isVar public var albedo(get, set):Color = Color.fromFloats(0.85, 0.85, 0.85);
-	@:isVar public var emission(get, set):Color = Color.fromFloats(0.0, 0.0, 0.0);
-	@:isVar public var normal(get, set):Color = Color.fromFloats(0.5, 0.5, 1.0);
-	@:isVar public var orm(get, set):Color = Color.fromFloats(0.85, 0.85, 0.85);
+	var geometryMap:Image = Image.createRenderTarget(4, 1); // [albedo, normal, orm, emission]
+
+	@:isVar public var width(default, set):Int = 1;
+	@:isVar public var height(default, set):Int = 1;
+
+	function set_width(value:Int):Int {
+		return value;
+	}
+
+	function set_height(value:Int):Int {
+		return value;
+	}
+
+	public var albedo(get, set):Color;
+	public var emission(get, set):Color;
+	public var normal(get, set):Color;
+	public var orm(get, set):Color;
 
 	public inline function new() {
 		super();
-		geometryMap = Image.create(4, 1);
+		albedo = Color.fromFloats(0.85, 0.85, 0.85);
+		emission = Color.fromFloats(0.0, 0.0, 0.0);
+		normal = Color.fromFloats(0.5, 0.5, 1.0);
+		orm = Color.fromFloats(0.85, 0.85, 0.85);
 	}
-
-	var geometryMap:Image; // [albedo, normal, orm, emission]
 
 	function get_albedo():Color {
 		return geometryMap.at(0, 0);

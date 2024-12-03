@@ -4,20 +4,17 @@ import kha.Color;
 import kha.Image;
 
 class Sprite extends MeshObject {
-	@:isVar public var width(default, set):Int = 512;
-	@:isVar public var height(default, set):Int = 512;
-
-	@:isVar public var albedoMap(get, set):Image = null;
-	@:isVar public var emissionMap(get, set):Image = null;
-	@:isVar public var normalMap(get, set):Image = null;
-	@:isVar public var ormMap(get, set):Image = null;
+	public var albedoMap(get, set):Image;
+	public var emissionMap(get, set):Image;
+	public var normalMap(get, set):Image;
+	public var ormMap(get, set):Image;
 
 	override public inline function new(width:Int, height:Int) {
 		super();
 		resize(width, height);
 	}
 
-	inline function set_width(value:Int):Int {
+	override inline function set_width(value:Int):Int {
 		width = value;
 		var gmap = geometryMap;
 		geometryMap = Image.create(width * 4, height);
@@ -28,7 +25,7 @@ class Sprite extends MeshObject {
 		return value;
 	}
 
-	inline function set_height(value:Int):Int {
+	override inline function set_height(value:Int):Int {
 		height = value;
 		var gmap = geometryMap;
 		geometryMap = Image.create(width * 4, height);

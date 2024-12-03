@@ -3,10 +3,10 @@ package sui.core.graphics.shaders;
 import kha.Canvas;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
-import kha.graphics4.ConstantLocation;
+import kha.graphics4.TextureUnit;
 
 class ImageDrawer extends Shader2D {
-	var imageCL:ConstantLocation;
+	var imageTU:TextureUnit;
 
 	override inline function initStructure() {
 		structure = new VertexStructure();
@@ -15,10 +15,10 @@ class ImageDrawer extends Shader2D {
 	}
 
 	override inline function getUniforms() {
-		imageCL = pipeline.getConstantLocation("tex");
+		imageTU = pipeline.getTextureUnit("tex");
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
-		target.g4.setFloats(imageCL, uniforms[0]);
+		target.g4.setTexture(imageTU, uniforms[0]);
 	}
 }
