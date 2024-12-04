@@ -23,5 +23,5 @@ class Light extends Object {
 		this.isCastingShadows = isCastingShadows;
 	}
 
-	public function drawShadows(shadowMap:Image, meshes:Array<MeshObject>):Void {}
+	public function drawShadows(target:Image, meshes:Array<MeshObject>):Void {}
 }

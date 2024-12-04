@@ -9,12 +9,9 @@ import sui.core.graphics.SUIShaders;
 
 @:structInit
 class PointLight extends Light {
-	override inline function drawShadows(shadowMap:Image, meshes:Array<MeshObject>):Void {
-		if (!isCastingShadows) {
-			shadowMap.g2.begin(true, Color.White);
-			shadowMap.g2.end();
+	override inline function drawShadows(target:Image, meshes:Array<MeshObject>):Void {
+		if (!isCastingShadows)
 			return;
-		}
 
 		var vertData:Array<Float> = [];
 		var indData:Array<Int> = [];
@@ -85,8 +82,6 @@ class PointLight extends Light {
 			ind[i] = indData[i];
 		indices.unlock();
 
-		shadowMap.g2.begin(true);
-		SUIShaders.shadowCaster.draw(shadowMap, vertices, indices);
-		shadowMap.g2.end();
+		SUIShaders.shadowCaster.draw(target, vertices, indices);
 	}
 }

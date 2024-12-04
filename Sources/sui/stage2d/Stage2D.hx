@@ -13,7 +13,8 @@ import sui.stage2d.objects.MeshObject;
 import sui.stage2d.objects.Light;
 
 class Stage2D extends DrawableElement {
-	public var gbuffer:GeometryMap = new GeometryMap(1, 1);
+	public var backbuffer:Image;
+	public var gbuffer:GeometryMap;
 
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;
@@ -23,7 +24,21 @@ class Stage2D extends DrawableElement {
 	public function new() {
 		super();
 
+		backbuffer = Image.createRenderTarget(1, 1);
+		gbuffer = new GeometryMap(1, 1);
+
 		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
+		var vert = vertices.lock();
+		vert[0] = -1;
+		vert[1] = -1;
+		vert[2] = -1;
+		vert[3] = 1;
+		vert[4] = 1;
+		vert[5] = 1;
+		vert[6] = 1;
+		vert[7] = -1;
+		vertices.unlock();
+
 		indices = new IndexBuffer(6, StaticUsage);
 		var ind = indices.lock();
 		ind[0] = 0;
@@ -40,48 +55,30 @@ class Stage2D extends DrawableElement {
 		bottom.addPositionListener(setBottom);
 	}
 
-	inline function setLeft(value:FastFloat) {
-		var v = vertices.lock();
-		var _x = (value / SUI.scene.backbuffer.width) * 2 - 1;
-		v[0] = _x;
-		v[6] = _x;
-		vertices.unlock();
+	inline function resizeBuffers(width:FastFloat, height:FastFloat) {
+		if (width > 0 && height > 0) {
+			var w = Std.int(width);
+			var h = Std.int(height);
 
-		if (width != 0 && height != 0)
-			gbuffer.resize(Std.int(width), Std.int(height));
+			backbuffer = Image.createRenderTarget(w, h);
+			gbuffer.resize(w, h);
+		}
+	}
+
+	inline function setLeft(value:FastFloat) {
+		resizeBuffers(width, height);
 	}
 
 	inline function setTop(value:FastFloat) {
-		var v = vertices.lock();
-		var _y = (value / SUI.scene.backbuffer.height) * 2 - 1;
-		v[1] = _y;
-		v[7] = _y;
-		vertices.unlock();
-
-		if (width != 0 && height != 0)
-			gbuffer.resize(Std.int(width), Std.int(height));
+		resizeBuffers(width, height);
 	}
 
 	inline function setRight(value:FastFloat) {
-		var v = vertices.lock();
-		var _x = (value / SUI.scene.backbuffer.width) * 2 - 1;
-		v[2] = _x;
-		v[4] = _x;
-		vertices.unlock();
-
-		if (width != 0 && height != 0)
-			gbuffer.resize(Std.int(width), Std.int(height));
+		resizeBuffers(width, height);
 	}
 
 	inline function setBottom(value:FastFloat) {
-		var v = vertices.lock();
-		var _y = (value / SUI.scene.backbuffer.height) * 2 - 1;
-		v[3] = _y;
-		v[5] = _y;
-		vertices.unlock();
-
-		if (width != 0 && height != 0)
-			gbuffer.resize(Std.int(width), Std.int(height));
+		resizeBuffers(width, height);
 	}
 
 	public inline function add(object:Object) {
@@ -114,18 +111,13 @@ class Stage2D extends DrawableElement {
 
 		drawMeshes(meshes);
 
-		var shadowMap = Image.createRenderTarget(Std.int(width), Std.int(height));
-
+		backbuffer.g2.begin(true);
 		for (light in lights) {
-			light.drawShadows(shadowMap, meshes);
-
-			target.g2.begin(false);
-			DeferredRenderer.lighting.draw(target, vertices, indices, [
+			DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
 				gbuffer.albedoMap,
 				gbuffer.emissionMap,
 				gbuffer.normalMap,
 				gbuffer.ormMap,
-				shadowMap,
 				light.x,
 				light.y,
 				light.z,
@@ -135,10 +127,12 @@ class Stage2D extends DrawableElement {
 				light.power,
 				light.radius
 			]);
-			target.g2.end();
+			// light.drawShadows(backbuffer, meshes);
 		}
+		backbuffer.g2.end();
 
 		target.g2.begin(false);
+		target.g2.drawImage(backbuffer, x, y);
 	}
 
 	inline function drawMeshes(meshes:Array<MeshObject>) {
@@ -193,7 +187,7 @@ class Stage2D extends DrawableElement {
 			ind[i] = indData[i];
 		indices.unlock();
 
-		if (maxW * maxH <= 0)
+		if (maxW <= 0 || maxH <= 0)
 			return;
 
 		var gMaps = new GeometryMap(maxW, maxH * meshCount);

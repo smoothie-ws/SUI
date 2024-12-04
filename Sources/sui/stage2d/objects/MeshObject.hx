@@ -32,7 +32,7 @@ class MeshObject extends Object {
 		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
 		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
 		normalColor = Color.fromFloats(0.5, 0.5, 1.0);
-		ormColor = Color.fromFloats(1.0, 0.0, 0.25);
+		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
 	}
 
 	@:isVar public var albedoColor(default, set):Color;

@@ -3,7 +3,6 @@
 uniform sampler2D normalMap;
 uniform sampler2D albedoMap;
 uniform sampler2D emissionMap;
-uniform sampler2D shadowMap;
 uniform sampler2D ormMap; // [occlusion, roughness, metalness, unused]
 
 uniform vec3 lightPos;
@@ -39,7 +38,6 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
 }
 
 void main() {
-    vec3 shadow = texture(shadowMap, fragCoord).rgb;
     vec3 orm = texture(ormMap, fragCoord).rgb;
     vec3 albedo = texture(albedoMap, fragCoord).rgb;
     vec3 emission = texture(emissionMap, fragCoord).rgb;
@@ -55,7 +53,7 @@ void main() {
     float dist = length(l);
     vec3 dir = normalize(l);
 
-    float lightAttenuation = lightAttrib.x / (4.0 * PI * dist * dist + lightAttrib.y * lightAttrib.y);
+    float lightAttenuation = lightAttrib.x / (4.0 * PI * dist * dist + lightAttrib.y);
 
     // view and half-vector
     vec3 V = normalize(viewDir);
@@ -76,5 +74,5 @@ void main() {
     vec3 ambient = vec3(0.03) * albedo * ao;
 
     vec3 lighting = (ambient + (diffuse + specular) * lightAttenuation) * lightColor;
-    fragColor = vec4(lighting - shadow + emission, 1.0);
+    fragColor = vec4(lighting + emission, 1.0);
 }
