@@ -1,5 +1,6 @@
 package sui.stage2d;
 
+import kha.Image;
 import kha.Canvas;
 import kha.FastFloat;
 import kha.graphics4.IndexBuffer;
@@ -7,14 +8,12 @@ import kha.graphics4.VertexBuffer;
 // sui
 import sui.core.graphics.DeferredRenderer;
 import sui.elements.DrawableElement;
-import sui.stage2d.batches.MeshBatch;
 import sui.stage2d.objects.Object;
 import sui.stage2d.objects.MeshObject;
 import sui.stage2d.objects.Light;
 
 class Stage2D extends DrawableElement {
 	public var gbuffer:GeometryMap = new GeometryMap(1, 1);
-	public var batches:Array<MeshBatch>;
 
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;
@@ -89,13 +88,6 @@ class Stage2D extends DrawableElement {
 		objects.push(object);
 	}
 
-	override inline function resize(w:Int, h:Int) {
-		width = w;
-		height = h;
-	}
-
-	public inline function update() {};
-
 	override inline function draw(target:Canvas) {
 		target.g2.end();
 
@@ -122,7 +114,30 @@ class Stage2D extends DrawableElement {
 
 		drawMeshes(meshes);
 
-		target.g2.drawScaledImage(gbuffer.emissionMap, x, y, width, height);
+		var shadowMap = Image.createRenderTarget(Std.int(width), Std.int(height));
+
+		for (light in lights) {
+			light.drawShadows(shadowMap, meshes);
+
+			target.g2.begin(false);
+			DeferredRenderer.lighting.draw(target, vertices, indices, [
+				gbuffer.albedoMap,
+				gbuffer.emissionMap,
+				gbuffer.normalMap,
+				gbuffer.ormMap,
+				shadowMap,
+				light.x,
+				light.y,
+				light.z,
+				light.color.R,
+				light.color.G,
+				light.color.B,
+				light.power,
+				light.radius
+			]);
+			target.g2.end();
+		}
+
 		target.g2.begin(false);
 	}
 
@@ -195,7 +210,7 @@ class Stage2D extends DrawableElement {
 			return;
 
 		gbuffer.albedoMap.g4.begin([gbuffer.emissionMap, gbuffer.normalMap, gbuffer.ormMap]);
-		DeferredRenderer.geometry.draw(gbuffer.albedoMap, vertices, indices, [gMaps, meshCount]);
+		DeferredRenderer.geometry.draw(gbuffer.albedoMap, vertices, indices, [gMaps.albedoMap, gMaps.emissionMap, gMaps.normalMap, gMaps.ormMap, meshCount]);
 		gbuffer.albedoMap.g4.end();
 	}
 }

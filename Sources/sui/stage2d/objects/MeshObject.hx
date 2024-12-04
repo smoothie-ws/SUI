@@ -5,9 +5,10 @@ import kha.Color;
 import kha.FastFloat;
 import kha.math.FastVector2;
 
-typedef Vertex = {
-	var pos:FastVector2;
-	var uv:FastVector2;
+@:structInit
+class Vertex {
+	public var pos:FastVector2 = {};
+	public var uv:FastVector2 = {};
 }
 
 @:structInit

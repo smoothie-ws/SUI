@@ -4,7 +4,7 @@ uniform sampler2D normalMap;
 uniform sampler2D albedoMap;
 uniform sampler2D emissionMap;
 uniform sampler2D shadowMap;
-uniform sampler2D ormdMap; // [occlusion, roughness, metalness, depth]
+uniform sampler2D ormMap; // [occlusion, roughness, metalness, unused]
 
 uniform vec3 lightPos;
 uniform vec3 lightColor;
@@ -40,14 +40,14 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
 
 void main() {
     vec3 shadow = texture(shadowMap, fragCoord).rgb;
-    vec4 ormd = texture(ormdMap, fragCoord);
+    vec3 orm = texture(ormMap, fragCoord).rgb;
     vec3 albedo = texture(albedoMap, fragCoord).rgb;
     vec3 emission = texture(emissionMap, fragCoord).rgb;
     vec3 normal = texture(normalMap, fragCoord).rgb * 2.0 - 1.0;
-    float ao = ormd.r;
-    float roughness = clamp(ormd.g, 0.05, 1.0);
-    float metalness = ormd.b;
-    float depth = ormd.a;
+    float ao = orm.r;
+    float roughness = clamp(orm.g, 0.05, 1.0);
+    float metalness = orm.b;
+    float depth = 0.0;
     normal.z += depth;
     normal = normalize(normal);
 

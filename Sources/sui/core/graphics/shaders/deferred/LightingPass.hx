@@ -6,13 +6,16 @@ import kha.graphics4.VertexShader;
 import kha.graphics4.FragmentShader;
 import kha.graphics4.TextureUnit;
 import kha.graphics4.ConstantLocation;
+// sui
+import sui.stage2d.GeometryMap;
+import sui.stage2d.objects.Light;
 
 class LightingPass extends Shader2D {
-	static var ormdTU:TextureUnit;
 	static var albedoTU:TextureUnit;
-	static var normalTU:TextureUnit;
-	static var shadowsTU:TextureUnit;
 	static var emissionTU:TextureUnit;
+	static var normalTU:TextureUnit;
+	static var ormTU:TextureUnit;
+	static var shadowsTU:TextureUnit;
 
 	static var lightPosCL:ConstantLocation;
 	static var lightColorCL:ConstantLocation;
@@ -23,15 +26,12 @@ class LightingPass extends Shader2D {
 		pipeline.inputLayout = [structure];
 		pipeline.vertexShader = vert;
 		pipeline.fragmentShader = frag;
-		pipeline.blendSource = SourceColor;
-		pipeline.blendDestination = DestinationColor;
-		pipeline.blendOperation = Add;
 		pipeline.compile();
 		getUniforms();
 	}
 
 	override inline function getUniforms() {
-		ormdTU = pipeline.getTextureUnit("ormdMap");
+		ormTU = pipeline.getTextureUnit("ormMap");
 		normalTU = pipeline.getTextureUnit("normalMap");
 		albedoTU = pipeline.getTextureUnit("albedoMap");
 		shadowsTU = pipeline.getTextureUnit("shadowMap");
@@ -43,13 +43,13 @@ class LightingPass extends Shader2D {
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
-		target.g4.setTexture(ormdTU, uniforms[0]);
-		target.g4.setTexture(albedoTU, uniforms[1]);
+		target.g4.setTexture(albedoTU, uniforms[0]);
+		target.g4.setTexture(emissionTU, uniforms[1]);
 		target.g4.setTexture(normalTU, uniforms[2]);
-		target.g4.setTexture(shadowsTU, uniforms[3]);
-		target.g4.setTexture(emissionTU, uniforms[4]);
-		target.g4.setVector3(lightPosCL, uniforms[5]);
-		target.g4.setFloat3(lightColorCL, uniforms[6], uniforms[7], uniforms[8]);
-		target.g4.setFloat2(lightAttribCL, uniforms[9], uniforms[10]);
+		target.g4.setTexture(ormTU, uniforms[3]);
+		target.g4.setTexture(shadowsTU, uniforms[4]);
+		target.g4.setFloat3(lightPosCL, uniforms[5], uniforms[6], uniforms[7]);
+		target.g4.setFloat3(lightColorCL, uniforms[8], uniforms[9], uniforms[10]);
+		target.g4.setFloat2(lightAttribCL, uniforms[11], uniforms[12]);
 	}
 }

@@ -29,10 +29,6 @@ class GeometryPass extends Shader2D {
 		pipeline.inputLayout = [structure];
 		pipeline.vertexShader = vert;
 		pipeline.fragmentShader = frag;
-		pipeline.alphaBlendSource = SourceAlpha;
-		pipeline.alphaBlendDestination = InverseSourceAlpha;
-		pipeline.blendSource = SourceAlpha;
-		pipeline.blendDestination = InverseSourceAlpha;
 		pipeline.colorAttachmentCount = 3;
 		pipeline.compile();
 		getUniforms();
@@ -47,12 +43,10 @@ class GeometryPass extends Shader2D {
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
-		var gmap:GeometryMap = cast uniforms[0];
-
-		target.g4.setTexture(albedoMapsTU, gmap.albedoMap);
-		target.g4.setTexture(emissionMapsTU, gmap.emissionMap);
-		target.g4.setTexture(normalMapsTU, gmap.normalMap);
-		target.g4.setTexture(ormMapsTU, gmap.ormMap);
-		target.g4.setInt(gMapsCountCL, uniforms[1]);
+		target.g4.setTexture(albedoMapsTU, uniforms[0]);
+		target.g4.setTexture(emissionMapsTU, uniforms[1]);
+		target.g4.setTexture(normalMapsTU, uniforms[2]);
+		target.g4.setTexture(ormMapsTU, uniforms[3]);
+		target.g4.setInt(gMapsCountCL, uniforms[4]);
 	}
 }
