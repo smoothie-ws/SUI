@@ -8,9 +8,14 @@ import kha.graphics4.TextureUnit;
 import kha.graphics4.ConstantLocation;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
+// sui
+import sui.stage2d.GeometryMap;
 
 class GeometryPass extends Shader2D {
-	var gMapsTU:TextureUnit;
+	var albedoMapsTU:TextureUnit;
+	var emissionMapsTU:TextureUnit;
+	var normalMapsTU:TextureUnit;
+	var ormMapsTU:TextureUnit;
 	var gMapsCountCL:ConstantLocation;
 
 	override inline function initStructure() {
@@ -28,19 +33,26 @@ class GeometryPass extends Shader2D {
 		pipeline.alphaBlendDestination = InverseSourceAlpha;
 		pipeline.blendSource = SourceAlpha;
 		pipeline.blendDestination = InverseSourceAlpha;
-		pipeline.colorAttachmentCount = 4;
-		pipeline.colorAttachments = [RGBA32, RGBA32, RGBA32, RGBA32];
+		pipeline.colorAttachmentCount = 3;
 		pipeline.compile();
 		getUniforms();
 	}
 
 	override inline function getUniforms() {
-		gMapsTU = pipeline.getTextureUnit("gMaps");
+		albedoMapsTU = pipeline.getTextureUnit("albedoMap");
+		emissionMapsTU = pipeline.getTextureUnit("emissionMap");
+		normalMapsTU = pipeline.getTextureUnit("normalMap");
+		ormMapsTU = pipeline.getTextureUnit("ormMap");
 		gMapsCountCL = pipeline.getConstantLocation("gMapsCount");
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
-		target.g4.setTexture(gMapsTU, uniforms[0]);
+		var gmap:GeometryMap = cast uniforms[0];
+
+		target.g4.setTexture(albedoMapsTU, gmap.albedoMap);
+		target.g4.setTexture(emissionMapsTU, gmap.emissionMap);
+		target.g4.setTexture(normalMapsTU, gmap.normalMap);
+		target.g4.setTexture(ormMapsTU, gmap.ormMap);
 		target.g4.setInt(gMapsCountCL, uniforms[1]);
 	}
 }

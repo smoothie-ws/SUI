@@ -1,8 +1,7 @@
 package sui.stage2d;
 
-import kha.FastFloat;
-import kha.Image;
 import kha.Canvas;
+import kha.FastFloat;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.VertexBuffer;
 // sui
@@ -123,7 +122,7 @@ class Stage2D extends DrawableElement {
 
 		drawMeshes(meshes);
 
-		target.g2.drawScaledImage(gbuffer.albedoMap, x, y, width, height);
+		target.g2.drawScaledImage(gbuffer.emissionMap, x, y, width, height);
 		target.g2.begin(false);
 	}
 
@@ -142,8 +141,8 @@ class Stage2D extends DrawableElement {
 				continue;
 
 			gMapsArray.push(mesh.geometryMap);
-			var w = mesh.geometryMap.width;
-			var h = mesh.geometryMap.height;
+			var w = mesh.geometryMap.albedoMap.width;
+			var h = mesh.geometryMap.albedoMap.height;
 
 			maxW = w > maxW ? w : maxW;
 			maxH = h > maxH ? h : maxH;
@@ -182,11 +181,15 @@ class Stage2D extends DrawableElement {
 		if (maxW * maxH <= 0)
 			return;
 
-		var gMaps = Image.createRenderTarget(maxW * 4, maxH * meshCount);
-		gMaps.g2.begin();
-		for (i in 0...gMapsArray.length)
-			gMaps.g2.drawScaledImage(gMapsArray[i].composite, 0, i * maxH, maxW * 4, maxH);
-		gMaps.g2.end();
+		var gMaps = new GeometryMap(maxW, maxH * meshCount);
+
+		for (i in 0...4) {
+			var map = gMaps.get(i);
+			map.g2.begin();
+			for (j in 0...gMapsArray.length)
+				map.g2.drawScaledImage(gMapsArray[j].get(i), 0, j * maxH, maxW, maxH);
+			map.g2.end();
+		}
 
 		if (gMaps == null)
 			return;

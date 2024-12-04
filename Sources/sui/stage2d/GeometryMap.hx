@@ -4,41 +4,16 @@ import kha.Color;
 import kha.Image;
 
 class GeometryMap {
-	public var albedoMap:Image = null;
-	public var emissionMap:Image = null;
-	public var normalMap:Image = null;
-	public var ormMap:Image = null;
+	public var albedoMap:Image;
+	public var emissionMap:Image;
+	public var normalMap:Image;
+	public var ormMap:Image;
 
 	public inline function new(width:Int, height:Int) {
-		resize(width, height);
-	}
-
-	public var composite(get, never):Image;
-
-	inline function get_composite():Image {
-		var img = Image.createRenderTarget(width * 4, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
-		img.g2.begin();
-		img.g2.drawImage(albedoMap, 0, 0);
-		img.g2.drawImage(emissionMap, width, 0);
-		img.g2.drawImage(normalMap, width * 2, 0);
-		img.g2.drawImage(ormMap, width * 3, 0);
-		img.g2.end();
-		return img;
-	}
-
-	@:isVar public var width(default, set):Int = 1;
-	@:isVar public var height(default, set):Int = 1;
-
-	inline function set_width(value:Int):Int {
-		width = value;
-		resize(width, height);
-		return value;
-	}
-
-	inline function set_height(value:Int):Int {
-		height = value;
-		resize(width, height);
-		return value;
+		albedoMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		emissionMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		normalMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		ormMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
 	}
 
 	inline function resizeMap(map:Image, mapWidth:Int, mapHeight:Int) {
@@ -46,15 +21,44 @@ class GeometryMap {
 		img.g2.begin();
 		img.g2.drawScaledImage(map, 0, 0, img.width, img.height);
 		img.g2.end();
-
-		map = img;
+		return img;
 	}
 
 	public inline function resize(mapWidth:Int, mapHeight:Int):Void {
-		resizeMap(albedoMap, mapWidth, mapHeight);
-		resizeMap(emissionMap, mapWidth, mapHeight);
-		resizeMap(normalMap, mapWidth, mapHeight);
-		resizeMap(ormMap, mapWidth, mapHeight);
+		albedoMap = resizeMap(albedoMap, mapWidth, mapHeight);
+		emissionMap = resizeMap(emissionMap, mapWidth, mapHeight);
+		normalMap = resizeMap(normalMap, mapWidth, mapHeight);
+		ormMap = resizeMap(ormMap, mapWidth, mapHeight);
+	}
+
+	public inline function get(index:Int):Image {
+		switch (index) {
+			case 0:
+				return albedoMap;
+			case 1:
+				return emissionMap;
+			case 2:
+				return normalMap;
+			case 3:
+				return ormMap;
+			default:
+				return null;
+		}
+	}
+
+	public inline function set(index:Int, value:Image):Void {
+		switch (index) {
+			case 0:
+				albedoMap = value;
+			case 1:
+				emissionMap = value;
+			case 2:
+				normalMap = value;
+			case 3:
+				ormMap = value;
+			default:
+				null;
+		}
 	}
 
 	inline function setMapColor(map:Image, color:Color):Void {
