@@ -39,7 +39,6 @@ class SUI {
 	}
 	#end
 
-	public static var initialized:Bool = false;
 	public static var scene:Scene = {};
 	public static var options:SUIoptions = {vsync: true, samplesPerPixel: 1};
 	public static var window:Window;
@@ -58,45 +57,40 @@ class SUI {
 		return value;
 	}
 
-	static var onUpdateListeners:Array<Void->Void> = [];
-	static var onRenderListeners:Array<Void->Void> = [];
-	static var updateTaskId:Int;
-
-	public static inline function start(title:String, width:Int, height:Int, vsync:Bool, samplesPerPixel) {
-		options.vsync = vsync;
-		options.samplesPerPixel = samplesPerPixel;
+	public static inline function start(app:App) {
+		options.vsync = app.vsync;
+		options.samplesPerPixel = app.samplesPerPixel;
 		System.start({
-			title: title,
-			width: width,
-			height: height,
+			title: app.title,
+			width: app.width,
+			height: app.height,
 			framebuffer: {
-				verticalSync: vsync,
-				samplesPerPixel: samplesPerPixel
+				verticalSync: app.vsync,
+				samplesPerPixel: app.samplesPerPixel
 			}
 		}, function(window:Window) {
-			init(window);
+			SUI.window = window;
+			SUI.mouse = Mouse.get();
+			SUI.keyboard = Keyboard.get();
+
+			SUI.window.notifyOnResize(scene.resize);
+			scene.createBackbuffer(window.width, window.height);
+
+			app.setup();
+
 			Assets.loadEverything(function() {
+				compileShaders();
+				startUpdates();
 				System.notifyOnFrames(function(frames:Array<Framebuffer>) {
 					render(frames[0].g2);
 				});
 			});
 		});
-		initialized = true;
 	}
 
-	public static inline function init(window:Window) {
-		SUI.window = window;
-		SUI.mouse = Mouse.get();
-		SUI.keyboard = Keyboard.get();
-
-		SUI.window.notifyOnResize(scene.resize);
-		scene.createBackbuffer(window.width, window.height);
-
-		Assets.loadEverything(function() {
-			compileShaders();
-			startUpdates();
-		});
-	}
+	static var onUpdateListeners:Array<Void->Void> = [];
+	static var onRenderListeners:Array<Void->Void> = [];
+	static var updateTaskId:Int;
 
 	public static inline function stop() {
 		System.stop();

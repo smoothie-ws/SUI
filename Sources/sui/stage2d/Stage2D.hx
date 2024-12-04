@@ -192,13 +192,25 @@ class Stage2D extends DrawableElement {
 
 		var gMaps = new GeometryMap(maxW, maxH * meshCount);
 
-		for (i in 0...4) {
-			var map = gMaps.get(i);
-			map.g2.begin();
-			for (j in 0...gMapsArray.length)
-				map.g2.drawScaledImage(gMapsArray[j].get(i), 0, j * maxH, maxW, maxH);
-			map.g2.end();
-		}
+		gMaps.albedoMap.g2.begin();
+		for (j in 0...gMapsArray.length)
+			gMaps.albedoMap.g2.drawScaledImage(gMapsArray[j].albedoMap, 0, j * maxH, maxW, maxH);
+		gMaps.albedoMap.g2.end();
+
+		gMaps.emissionMap.g2.begin();
+		for (j in 0...gMapsArray.length)
+			gMaps.emissionMap.g2.drawScaledImage(gMapsArray[j].emissionMap, 0, j * maxH, maxW, maxH);
+		gMaps.emissionMap.g2.end();
+
+		gMaps.normalMap.g2.begin();
+		for (j in 0...gMapsArray.length)
+			gMaps.normalMap.g2.drawScaledImage(gMapsArray[j].normalMap, 0, j * maxH, maxW, maxH);
+		gMaps.normalMap.g2.end();
+
+		gMaps.ormMap.g2.begin();
+		for (j in 0...gMapsArray.length)
+			gMaps.ormMap.g2.drawScaledImage(gMapsArray[j].ormMap, 0, j * maxH, maxW, maxH);
+		gMaps.ormMap.g2.end();
 
 		if (gMaps == null)
 			return;

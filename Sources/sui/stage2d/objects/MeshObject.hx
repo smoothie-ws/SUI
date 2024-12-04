@@ -35,31 +35,6 @@ class MeshObject extends Object {
 		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
 	}
 
-	@:isVar public var albedoColor(default, set):Color;
-	@:isVar public var emissionColor(default, set):Color;
-	@:isVar public var normalColor(default, set):Color;
-	@:isVar public var ormColor(default, set):Color;
-
-	function set_albedoColor(value:Color):Color {
-		geometryMap.setAlbedoColor(value);
-		return value;
-	}
-
-	function set_emissionColor(value:Color):Color {
-		geometryMap.setEmissionColor(value);
-		return value;
-	}
-
-	function set_normalColor(value:Color):Color {
-		geometryMap.setNormalColor(value);
-		return value;
-	}
-
-	function set_ormColor(value:Color):Color {
-		geometryMap.setORMColor(value);
-		return value;
-	}
-
 	public var albedoMap(get, set):Image;
 	public var emissionMap(get, set):Image;
 	public var normalMap(get, set):Image;
@@ -70,7 +45,7 @@ class MeshObject extends Object {
 	}
 
 	inline function set_albedoMap(value:Image):Image {
-		geometryMap.albedoMap = value;
+		geometryMap.setMap(albedoMap, value);
 		return value;
 	}
 
@@ -79,7 +54,7 @@ class MeshObject extends Object {
 	}
 
 	inline function set_emissionMap(value:Image):Image {
-		geometryMap.emissionMap = value;
+		geometryMap.setMap(emissionMap, value);
 		return value;
 	}
 
@@ -88,7 +63,7 @@ class MeshObject extends Object {
 	}
 
 	inline function set_normalMap(value:Image):Image {
-		geometryMap.normalMap = value;
+		geometryMap.setMap(normalMap, value);
 		return value;
 	}
 
@@ -97,7 +72,32 @@ class MeshObject extends Object {
 	}
 
 	inline function set_ormMap(value:Image):Image {
-		geometryMap.ormMap = value;
+		geometryMap.setMap(ormMap, value);
+		return value;
+	}
+
+	@:isVar public var albedoColor(default, set):Color;
+	@:isVar public var emissionColor(default, set):Color;
+	@:isVar public var normalColor(default, set):Color;
+	@:isVar public var ormColor(default, set):Color;
+
+	function set_albedoColor(value:Color):Color {
+		geometryMap.setMapColor(geometryMap.albedoMap, value);
+		return value;
+	}
+
+	function set_emissionColor(value:Color):Color {
+		geometryMap.setMapColor(geometryMap.emissionMap, value);
+		return value;
+	}
+
+	function set_normalColor(value:Color):Color {
+		geometryMap.setMapColor(geometryMap.normalMap, value);
+		return value;
+	}
+
+	function set_ormColor(value:Color):Color {
+		geometryMap.setMapColor(geometryMap.ormMap, value);
 		return value;
 	}
 }

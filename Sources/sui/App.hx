@@ -19,10 +19,5 @@ class App {
 		this.samplesPerPixel = samplesPerPixel;
 	}
 
-	public inline function run() {
-		SUI.start(title, width, height, vsync, samplesPerPixel);
-		setup();
-	}
-
-	function setup() {}
+	public function setup() {}
 }

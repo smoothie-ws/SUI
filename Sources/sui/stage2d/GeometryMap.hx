@@ -4,24 +4,16 @@ import kha.Color;
 import kha.Image;
 
 class GeometryMap {
-	public var albedoMap:Image;
-	public var emissionMap:Image;
-	public var normalMap:Image;
-	public var ormMap:Image;
+	@:isVar public var albedoMap(default, null):Image;
+	@:isVar public var emissionMap(default, null):Image;
+	@:isVar public var normalMap(default, null):Image;
+	@:isVar public var ormMap(default, null):Image;
 
 	public inline function new(width:Int, height:Int) {
 		albedoMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
 		emissionMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
 		normalMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
 		ormMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
-	}
-
-	inline function resizeMap(map:Image, mapWidth:Int, mapHeight:Int) {
-		var img = Image.createRenderTarget(mapWidth, mapHeight, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
-		img.g2.begin();
-		img.g2.drawScaledImage(map, 0, 0, img.width, img.height);
-		img.g2.end();
-		return img;
 	}
 
 	public inline function resize(mapWidth:Int, mapHeight:Int):Void {
@@ -31,37 +23,19 @@ class GeometryMap {
 		ormMap = resizeMap(ormMap, mapWidth, mapHeight);
 	}
 
-	public inline function get(index:Int):Image {
-		switch (index) {
-			case 0:
-				return albedoMap;
-			case 1:
-				return emissionMap;
-			case 2:
-				return normalMap;
-			case 3:
-				return ormMap;
-			default:
-				return null;
-		}
+	inline function resizeMap(map:Image, mapWidth:Int, mapHeight:Int) {
+		var img = Image.createRenderTarget(mapWidth, mapHeight, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		setMap(img, map);
+		return img;
 	}
 
-	public inline function set(index:Int, value:Image):Void {
-		switch (index) {
-			case 0:
-				albedoMap = value;
-			case 1:
-				emissionMap = value;
-			case 2:
-				normalMap = value;
-			case 3:
-				ormMap = value;
-			default:
-				null;
-		}
+	public inline function setMap(map:Image, value:Image) {
+		map.g2.begin();
+		map.g2.drawScaledImage(value, 0, 0, map.width, map.height);
+		map.g2.end();
 	}
 
-	inline function setMapColor(map:Image, color:Color):Void {
+	public inline function setMapColor(map:Image, color:Color):Void {
 		map.g2.begin(false);
 		map.g2.color = color;
 		map.g2.fillRect(0, 0, map.width, map.height);
