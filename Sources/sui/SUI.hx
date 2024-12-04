@@ -1,6 +1,5 @@
 package sui;
 
-import kha.Display;
 import kha.Color;
 import kha.Shaders;
 import kha.Assets;
@@ -76,11 +75,12 @@ class SUI {
 			SUI.window.notifyOnResize(scene.resize);
 			scene.createBackbuffer(window.width, window.height);
 
-			app.setup();
-
 			Assets.loadEverything(function() {
 				compileShaders();
 				startUpdates();
+
+				app.setup();
+
 				System.notifyOnFrames(function(frames:Array<Framebuffer>) {
 					render(frames[0].g2);
 				});

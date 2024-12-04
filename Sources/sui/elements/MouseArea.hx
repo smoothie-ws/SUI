@@ -1,7 +1,5 @@
 package sui.elements;
 
-import kha.math.FastVector2;
-// sui
 import sui.elements.Element;
 
 using sui.core.utils.ArrayExt;
@@ -28,7 +26,7 @@ class MouseArea extends Element {
 
 			focused = (x >= left.position && x <= right.position && y >= top.position && y <= bottom.position);
 		}, null);
-		
+
 		SUI.mouse.notify(function(button:Int, x:Int, y:Int) {
 			if (focused)
 				for (f in downListeners)

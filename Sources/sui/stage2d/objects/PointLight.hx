@@ -1,7 +1,6 @@
 package sui.stage2d.objects;
 
 import kha.Image;
-import kha.Color;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.VertexBuffer;
 // sui
@@ -9,6 +8,10 @@ import sui.core.graphics.SUIShaders;
 
 @:structInit
 class PointLight extends Light {
+	public inline function new() {
+		super();
+	}
+
 	override inline function drawShadows(target:Image, meshes:Array<MeshObject>):Void {
 		if (!isCastingShadows)
 			return;

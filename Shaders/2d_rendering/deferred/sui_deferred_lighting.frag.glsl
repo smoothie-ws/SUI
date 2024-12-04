@@ -71,8 +71,7 @@ void main() {
     // diffuse and ambient
     vec3 kD = (1.0 - F) * (1.0 - metalness);
     vec3 diffuse = kD * albedo * max(dot(normal, dir), 0.0) / PI;
-    vec3 ambient = vec3(0.03) * albedo * ao;
 
-    vec3 lighting = (ambient + (diffuse + specular) * lightAttenuation) * lightColor;
+    vec3 lighting = ((diffuse * ao + specular) * lightAttenuation) * lightColor;
     fragColor = vec4(lighting + emission, 1.0);
 }
