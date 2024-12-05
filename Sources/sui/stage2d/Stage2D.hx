@@ -11,6 +11,7 @@ import sui.elements.DrawableElement;
 import sui.stage2d.batches.MeshBatch;
 import sui.stage2d.objects.Object;
 import sui.stage2d.objects.MeshObject;
+import sui.stage2d.objects.Light;
 
 using sui.core.utils.ArrayExt;
 
@@ -22,12 +23,13 @@ class Stage2D extends DrawableElement {
 	var vertices:VertexBuffer;
 
 	var batches:Array<MeshBatch> = [];
+	var lights:Array<Light> = [];
 
 	public function new(scene:Scene) {
 		super(scene);
 
 		backbuffer = Image.createRenderTarget(1, 1);
-		gbuffer = new GBuffer(1, 1);
+		gbuffer = new GBuffer();
 
 		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
 		var vert = vertices.lock();
@@ -58,13 +60,11 @@ class Stage2D extends DrawableElement {
 	}
 
 	inline function resizeBuffers(width:FastFloat, height:FastFloat) {
-		if (width > 0 && height > 0) {
-			var w = Std.int(width);
-			var h = Std.int(height);
+		var w = Std.int(width);
+		var h = Std.int(height);
 
-			backbuffer = Image.createRenderTarget(w, h);
-			gbuffer.resize(w, h);
-		}
+		backbuffer = Image.createRenderTarget(w, h);
+		gbuffer.resize(w, h);
 	}
 
 	inline function setLeft(value:FastFloat) {
@@ -88,46 +88,21 @@ class Stage2D extends DrawableElement {
 			var mesh:MeshObject = cast object;
 			var lb = batches.last();
 
-			if (lb is MeshBatch && lb.capacity < lb.meshes.length) {
+			if (lb is MeshBatch) {
 				lb.add(mesh);
 			} else {
 				var b = new MeshBatch();
+				b.gbuffer.resize(512, 512);
 				b.add(mesh);
 				batches.push(b);
 			}
-		}
+		} else if (object is Light)
+			lights.push(cast object);
 	}
 
 	override inline function draw(target:Canvas) {
 		target.g2.end();
 
-		// drawGeometry();
-
-		// backbuffer.g2.begin(true);
-		// for (light in lights) {
-		// 	DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
-		// 		gbuffer.albedo,
-		// 		gbuffer.emission,
-		// 		gbuffer.normal,
-		// 		gbuffer.orm,
-		// 		light.x,
-		// 		light.y,
-		// 		light.z,
-		// 		light.color.R,
-		// 		light.color.G,
-		// 		light.color.B,
-		// 		light.power,
-		// 		light.radius
-		// 	]);
-		// 	// light.drawShadows(backbuffer, meshes);
-		// }
-		// backbuffer.g2.end();
-
-		target.g2.begin(false);
-		target.g2.drawImage(backbuffer, x, y);
-	}
-
-	inline function drawGeometry() {
 		gbuffer.albedo.g4.begin([gbuffer.emission, gbuffer.normal, gbuffer.orm]);
 		for (batch in batches)
 			DeferredRenderer.geometry.draw(gbuffer.albedo, batch.vertices, batch.indices, [
@@ -138,5 +113,28 @@ class Stage2D extends DrawableElement {
 				batch.meshes.length
 			]);
 		gbuffer.albedo.g4.end();
+
+		backbuffer.g2.begin();
+		for (light in lights) {
+			DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
+				gbuffer.albedo,
+				gbuffer.emission,
+				gbuffer.normal,
+				gbuffer.orm,
+				light.x,
+				light.y,
+				light.z,
+				light.color.R,
+				light.color.G,
+				light.color.B,
+				light.power,
+				light.radius
+			]);
+			// light.drawShadows(backbuffer, meshes);
+		}
+		backbuffer.g2.end();
+
+		target.g2.begin(false);
+		target.g2.drawImage(batches[0].gbuffer.albedo, x, y);
 	}
 }

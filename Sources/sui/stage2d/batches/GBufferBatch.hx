@@ -6,8 +6,8 @@ import kha.Image;
 class GBufferBatch extends GBuffer {
 	var capacity:Int;
 
-	public inline function new(width:Int, height:Int, capacity:Int = 64) {
-		super(width, height * capacity);
+	public inline function new(capacity:Int = 64) {
+		super();
 
 		this.capacity = capacity;
 	}
@@ -22,14 +22,16 @@ class GBufferBatch extends GBuffer {
 	}
 
 	public inline function setMapInstance(map:Image, value:Image, instance:Int) {
-		map.g2.begin();
+		map.g2.begin(false);
 		map.g2.drawScaledImage(value, 0, instance * height, width, height);
 		map.g2.end();
 	}
 
 	public inline function setMapInstanceColor(map:Image, color:Color, instance:Int):Void {
-		map.g2.begin();
+		map.g2.begin(false);
 		map.g2.color = color;
+		trace(map.width, map.height);
+		trace(0, instance * height, width, height);
 		map.g2.fillRect(0, instance * height, width, height);
 		map.g2.end();
 	}

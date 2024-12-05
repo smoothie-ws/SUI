@@ -12,24 +12,23 @@ class GBuffer {
 	@readonly public var width:Int;
 	@readonly public var height:Int;
 
-	public inline function new(mapWidth:Int, mapHeight:Int) {
-		width = mapWidth;
-		height = mapHeight;
-
-		albedo = Image.createRenderTarget(width, height);
-		emission = Image.createRenderTarget(width, height);
-		normal = Image.createRenderTarget(width, height);
-		orm = Image.createRenderTarget(width, height);
+	public inline function new() {
+		albedo = Image.createRenderTarget(1, 1);
+		emission = Image.createRenderTarget(1, 1);
+		normal = Image.createRenderTarget(1, 1);
+		orm = Image.createRenderTarget(1, 1);
 	}
 
 	public inline function resize(mapWidth:Int, mapHeight:Int):Void {
 		width = mapWidth;
 		height = mapHeight;
 
-		albedo = resizeMap(albedo);
-		emission = resizeMap(emission);
-		normal = resizeMap(normal);
-		orm = resizeMap(orm);
+		if (width > 0 && height > 0) {
+			albedo = resizeMap(albedo);
+			emission = resizeMap(emission);
+			normal = resizeMap(normal);
+			orm = resizeMap(orm);
+		}
 	}
 
 	function resizeMap(map:Image):Image {
@@ -48,7 +47,7 @@ class GBuffer {
 	}
 
 	public inline function setMapColor(map:Image, color:Color):Void {
-		map.g2.begin(false);
+		map.g2.begin();
 		map.g2.color = color;
 		map.g2.fillRect(0, 0, width, height);
 		map.g2.end();
