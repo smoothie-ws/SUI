@@ -8,24 +8,26 @@ import kha.graphics4.VertexBuffer;
 // sui
 import sui.core.graphics.DeferredRenderer;
 import sui.elements.DrawableElement;
+import sui.stage2d.batches.MeshBatch;
 import sui.stage2d.objects.Object;
 import sui.stage2d.objects.MeshObject;
-import sui.stage2d.objects.Light;
+
+using sui.core.utils.ArrayExt;
 
 class Stage2D extends DrawableElement {
 	public var backbuffer:Image;
-	public var gbuffer:GeometryMap;
+	public var gbuffer:GBuffer;
 
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;
 
-	var objects:Array<Object> = [];
+	var batches:Array<MeshBatch> = [];
 
-	public function new() {
-		super();
+	public function new(scene:Scene) {
+		super(scene);
 
 		backbuffer = Image.createRenderTarget(1, 1);
-		gbuffer = new GeometryMap(1, 1);
+		gbuffer = new GBuffer(1, 1);
 
 		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
 		var vert = vertices.lock();
@@ -82,141 +84,59 @@ class Stage2D extends DrawableElement {
 	}
 
 	public inline function add(object:Object) {
-		objects.push(object);
+		if (object is MeshObject) {
+			var mesh:MeshObject = cast object;
+			var lb = batches.last();
+
+			if (lb is MeshBatch && lb.capacity < lb.meshes.length) {
+				lb.add(mesh);
+			} else {
+				var b = new MeshBatch();
+				b.add(mesh);
+				batches.push(b);
+			}
+		}
 	}
 
 	override inline function draw(target:Canvas) {
 		target.g2.end();
 
-		var meshes:Array<MeshObject> = [];
-		var lights:Array<Light> = [];
+		// drawGeometry();
 
-		for (object in objects) {
-			if (object is MeshObject) {
-				var mesh:MeshObject = cast object;
-				var added = false;
-				for (i in 0...meshes.length)
-					if (meshes[i].z > object.z) {
-						meshes.insert(i, mesh);
-						added = true;
-						break;
-					}
-				if (!added)
-					meshes.push(mesh);
-			} else if (object is Light) {
-				var light:Light = cast object;
-				lights.push(light);
-			}
-		}
-
-		drawMeshes(meshes);
-
-		backbuffer.g2.begin(true);
-		for (light in lights) {
-			DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
-				gbuffer.albedoMap,
-				gbuffer.emissionMap,
-				gbuffer.normalMap,
-				gbuffer.ormMap,
-				light.x,
-				light.y,
-				light.z,
-				light.color.R,
-				light.color.G,
-				light.color.B,
-				light.power,
-				light.radius
-			]);
-			// light.drawShadows(backbuffer, meshes);
-		}
-		backbuffer.g2.end();
+		// backbuffer.g2.begin(true);
+		// for (light in lights) {
+		// 	DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
+		// 		gbuffer.albedo,
+		// 		gbuffer.emission,
+		// 		gbuffer.normal,
+		// 		gbuffer.orm,
+		// 		light.x,
+		// 		light.y,
+		// 		light.z,
+		// 		light.color.R,
+		// 		light.color.G,
+		// 		light.color.B,
+		// 		light.power,
+		// 		light.radius
+		// 	]);
+		// 	// light.drawShadows(backbuffer, meshes);
+		// }
+		// backbuffer.g2.end();
 
 		target.g2.begin(false);
 		target.g2.drawImage(backbuffer, x, y);
 	}
 
-	inline function drawMeshes(meshes:Array<MeshObject>) {
-		var meshCount = 0;
-		var vertCount = 0;
-		var vertData:Array<Float> = [];
-		var indData:Array<Int> = [];
-
-		var gMapsArray:Array<GeometryMap> = [];
-		var maxW = 0;
-		var maxH = 0;
-
-		for (mesh in meshes) {
-			if (!mesh.isShaded)
-				continue;
-
-			gMapsArray.push(mesh.geometryMap);
-			var w = mesh.geometryMap.width;
-			var h = mesh.geometryMap.height;
-
-			maxW = w > maxW ? w : maxW;
-			maxH = h > maxH ? h : maxH;
-
-			var vCount = mesh.vertices.length;
-			for (i in 0...vCount) {
-				vertData.push(mesh.vertices[i].pos.x);
-				vertData.push(mesh.vertices[i].pos.y);
-				vertData.push(mesh.z);
-				vertData.push(meshes.indexOf(mesh));
-				vertData.push(mesh.vertices[i].uv.x);
-				vertData.push(mesh.vertices[i].uv.y);
-
-				if (i < vCount - 2) {
-					indData.push(vertCount);
-					indData.push(vertCount + i + 1);
-					indData.push(vertCount + i + 2);
-				}
-			}
-			vertCount += vCount;
-			++meshCount;
-		}
-
-		var vertices = new VertexBuffer(vertCount, DeferredRenderer.geometry.structure, StaticUsage);
-		var v = vertices.lock();
-		for (i in 0...vertData.length)
-			v[i] = vertData[i];
-		vertices.unlock();
-
-		var indices = new IndexBuffer(indData.length, StaticUsage);
-		var ind = indices.lock();
-		for (i in 0...indData.length)
-			ind[i] = indData[i];
-		indices.unlock();
-
-		if (maxW <= 0 || maxH <= 0)
-			return;
-
-		var gMaps = new GeometryMap(maxW, maxH * meshCount);
-
-		gMaps.albedoMap.g2.begin();
-		for (j in 0...gMapsArray.length)
-			gMaps.albedoMap.g2.drawScaledImage(gMapsArray[j].albedoMap, 0, j * maxH, maxW, maxH);
-		gMaps.albedoMap.g2.end();
-
-		gMaps.emissionMap.g2.begin();
-		for (j in 0...gMapsArray.length)
-			gMaps.emissionMap.g2.drawScaledImage(gMapsArray[j].emissionMap, 0, j * maxH, maxW, maxH);
-		gMaps.emissionMap.g2.end();
-
-		gMaps.normalMap.g2.begin();
-		for (j in 0...gMapsArray.length)
-			gMaps.normalMap.g2.drawScaledImage(gMapsArray[j].normalMap, 0, j * maxH, maxW, maxH);
-		gMaps.normalMap.g2.end();
-
-		gMaps.ormMap.g2.begin();
-		for (j in 0...gMapsArray.length)
-			gMaps.ormMap.g2.drawScaledImage(gMapsArray[j].ormMap, 0, j * maxH, maxW, maxH);
-		gMaps.ormMap.g2.end();
-
-		if (gMaps == null)
-			return;
-
-		gbuffer.albedoMap.g4.begin([gbuffer.emissionMap, gbuffer.normalMap, gbuffer.ormMap]);
-		DeferredRenderer.geometry.draw(gbuffer.albedoMap, vertices, indices, [gMaps.albedoMap, gMaps.emissionMap, gMaps.normalMap, gMaps.ormMap, meshCount]);
-		gbuffer.albedoMap.g4.end();
+	inline function drawGeometry() {
+		gbuffer.albedo.g4.begin([gbuffer.emission, gbuffer.normal, gbuffer.orm]);
+		for (batch in batches)
+			DeferredRenderer.geometry.draw(gbuffer.albedo, batch.vertices, batch.indices, [
+				batch.gbuffer.albedo,
+				batch.gbuffer.emission,
+				batch.gbuffer.normal,
+				batch.gbuffer.orm,
+				batch.meshes.length
+			]);
+		gbuffer.albedo.g4.end();
 	}
 }

@@ -38,7 +38,7 @@ class SUI {
 	}
 	#end
 
-	public static var scene:Scene = {};
+	public static var scene:Scene = new Scene();
 	public static var options:SUIoptions = {vsync: true, samplesPerPixel: 1};
 	public static var window:Window;
 	// input vars

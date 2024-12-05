@@ -1,18 +1,18 @@
 package sui.elements;
 
-import sui.core.utils.Math.clamp;
 import kha.FastFloat;
 import kha.math.FastVector2;
 // sui
 import sui.positioning.Anchors;
 import sui.elements.batches.ElementBatch;
+import sui.core.utils.Math.clamp;
 
 @:autoBuild(sui.core.macro.SUIMacro.build())
 class Element {
-	var components = [];
-
-	public function new() {
+	public function new(?scene:Scene) {
 		anchors = new Anchors(this);
+		if (scene != null)
+			scene.add(this);
 	}
 
 	// anchors

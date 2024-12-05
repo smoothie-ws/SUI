@@ -53,7 +53,7 @@ void main() {
     float dist = sqrt(distSq);
     vec3 dir = l / dist;
 
-    float lightAttenuation = lightAttrib.x / (4.0 * PI * distSq + lightAttrib.y);
+    float lightAttenuation = lightAttrib.x / (4.0 * PI * distSq + lightAttrib.y * lightAttrib.y);
 
     vec3 V = normalize(viewDir);
     vec3 H = normalize(dir + V);
@@ -69,7 +69,6 @@ void main() {
 
     // diffuse and ambient
     vec3 kD = (1.0 - F) * (1.0 - metalness);
-    vec3 diffuse = kD * albedo * max(dot(normal, dir), 0.0) / PI;
     vec3 diffuse = ao * kD * albedo * max(dot(normal, dir), 0.0) / PI;
 
     fragColor = vec4(emission + (diffuse + specular) * lightColor * lightAttenuation, 1.0);

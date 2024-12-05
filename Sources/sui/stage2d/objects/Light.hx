@@ -14,8 +14,8 @@ class Light extends Object {
 	public var radius:FastFloat = 0;
 	public var isCastingShadows:Bool = true;
 
-	public inline function new(?color:Color = Color.White, ?power:FastFloat = 1, ?radius:FastFloat = 0, ?isCastingShadows:Bool = true) {
-		super();
+	public inline function new(stage:Stage2D, ?color:Color = Color.White, ?power:FastFloat = 1, ?radius:FastFloat = 0, ?isCastingShadows:Bool = true) {
+		super(stage);
 
 		this.color = color;
 		this.power = power;

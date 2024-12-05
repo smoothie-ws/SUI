@@ -18,8 +18,9 @@ class MouseArea extends Element {
 	var _focused:Bool = false;
 	var focused:Bool;
 
-	public function new() {
-		super();
+	public function new(scene:Scene) {
+		super(scene);
+
 		SUI.mouse.notify(null, null, function(x:Int, y:Int, moveX:Int, moveY:Int) {
 			mouseX = x;
 			mouseY = y;

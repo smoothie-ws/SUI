@@ -8,8 +8,6 @@ import kha.graphics4.TextureUnit;
 import kha.graphics4.ConstantLocation;
 import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
-// sui
-import sui.stage2d.GeometryMap;
 
 class GeometryPass extends Shader2D {
 	var albedoMapsTU:TextureUnit;

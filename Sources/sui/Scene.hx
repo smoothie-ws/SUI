@@ -12,6 +12,10 @@ class Scene extends DrawableElement {
 	public var resolution:Int = 0;
 	public var backbuffer:Image = null;
 
+	public inline function new() {
+		super();
+	}
+
 	public inline function add(element:Element) {
 		if (element.batchType != null) {
 			var lastEl = cast children.last();
@@ -25,8 +29,6 @@ class Scene extends DrawableElement {
 		} else
 			addChild(element);
 
-		for (c in element.components)
-			add(c);
 		for (c in element.children)
 			add(c);
 	}
