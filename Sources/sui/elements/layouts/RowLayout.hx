@@ -28,13 +28,10 @@ class RowLayout extends Element {
 		return value;
 	}
 
-	override inline function construct() {
+	inline function buildLayout() {
 		if (direction == Direction.RightToLeft)
 			children.reverse();
-		buildLayout();
-	}
 
-	inline function buildLayout() {
 		var w = width / children.length;
 		children[0].anchors.left = left;
 		children[0].width = w;

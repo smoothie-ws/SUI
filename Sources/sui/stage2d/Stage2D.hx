@@ -150,8 +150,8 @@ class Stage2D extends DrawableElement {
 				continue;
 
 			gMapsArray.push(mesh.geometryMap);
-			var w = mesh.geometryMap.albedoMap.width;
-			var h = mesh.geometryMap.albedoMap.height;
+			var w = mesh.geometryMap.width;
+			var h = mesh.geometryMap.height;
 
 			maxW = w > maxW ? w : maxW;
 			maxH = h > maxH ? h : maxH;

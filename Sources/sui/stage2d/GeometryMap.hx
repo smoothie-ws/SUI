@@ -4,10 +4,10 @@ import kha.Color;
 import kha.Image;
 
 class GeometryMap {
-	@:isVar public var albedoMap(default, null):Image;
-	@:isVar public var emissionMap(default, null):Image;
-	@:isVar public var normalMap(default, null):Image;
-	@:isVar public var ormMap(default, null):Image;
+	@readonly public var albedoMap:Image;
+	@readonly public var emissionMap:Image;
+	@readonly public var normalMap:Image;
+	@readonly public var ormMap:Image;
 
 	public inline function new(width:Int, height:Int) {
 		albedoMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
@@ -16,7 +16,36 @@ class GeometryMap {
 		ormMap = Image.createRenderTarget(width, height, RGBA32, NoDepthAndStencil, SUI.options.samplesPerPixel);
 	}
 
+	var _width:Int = 0;
+	var _height:Int = 0;
+
+	public var width(get, set):Int;
+	public var height(get, set):Int;
+
+	inline function get_width():Int {
+		return _width;
+	}
+
+	inline function set_width(value:Int):Int {
+		_width = value;
+		resize(_width, _height);
+		return value;
+	}
+
+	inline function get_height():Int {
+		return _height;
+	}
+
+	inline function set_height(value:Int):Int {
+		_height = value;
+		resize(_width, _height);
+		return value;
+	}
+
 	public inline function resize(mapWidth:Int, mapHeight:Int):Void {
+		_width = mapWidth;
+		_height = mapHeight;
+		
 		albedoMap = resizeMap(albedoMap, mapWidth, mapHeight);
 		emissionMap = resizeMap(emissionMap, mapWidth, mapHeight);
 		normalMap = resizeMap(normalMap, mapWidth, mapHeight);

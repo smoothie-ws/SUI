@@ -34,7 +34,6 @@ class Scene extends DrawableElement {
 	override inline function resize(w:Int, h:Int) {
 		width = w;
 		height = h;
-
 		createBackbuffer(w, h);
 	}
 

@@ -28,13 +28,10 @@ class ColumnLayout extends Element {
 		return value;
 	}
 
-	override inline function construct() {
+	inline function buildLayout() {
 		if (direction == Direction.BottomToTop)
 			children.reverse();
-		buildLayout();
-	}
 
-	inline function buildLayout() {
 		var h = height / children.length;
 		children[0].anchors.top = top;
 		children[0].height = h;

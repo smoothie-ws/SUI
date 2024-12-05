@@ -72,14 +72,13 @@ class SUI {
 			SUI.mouse = Mouse.get();
 			SUI.keyboard = Keyboard.get();
 
-			SUI.window.notifyOnResize(scene.resize);
-			scene.createBackbuffer(window.width, window.height);
-
 			Assets.loadEverything(function() {
 				compileShaders();
 				startUpdates();
-
 				app.setup();
+
+				scene.resize(window.width, window.height);
+				window.notifyOnResize(scene.resize);
 
 				System.notifyOnFrames(function(frames:Array<Framebuffer>) {
 					render(frames[0].g2);
