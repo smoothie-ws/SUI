@@ -116,7 +116,7 @@ class SUI {
 		SUIShaders.shadowCaster.compile(Shaders.sui_deferred_shadows_vert, Shaders.sui_deferred_shadows_frag);
 
 		DeferredRenderer.geometry.compile(Shaders.sui_deferred_geometry_vert, Shaders.sui_deferred_geometry_frag);
-		DeferredRenderer.lighting.compile(Shaders.sui_deferred_lighting_vert, Shaders.sui_deferred_lighting_frag);
+		DeferredRenderer.lighting.compile(Shaders.sui_point_light_vert, Shaders.sui_point_light_frag);
 	}
 
 	public static inline function update() {

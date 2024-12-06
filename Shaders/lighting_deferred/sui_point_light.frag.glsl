@@ -67,10 +67,9 @@ void main() {
     float G = geometrySmith(normal, V, dir, roughness);
     vec3 specular = NDF * G * F / max(4.0 * max(dot(normal, V), 0.0) * max(dot(normal, dir), 0.0), 0.001);
 
-    // diffuse and ambient
+    // diffuse
     vec3 kD = (1.0 - F) * (1.0 - metalness);
-    vec3 diffuse = ao * kD * albedo * max(dot(normal, dir), 0.0) / PI;
+    vec3 diffuse = kD * albedo * max(dot(normal, dir), 0.0) / PI;
 
-    // fragColor = vec4(emission + (diffuse + specular) * lightColor * lightAttenuation, 1.0);
-    fragColor = vec4(diffuse, 1.0);
+    fragColor = vec4(emission + ao * (diffuse + specular) * lightColor * lightAttenuation, 1.0);
 }

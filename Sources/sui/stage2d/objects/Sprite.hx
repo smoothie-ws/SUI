@@ -11,7 +11,7 @@ import sui.stage2d.batches.SpriteBatch;
 @:allow(sui.stage2d.Stage2D)
 @:allow(sui.stage2d.batches.SpriteBatch)
 class Sprite extends Object {
-	var batch:SpriteBatch;
+	public var batch:SpriteBatch;
 
 	public var opacity:FastFloat = 1.0;
 	public var isShaded:Bool = true;
