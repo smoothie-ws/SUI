@@ -21,29 +21,28 @@ class MapPack {
 
 		if (mapWidth > 0 && mapHeight > 0)
 			for (i in 0...maps.length)
-				maps[i] = resizeMap(maps[i]);
+				resizeMap(i);
 	}
 
-	private function resizeMap(map:Image):Image {
-		if (map.width == mapWidth && map.height == mapHeight)
-			return map;
+	private function resizeMap(mapID:Int):Void {
 		var img = Image.createRenderTarget(mapWidth, mapHeight);
 		img.g2.begin();
-		img.g2.drawScaledImage(map, 0, 0, mapWidth, mapHeight);
+		img.g2.drawScaledImage(maps[mapID], 0, 0, mapWidth, mapHeight);
 		img.g2.end();
-		return img;
+
+		maps[mapID] = img;
 	}
 
-	public inline function setMap(map:Image, value:Image) {
-		map.g2.begin();
-		map.g2.drawScaledImage(value, 0, 0, mapWidth, mapHeight);
-		map.g2.end();
+	public inline function setMap(mapID:Int, value:Image) {
+		maps[mapID].g2.begin();
+		maps[mapID].g2.drawScaledImage(value, 0, 0, mapWidth, mapHeight);
+		maps[mapID].g2.end();
 	}
 
-	public inline function setMapColor(map:Image, color:Color):Void {
-		map.g2.begin();
-		map.g2.color = color;
-		map.g2.fillRect(0, 0, mapWidth, mapHeight);
-		map.g2.end();
+	public inline function setMapColor(mapID:Int, color:Color):Void {
+		maps[mapID].g2.begin();
+		maps[mapID].g2.color = color;
+		maps[mapID].g2.fillRect(0, 0, mapWidth, mapHeight);
+		maps[mapID].g2.end();
 	}
 }

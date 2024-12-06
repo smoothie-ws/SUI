@@ -42,7 +42,7 @@ void main() {
     vec3 orm = texture(ormMap, fragCoord).rgb;
     vec3 albedo = texture(albedoMap, fragCoord).rgb;
     vec3 emission = texture(emissionMap, fragCoord).rgb;
-    vec3 normal = normalize(texture(normalMap, fragCoord).rgb);
+    vec3 normal = normalize(texture(normalMap, fragCoord).rgb * 2 - 1);
 
     float ao = orm.r;
     float roughness = clamp(orm.g, 0.05, 1.0);
@@ -71,5 +71,6 @@ void main() {
     vec3 kD = (1.0 - F) * (1.0 - metalness);
     vec3 diffuse = ao * kD * albedo * max(dot(normal, dir), 0.0) / PI;
 
-    fragColor = vec4(emission + (diffuse + specular) * lightColor * lightAttenuation, 1.0);
+    // fragColor = vec4(emission + (diffuse + specular) * lightColor * lightAttenuation, 1.0);
+    fragColor = vec4(diffuse, 1.0);
 }

@@ -13,43 +13,43 @@ class MapBatch extends MapPack {
 	public inline function extend():Void {
 		++count;
 		for (i in 0...maps.length)
-			maps[i] = extendMap(maps[i]);
+			extendMap(i);
 	}
 
-	override inline function resizeMap(map:Image):Image {
+	override inline function resizeMap(mapID:Int):Void {
 		var img = Image.createRenderTarget(mapWidth, mapHeight * count);
 		img.g2.begin();
-		img.g2.drawScaledImage(map, 0, 0, mapWidth, mapHeight * count);
+		img.g2.drawScaledImage(maps[mapID], 0, 0, mapWidth, mapHeight * count);
 		img.g2.end();
-		return img;
+		maps[mapID] = img;
 	}
 
-	inline function extendMap(map:Image):Image {
+	inline function extendMap(mapID:Int):Void {
 		var img = Image.createRenderTarget(mapWidth, mapHeight * count);
 		img.g2.begin();
-		img.g2.drawImage(map, 0, 0);
+		img.g2.drawImage(maps[mapID], 0, 0);
 		img.g2.end();
-		return img;
+		maps[mapID] = img;
 	}
 
-	public inline function setMapInstance(map:Image, value:Image, instance:Int):Void {
-		if (instance < 0 || instance >= count) {
-			trace("Error: Instance index out of bounds");
-			return;
-		}
-		map.g2.begin(false);
-		map.g2.drawScaledImage(value, 0, instance * mapHeight, mapWidth, mapHeight);
+	public inline function getMapInstance(mapID:Int, instanceID:Int):Image {
+		var map = Image.createRenderTarget(mapWidth, mapHeight);
+		map.g2.begin(true);
+		map.g2.drawScaledSubImage(maps[mapID], 0, instanceID * mapHeight, mapWidth, mapHeight, 0, 0, mapWidth, mapHeight,);
 		map.g2.end();
+		return map;
 	}
 
-	public inline function setMapInstanceColor(map:Image, color:Color, instance:Int):Void {
-		if (instance < 0 || instance >= count) {
-			trace("Error: Instance index out of bounds");
-			return;
-		}
-		map.g2.begin(false);
-		map.g2.color = color;
-		map.g2.fillRect(0, instance * mapHeight, mapWidth, mapHeight);
-		map.g2.end();
+	public inline function setMapInstance(mapID:Int, value:Image, instanceID:Int):Void {
+		maps[mapID].g2.begin(false);
+		maps[mapID].g2.drawScaledImage(value, 0, instanceID * mapHeight, mapWidth, mapHeight);
+		maps[mapID].g2.end();
+	}
+
+	public inline function setMapInstanceColor(mapID:Int, color:Color, instanceID:Int):Void {
+		maps[mapID].g2.begin(false);
+		maps[mapID].g2.color = color;
+		maps[mapID].g2.fillRect(0, instanceID * mapHeight, mapWidth, mapHeight);
+		maps[mapID].g2.end();
 	}
 }
