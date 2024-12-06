@@ -28,6 +28,10 @@ class GeometryPass extends Shader2D {
 		pipeline.vertexShader = vert;
 		pipeline.fragmentShader = frag;
 		pipeline.colorAttachmentCount = 3;
+		pipeline.alphaBlendSource = SourceAlpha;
+		pipeline.alphaBlendDestination = InverseSourceAlpha;
+		pipeline.blendSource = SourceAlpha;
+		pipeline.blendDestination = InverseSourceAlpha;
 		pipeline.compile();
 		getUniforms();
 	}

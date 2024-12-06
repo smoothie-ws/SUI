@@ -1,5 +1,6 @@
 package sui.stage2d;
 
+import kha.Color;
 import kha.Image;
 import kha.Canvas;
 import kha.FastFloat;
@@ -103,6 +104,7 @@ class Stage2D extends DrawableElement {
 		target.g2.end();
 
 		gbuffer.maps[0].g4.begin([gbuffer.maps[1], gbuffer.maps[2], gbuffer.maps[3]]);
+		gbuffer.maps[0].g4.clear(Color.Black);
 		for (batch in batches)
 			DeferredRenderer.geometry.draw(gbuffer.maps[0], batch.vertices, batch.indices, [
 				batch.gbuffer.maps[0],
