@@ -1,6 +1,5 @@
 #version 450
 
-
 uniform sampler2D albedoMap;
 uniform sampler2D emissionMap;
 uniform sampler2D normalMap;

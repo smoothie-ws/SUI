@@ -42,8 +42,8 @@ void main() {
     vec3 orm = texture(ormMap, fragCoord).rgb;
     vec3 albedo = texture(albedoMap, fragCoord).rgb;
     vec3 emission = texture(emissionMap, fragCoord).rgb;
-    vec3 normal = normalize(texture(normalMap, fragCoord).rgb * 2.0 - 1.0);
-    
+    vec3 normal = normalize(texture(normalMap, fragCoord).rgb);
+
     float ao = orm.r;
     float roughness = clamp(orm.g, 0.05, 1.0);
     float metalness = orm.b;
