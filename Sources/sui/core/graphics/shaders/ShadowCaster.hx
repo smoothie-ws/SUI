@@ -6,6 +6,6 @@ import kha.graphics4.VertexStructure;
 class ShadowCaster extends Shader2D {
 	override inline function initStructure() {
 		structure = new VertexStructure();
-		structure.add("vertData", VertexData.Float32_3X);
+		structure.add("vertPos", VertexData.Float32_2X);
 	}
 }

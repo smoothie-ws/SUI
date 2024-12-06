@@ -3,9 +3,9 @@ package sui.stage2d.objects;
 import kha.Image;
 import kha.Color;
 import kha.FastFloat;
+import kha.math.FastVector2;
 // sui
 import sui.stage2d.objects.Object;
-import sui.stage2d.objects.MeshObject;
 
 @:structInit
 class Light extends Object {
@@ -23,5 +23,5 @@ class Light extends Object {
 		this.isCastingShadows = isCastingShadows;
 	}
 
-	public function drawShadows(target:Image, meshes:Array<MeshObject>):Void {}
+	public function drawShadows(target:Image, vertices:Array<FastVector2>):Void {}
 }

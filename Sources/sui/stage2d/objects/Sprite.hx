@@ -1,39 +1,40 @@
 package sui.stage2d.objects;
 
+import kha.math.FastVector2;
 import kha.Image;
 import kha.Color;
 import kha.FastFloat;
 // sui
-import sui.stage2d.batches.MeshBatch;
+import sui.stage2d.batches.SpriteBatch;
 
 @:structInit
 @:allow(sui.stage2d.Stage2D)
-@:allow(sui.stage2d.batches.MeshBatch)
-class MeshObject extends Object {
-	var batch:MeshBatch;
-	var vertCount:Int = 0;
-	var vertOffset:Int = 0;
+@:allow(sui.stage2d.batches.SpriteBatch)
+class Sprite extends Object {
+	var batch:SpriteBatch;
 
 	public var opacity:FastFloat = 1.0;
 	public var isShaded:Bool = true;
 	public var isCastingShadows:Bool = true;
 
-	public inline function new(stage:Stage2D, vertCount:Int) {
+	public inline function new(stage:Stage2D) {
 		super(stage);
 
-		this.vertCount = vertCount;
 		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
 		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
 		normalColor = Color.fromFloats(0.5, 0.5, 1.0);
 		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
 	}
 
-	public inline function setVertices(vertices:Array<Float>) {
-		if (vertices.length != vertCount * 5)
+	public inline function setVertices(vertices:Array<FastVector2>) {
+		if (vertices.length != 4)
 			return;
-		var vert = batch.vertices.lock(vertOffset * 5, (vertOffset + vertCount) * 5);
-		for (i in 0...vertices.length)
-			vert[i] = vertices[i];
+
+		var vert = batch.vertices.lock();
+		for (i in 0...vertices.length) {
+			vert[instanceID * 24 + i * 6 + 0] = vertices[i].x;
+			vert[instanceID * 24 + i * 6 + 1] = vertices[i].y;
+		}
 		batch.vertices.unlock();
 	}
 
@@ -43,22 +44,22 @@ class MeshObject extends Object {
 	public var ormMap(never, set):Image;
 
 	inline function set_albedoMap(value:Image):Image {
-		batch.gbuffer.setMapInstance(batch.gbuffer.albedo, value, instanceID);
+		batch.gbuffer.setMapInstance(batch.gbuffer.maps[0], value, instanceID);
 		return value;
 	}
 
 	inline function set_emissionMap(value:Image):Image {
-		batch.gbuffer.setMapInstance(batch.gbuffer.emission, value, instanceID);
+		batch.gbuffer.setMapInstance(batch.gbuffer.maps[1], value, instanceID);
 		return value;
 	}
 
 	inline function set_normalMap(value:Image):Image {
-		batch.gbuffer.setMapInstance(batch.gbuffer.normal, value, instanceID);
+		batch.gbuffer.setMapInstance(batch.gbuffer.maps[2], value, instanceID);
 		return value;
 	}
 
 	inline function set_ormMap(value:Image):Image {
-		batch.gbuffer.setMapInstance(batch.gbuffer.orm, value, instanceID);
+		batch.gbuffer.setMapInstance(batch.gbuffer.maps[3], value, instanceID);
 		return value;
 	}
 
@@ -68,22 +69,22 @@ class MeshObject extends Object {
 	public var ormColor(never, set):Color;
 
 	function set_albedoColor(value:Color):Color {
-		batch.gbuffer.setMapInstanceColor(batch.gbuffer.albedo, value, instanceID);
+		batch.gbuffer.setMapInstanceColor(batch.gbuffer.maps[0], value, instanceID);
 		return value;
 	}
 
 	function set_emissionColor(value:Color):Color {
-		batch.gbuffer.setMapInstanceColor(batch.gbuffer.emission, value, instanceID);
+		batch.gbuffer.setMapInstanceColor(batch.gbuffer.maps[1], value, instanceID);
 		return value;
 	}
 
 	function set_normalColor(value:Color):Color {
-		batch.gbuffer.setMapInstanceColor(batch.gbuffer.normal, value, instanceID);
+		batch.gbuffer.setMapInstanceColor(batch.gbuffer.maps[2], value, instanceID);
 		return value;
 	}
 
 	function set_ormColor(value:Color):Color {
-		batch.gbuffer.setMapInstanceColor(batch.gbuffer.orm, value, instanceID);
+		batch.gbuffer.setMapInstanceColor(batch.gbuffer.maps[3], value, instanceID);
 		return value;
 	}
 }

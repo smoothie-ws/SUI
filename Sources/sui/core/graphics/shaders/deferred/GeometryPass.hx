@@ -14,7 +14,7 @@ class GeometryPass extends Shader2D {
 	var emissionMapsTU:TextureUnit;
 	var normalMapsTU:TextureUnit;
 	var ormMapsTU:TextureUnit;
-	var gMapsCountCL:ConstantLocation;
+	var instancesCountCL:ConstantLocation;
 
 	override inline function initStructure() {
 		structure = new VertexStructure();
@@ -37,7 +37,7 @@ class GeometryPass extends Shader2D {
 		emissionMapsTU = pipeline.getTextureUnit("emissionMap");
 		normalMapsTU = pipeline.getTextureUnit("normalMap");
 		ormMapsTU = pipeline.getTextureUnit("ormMap");
-		gMapsCountCL = pipeline.getConstantLocation("gMapsCount");
+		instancesCountCL = pipeline.getConstantLocation("instancesCount");
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
@@ -45,6 +45,6 @@ class GeometryPass extends Shader2D {
 		target.g4.setTexture(emissionMapsTU, uniforms[1]);
 		target.g4.setTexture(normalMapsTU, uniforms[2]);
 		target.g4.setTexture(ormMapsTU, uniforms[3]);
-		target.g4.setInt(gMapsCountCL, uniforms[4]);
+		target.g4.setInt(instancesCountCL, uniforms[4]);
 	}
 }

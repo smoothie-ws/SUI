@@ -8,28 +8,29 @@ import kha.graphics4.VertexBuffer;
 // sui
 import sui.core.graphics.DeferredRenderer;
 import sui.elements.DrawableElement;
-import sui.stage2d.batches.MeshBatch;
+import sui.stage2d.batches.MapPack;
+import sui.stage2d.batches.SpriteBatch;
 import sui.stage2d.objects.Object;
-import sui.stage2d.objects.MeshObject;
+import sui.stage2d.objects.Sprite;
 import sui.stage2d.objects.Light;
 
 using sui.core.utils.ArrayExt;
 
 class Stage2D extends DrawableElement {
 	public var backbuffer:Image;
-	public var gbuffer:GBuffer;
+	public var gbuffer:MapPack;
 
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;
 
-	var batches:Array<MeshBatch> = [];
+	var batches:Array<SpriteBatch> = [];
 	var lights:Array<Light> = [];
 
 	public function new(scene:Scene) {
 		super(scene);
 
 		backbuffer = Image.createRenderTarget(1, 1);
-		gbuffer = new GBuffer();
+		gbuffer = new MapPack(1, 1, 4);
 
 		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
 		var vert = vertices.lock();
@@ -84,16 +85,14 @@ class Stage2D extends DrawableElement {
 	}
 
 	public inline function add(object:Object) {
-		if (object is MeshObject) {
-			var mesh:MeshObject = cast object;
+		if (object is Sprite) {
+			var sprite:Sprite = cast object;
 			var lb = batches.last();
-
-			if (lb is MeshBatch) {
-				lb.add(mesh);
+			if (lb is SpriteBatch) {
+				lb.add(sprite);
 			} else {
-				var b = new MeshBatch();
-				b.gbuffer.resize(512, 512);
-				b.add(mesh);
+				var b = new SpriteBatch();
+				b.add(sprite);
 				batches.push(b);
 			}
 		} else if (object is Light)
@@ -103,24 +102,24 @@ class Stage2D extends DrawableElement {
 	override inline function draw(target:Canvas) {
 		target.g2.end();
 
-		gbuffer.albedo.g4.begin([gbuffer.emission, gbuffer.normal, gbuffer.orm]);
+		gbuffer.maps[0].g4.begin([gbuffer.maps[1], gbuffer.maps[2], gbuffer.maps[3]]);
 		for (batch in batches)
-			DeferredRenderer.geometry.draw(gbuffer.albedo, batch.vertices, batch.indices, [
-				batch.gbuffer.albedo,
-				batch.gbuffer.emission,
-				batch.gbuffer.normal,
-				batch.gbuffer.orm,
-				batch.meshes.length
+			DeferredRenderer.geometry.draw(gbuffer.maps[0], batch.vertices, batch.indices, [
+				batch.gbuffer.maps[0],
+				batch.gbuffer.maps[1],
+				batch.gbuffer.maps[2],
+				batch.gbuffer.maps[3],
+				batch.sprites.length
 			]);
-		gbuffer.albedo.g4.end();
+		gbuffer.maps[0].g4.end();
 
 		backbuffer.g2.begin();
-		for (light in lights) {
+		for (light in lights)
 			DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
-				gbuffer.albedo,
-				gbuffer.emission,
-				gbuffer.normal,
-				gbuffer.orm,
+				gbuffer.maps[0],
+				gbuffer.maps[1],
+				gbuffer.maps[2],
+				gbuffer.maps[3],
 				light.x,
 				light.y,
 				light.z,
@@ -130,11 +129,9 @@ class Stage2D extends DrawableElement {
 				light.power,
 				light.radius
 			]);
-			// light.drawShadows(backbuffer, meshes);
-		}
 		backbuffer.g2.end();
 
 		target.g2.begin(false);
-		target.g2.drawImage(batches[0].gbuffer.albedo, x, y);
+		target.g2.drawImage(backbuffer, x, y);
 	}
 }
