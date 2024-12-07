@@ -15,6 +15,7 @@ class GeometryPass extends Shader2D {
 	var normalMapsTU:TextureUnit;
 	var ormMapsTU:TextureUnit;
 	var instancesCountCL:ConstantLocation;
+	var blendModesCL:ConstantLocation;
 
 	override inline function initStructure() {
 		structure = new VertexStructure();
@@ -42,6 +43,7 @@ class GeometryPass extends Shader2D {
 		normalMapsTU = pipeline.getTextureUnit("normalMap");
 		ormMapsTU = pipeline.getTextureUnit("ormMap");
 		instancesCountCL = pipeline.getConstantLocation("instancesCount");
+		blendModesCL = pipeline.getConstantLocation("blendModes");
 	}
 
 	override inline function setUniforms(target:Canvas, ?uniforms:Dynamic) {
@@ -50,5 +52,6 @@ class GeometryPass extends Shader2D {
 		target.g4.setTexture(normalMapsTU, uniforms[2]);
 		target.g4.setTexture(ormMapsTU, uniforms[3]);
 		target.g4.setInt(instancesCountCL, uniforms[4]);
+		target.g4.setInts(blendModesCL, uniforms[5]);
 	}
 }

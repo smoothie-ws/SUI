@@ -5,6 +5,7 @@ import kha.Color;
 import kha.FastFloat;
 import kha.math.FastVector2;
 // sui
+import sui.stage2d.graphics.BlendMode;
 import sui.stage2d.batches.SpriteBatch;
 
 @:structInit
@@ -13,9 +14,19 @@ import sui.stage2d.batches.SpriteBatch;
 class Sprite extends Object {
 	var batch:SpriteBatch;
 
-	public var opacity:FastFloat = 1.0;
 	public var isShaded:Bool = true;
+	public var blendMode(get, set):BlendMode;
+	public var shadowOpacity:FastFloat = 1.0;
 	public var isCastingShadows:Bool = true;
+
+	public inline function get_blendMode():BlendMode {
+		return batch.blendModes[instanceID];
+	}
+
+	public inline function set_blendMode(value:BlendMode):BlendMode {
+		batch.blendModes[instanceID] = value;
+		return value;
+	}
 
 	public inline function new(stage:Stage2D) {
 		super(stage);

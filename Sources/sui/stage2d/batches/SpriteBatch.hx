@@ -1,5 +1,7 @@
 package sui.stage2d.batches;
 
+import kha.Canvas;
+import kha.arrays.Int32Array;
 import kha.arrays.Uint32Array;
 import kha.arrays.Float32Array;
 import kha.graphics4.IndexBuffer;
@@ -14,7 +16,9 @@ using sui.core.utils.ArrayExt;
 @:allow(sui.stage2d.objects.Sprite)
 class SpriteBatch {
 	public var sprites:Array<Sprite> = [];
-	public var gbuffer:MapBatch = new MapBatch(1024, 1024, 4);
+	public var gbuffer:MapBatch = new MapBatch(512, 512, 4);
+
+	var blendModes:Int32Array = new Int32Array(64);
 
 	@readonly var vertData:Float32Array;
 	@readonly var indData:Uint32Array;
@@ -85,5 +89,18 @@ class SpriteBatch {
 		sprites.push(sprite);
 		vertData = vert;
 		indData = ind;
+	}
+
+	public inline function drawGeometry(target:Canvas) {
+		unlock();
+		DeferredRenderer.geometry.draw(target, vertices, indices, [
+			gbuffer.maps[0],
+			gbuffer.maps[1],
+			gbuffer.maps[2],
+			gbuffer.maps[3],
+			sprites.length,
+			blendModes
+		]);
+		lock();
 	}
 }

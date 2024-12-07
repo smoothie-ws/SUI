@@ -18,7 +18,7 @@ class MapBatch extends MapPack {
 
 	override inline function resizeMap(mapID:Int):Void {
 		var img = Image.createRenderTarget(mapWidth, mapHeight * count);
-		img.g2.begin();
+		img.g2.begin(true, Color.Transparent);
 		img.g2.drawScaledImage(maps[mapID], 0, 0, mapWidth, mapHeight * count);
 		img.g2.end();
 		maps[mapID] = img;
@@ -26,7 +26,7 @@ class MapBatch extends MapPack {
 
 	inline function extendMap(mapID:Int):Void {
 		var img = Image.createRenderTarget(mapWidth, mapHeight * count);
-		img.g2.begin();
+		img.g2.begin(true, Color.Transparent);
 		img.g2.drawImage(maps[mapID], 0, 0);
 		img.g2.end();
 		maps[mapID] = img;
@@ -34,23 +34,31 @@ class MapBatch extends MapPack {
 
 	public inline function getMapInstance(mapID:Int, instanceID:Int):Image {
 		var map = Image.createRenderTarget(mapWidth, mapHeight);
-		map.g2.begin(true);
+		map.g2.begin(true, Color.Transparent);
 		map.g2.drawScaledSubImage(maps[mapID], 0, instanceID * mapHeight, mapWidth, mapHeight, 0, 0, mapWidth, mapHeight,);
 		map.g2.end();
 		return map;
 	}
 
 	public inline function setMapInstance(mapID:Int, value:Image, instanceID:Int):Void {
-		maps[mapID].g2.begin(false);
-		maps[mapID].g2.drawScaledImage(value, 0, instanceID * mapHeight, mapWidth, mapHeight);
+		var mapRect = [0, instanceID * mapHeight, mapWidth, mapHeight];
+
+		maps[mapID].g2.scissor(mapRect[0], mapRect[1], mapRect[2], mapRect[3]);
+		maps[mapID].g2.begin(true, Color.Transparent);
+		maps[mapID].g2.drawScaledImage(value, mapRect[0], mapRect[1], mapRect[2], mapRect[3]);
 		maps[mapID].g2.end();
+		maps[mapID].g2.disableScissor();
 	}
 
 	public inline function setMapInstanceColor(mapID:Int, color:Color, instanceID:Int):Void {
-		maps[mapID].g2.begin(false);
+		var mapRect = [0, instanceID * mapHeight, mapWidth, mapHeight];
+
+		maps[mapID].g2.scissor(mapRect[0], mapRect[1], mapRect[2], mapRect[3]);
+		maps[mapID].g2.begin(true, Color.Transparent);
 		maps[mapID].g2.color = color;
-		maps[mapID].g2.fillRect(0, instanceID * mapHeight, mapWidth, mapHeight);
+		maps[mapID].g2.fillRect(mapRect[0], mapRect[1], mapRect[2], mapRect[3]);
 		maps[mapID].g2.color = Color.White;
 		maps[mapID].g2.end();
+		maps[mapID].g2.disableScissor();
 	}
 }

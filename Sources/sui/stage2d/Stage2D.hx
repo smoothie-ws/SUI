@@ -104,18 +104,9 @@ class Stage2D extends DrawableElement {
 		target.g2.end();
 
 		gbuffer.maps[0].g4.begin([gbuffer.maps[1], gbuffer.maps[2], gbuffer.maps[3]]);
-		gbuffer.maps[0].g4.clear(Color.Black);
-		for (batch in batches) {
-			batch.unlock();
-			DeferredRenderer.geometry.draw(gbuffer.maps[0], batch.vertices, batch.indices, [
-				batch.gbuffer.maps[0],
-				batch.gbuffer.maps[1],
-				batch.gbuffer.maps[2],
-				batch.gbuffer.maps[3],
-				batch.sprites.length
-			]);
-			batch.lock();
-		}
+		gbuffer.maps[0].g4.clear(Color.Cyan);
+		for (batch in batches)
+			batch.drawGeometry(gbuffer.maps[0]);
 		gbuffer.maps[0].g4.end();
 
 		backbuffer.g2.begin();
@@ -137,6 +128,6 @@ class Stage2D extends DrawableElement {
 		backbuffer.g2.end();
 
 		target.g2.begin(false);
-		target.g2.drawImage(backbuffer, x, y);
+		target.g2.drawScaledImage(backbuffer, x, y, width, height);
 	}
 }
