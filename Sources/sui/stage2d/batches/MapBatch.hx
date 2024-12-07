@@ -50,6 +50,7 @@ class MapBatch extends MapPack {
 		maps[mapID].g2.begin(false);
 		maps[mapID].g2.color = color;
 		maps[mapID].g2.fillRect(0, instanceID * mapHeight, mapWidth, mapHeight);
+		maps[mapID].g2.color = Color.White;
 		maps[mapID].g2.end();
 	}
 }
