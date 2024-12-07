@@ -104,13 +104,13 @@ class Stage2D extends DrawableElement {
 		target.g2.end();
 
 		gbuffer.maps[0].g4.begin([gbuffer.maps[1], gbuffer.maps[2], gbuffer.maps[3]]);
-		gbuffer.maps[0].g4.clear(Color.Cyan);
+		gbuffer.maps[0].g4.clear(Color.Black);
 		for (batch in batches)
 			batch.drawGeometry(gbuffer.maps[0]);
 		gbuffer.maps[0].g4.end();
 
 		backbuffer.g2.begin();
-		for (light in lights)
+		for (light in lights) {
 			DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
 				gbuffer.maps[0],
 				gbuffer.maps[1],
@@ -125,6 +125,7 @@ class Stage2D extends DrawableElement {
 				light.power,
 				light.radius
 			]);
+		}
 		backbuffer.g2.end();
 
 		target.g2.begin(false);
