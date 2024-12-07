@@ -1,5 +1,6 @@
 package sui.stage2d.batches;
 
+import kha.arrays.Uint32Array;
 import kha.arrays.Float32Array;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.VertexBuffer;
@@ -15,8 +16,8 @@ class SpriteBatch {
 	public var sprites:Array<Sprite> = [];
 	public var gbuffer:MapBatch = new MapBatch(1024, 1024, 4);
 
-	@readonly var structLength:Int = 6;
 	@readonly var vertData:Float32Array;
+	@readonly var indData:Uint32Array;
 	@readonly var vertices:VertexBuffer;
 	@readonly var indices:IndexBuffer;
 
@@ -34,60 +35,55 @@ class SpriteBatch {
 		sprite.batch = this;
 		sprite.instanceID = sprites.length;
 		gbuffer.extend();
-		sprites.push(sprite);
 
-		var vertCount = vertices == null ? 0 : vertices.count();
-		var indCount = indices == null ? 0 : indices.count();
+		var structLength = 6;
+		var vertCount = sprites.length * 4;
+		var indCount = sprites.length * 6;
 		var vertOffset = vertCount * structLength;
 
-		if (sprites.length > 1) {
-			var _vert = vertices.lock();
-			vertices.delete();
-			var _ind = indices.lock();
-			indices.delete();
+		vertices?.delete();
+		vertices = new VertexBuffer(vertCount + 4, DeferredRenderer.geometry.structure, StaticUsage);
+		indices?.delete();
+		indices = new IndexBuffer(indCount + 6, StaticUsage);
 
-			vertices = new VertexBuffer(vertCount + sprite.vertCount, DeferredRenderer.geometry.structure, StaticUsage);
-			vertData = vertices.lock();
+		var vert = vertices.lock();
+		for (i in 0...vertData?.length)
+			vert[i] = vertData[i];
 
-			for (i in 0..._vert.length)
-				vertData[i] = _vert[i];
+		vert[vertOffset + 2] = sprite.z;
+		vert[vertOffset + 3] = sprite.instanceID;
+		vert[vertOffset + 4] = 0;
+		vert[vertOffset + 5] = 0;
 
-			for (i in 0...sprite.vertCount) {
-				vertData[vertOffset + i * structLength + 2] = sprite.z;
-				vertData[vertOffset + i * structLength + 3] = sprite.instanceID;
-			}
+		vert[vertOffset + 8] = sprite.z;
+		vert[vertOffset + 9] = sprite.instanceID;
+		vert[vertOffset + 10] = 0;
+		vert[vertOffset + 11] = 1;
 
-			indices = new IndexBuffer(indCount + (sprite.vertCount - 2) * 3, StaticUsage);
+		vert[vertOffset + 14] = sprite.z;
+		vert[vertOffset + 15] = sprite.instanceID;
+		vert[vertOffset + 16] = 1;
+		vert[vertOffset + 17] = 1;
 
-			var ind = indices.lock();
-			for (i in 0..._ind.length)
-				ind[i] = _ind[i];
+		vert[vertOffset + 20] = sprite.z;
+		vert[vertOffset + 21] = sprite.instanceID;
+		vert[vertOffset + 22] = 1;
+		vert[vertOffset + 23] = 0;
 
-			ind[indCount + 0] = vertCount + 0;
-			ind[indCount + 1] = vertCount + 1;
-			ind[indCount + 2] = vertCount + 2;
-			ind[indCount + 3] = vertCount + 0;
-			ind[indCount + 4] = vertCount + 2;
-			ind[indCount + 5] = vertCount + 3;
-			indices.unlock();
-		} else {
-			vertices = new VertexBuffer(vertCount + sprite.vertCount, DeferredRenderer.geometry.structure, StaticUsage);
-			vertData = vertices.lock();
+		var ind = indices.lock();
+		for (i in 0...indData?.length)
+			ind[i] = indData[i];
 
-			for (i in 0...sprite.vertCount) {
-				vertData[vertOffset + i * structLength + 2] = sprite.z;
-				vertData[vertOffset + i * structLength + 3] = sprite.instanceID;
-			}
+		ind[indCount + 0] = vertCount + 0;
+		ind[indCount + 1] = vertCount + 1;
+		ind[indCount + 2] = vertCount + 2;
+		ind[indCount + 3] = vertCount + 0;
+		ind[indCount + 4] = vertCount + 2;
+		ind[indCount + 5] = vertCount + 3;
+		indices.unlock();
 
-			indices = new IndexBuffer(indCount + (sprite.vertCount - 2) * 3, StaticUsage);
-			var ind = indices.lock();
-			ind[indCount + 0] = vertCount + 0;
-			ind[indCount + 1] = vertCount + 1;
-			ind[indCount + 2] = vertCount + 2;
-			ind[indCount + 3] = vertCount + 0;
-			ind[indCount + 4] = vertCount + 2;
-			ind[indCount + 5] = vertCount + 3;
-			indices.unlock();
-		}
+		sprites.push(sprite);
+		vertData = vert;
+		indData = ind;
 	}
 }

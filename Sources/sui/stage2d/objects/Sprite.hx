@@ -3,7 +3,7 @@ package sui.stage2d.objects;
 import kha.Image;
 import kha.Color;
 import kha.FastFloat;
-import kha.math.FastVector4;
+import kha.math.FastVector2;
 // sui
 import sui.stage2d.batches.SpriteBatch;
 
@@ -12,17 +12,13 @@ import sui.stage2d.batches.SpriteBatch;
 @:allow(sui.stage2d.batches.SpriteBatch)
 class Sprite extends Object {
 	var batch:SpriteBatch;
-	var vertCount:Int;
 
 	public var opacity:FastFloat = 1.0;
 	public var isShaded:Bool = true;
 	public var isCastingShadows:Bool = true;
 
-	public inline function new(stage:Stage2D, ?vertCount:Int = 4) {
-		super();
-
-		this.vertCount = vertCount;
-		stage.add(this);
+	public inline function new(stage:Stage2D) {
+		super(stage);
 
 		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
 		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
@@ -30,13 +26,24 @@ class Sprite extends Object {
 		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
 	}
 
-	public inline function setVertices(vertices:Array<FastVector4>) {
+	public inline function setVertices(vertices:Array<FastVector2>) {
+		if (vertices.length != 4)
+			return;
+
 		for (i in 0...vertices.length) {
 			batch.vertData[instanceID * 24 + i * 6 + 0] = vertices[i].x;
 			batch.vertData[instanceID * 24 + i * 6 + 1] = vertices[i].y;
-			batch.vertData[instanceID * 24 + i * 6 + 4] = vertices[i].z;
-			batch.vertData[instanceID * 24 + i * 6 + 5] = vertices[i].w;
 		}
+	}
+
+	override inline function set_z(value:FastFloat):FastFloat {
+		for (c in children)
+			c.z += value - z;
+		z = value;
+
+		for (i in 0...4)
+			batch.vertData[instanceID * 24 + i * 6 + 2] = z;
+		return value;
 	}
 
 	public var albedoMap(get, set):Image;
