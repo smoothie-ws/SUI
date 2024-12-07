@@ -14,20 +14,11 @@ layout(location = 1) out vec4 emissionColor;
 layout(location = 2) out vec4 normalColor;
 layout(location = 3) out vec4 ormColor;
 
-vec4 linearize(vec4 col) {
-    return vec4(
-        pow(col.r, 1 / 1.98),
-        pow(col.g, 1 / 1.98),
-        pow(col.b, 1 / 1.98),
-        pow(col.a, 1 / 1.98)
-    );
-}
-
 void main() {
     vec2 uv = vec2(fragCoord.x, (fragCoord.y + instanceID) / instancesCount);
 
-    albedoColor = linearize(texture(albedoMap, uv));
-    emissionColor = linearize(texture(emissionMap, uv));
-    normalColor = linearize(texture(normalMap, uv));
-    ormColor = linearize(texture(ormMap, uv));
+    albedoColor = texture(albedoMap, uv);
+    emissionColor = texture(emissionMap, uv);
+    normalColor = texture(normalMap, uv);
+    ormColor = texture(ormMap, uv);
 }
