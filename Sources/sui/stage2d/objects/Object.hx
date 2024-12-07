@@ -8,8 +8,9 @@ import kha.math.FastVector2;
 class Object {
 	public var instanceID:Int = 0;
 
-	public inline function new(stage:Stage2D) {
-		stage.add(this);
+	public inline function new(?stage:Stage2D) {
+		if (stage != null)
+			stage.add(this);
 	}
 
 	@:isVar public var x(default, set):FastFloat = 0.0;

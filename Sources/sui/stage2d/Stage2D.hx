@@ -105,7 +105,8 @@ class Stage2D extends DrawableElement {
 
 		gbuffer.maps[0].g4.begin([gbuffer.maps[1], gbuffer.maps[2], gbuffer.maps[3]]);
 		gbuffer.maps[0].g4.clear(Color.Black);
-		for (batch in batches)
+		for (batch in batches) {
+			batch.unlock();
 			DeferredRenderer.geometry.draw(gbuffer.maps[0], batch.vertices, batch.indices, [
 				batch.gbuffer.maps[0],
 				batch.gbuffer.maps[1],
@@ -113,6 +114,8 @@ class Stage2D extends DrawableElement {
 				batch.gbuffer.maps[3],
 				batch.sprites.length
 			]);
+			batch.lock();
+		}
 		gbuffer.maps[0].g4.end();
 
 		backbuffer.g2.begin();
