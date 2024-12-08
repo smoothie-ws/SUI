@@ -16,7 +16,7 @@ import sui.core.graphics.SUIShaders;
 import sui.core.graphics.DeferredRenderer;
 
 class SUI {
-	#if debug
+	#if SUI_DEBUG_FPS
 	static var fst:FastFloat = 0;
 	static var fpsCounter:Int = 0;
 	static var fps:Int = 0;
@@ -100,7 +100,7 @@ class SUI {
 
 		g2.begin(clear, clearColor);
 		g2.drawImage(scene.backbuffer, 0, 0);
-		#if debug
+		#if SUI_DEBUG_FPS
 		showFPS(g2);
 		#end
 		g2.end();
