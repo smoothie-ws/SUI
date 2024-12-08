@@ -17,18 +17,21 @@ enum abstract MapBatch(Array<Image>) from Array<Image> to Array<Image> {
 	}
 
 	inline function get_packsCount():Int {
-		return Std.int(width / height);
+		return Std.int(height / width);
 	}
 
 	public inline function new(resolution:Int, ?mapCount:Int = 4) {
 		this = [];
-		for (i in 0...mapCount)
+		for (_ in 0...mapCount)
 			this.push(Image.createRenderTarget(resolution, resolution));
 	}
 
 	public inline function extend():Void {
+		var w = width;
+		var h = height + w;
+
 		for (i in 0...this.length) {
-			var img = Image.createRenderTarget(width, height * (packsCount + 1));
+			var img = Image.createRenderTarget(w, h);
 			img.g2.begin(true, Color.Transparent);
 			img.g2.drawImage(this[i], 0, 0);
 			img.g2.end();

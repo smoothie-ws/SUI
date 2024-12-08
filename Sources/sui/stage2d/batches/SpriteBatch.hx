@@ -39,7 +39,8 @@ class SpriteBatch {
 	public inline function add(sprite:Sprite) {
 		sprite.batch = this;
 		sprite.instanceID = sprites.length;
-		gbuffer.extend();
+		if (sprites.length > 0)
+			gbuffer.extend();
 
 		var structLength = 6;
 		var vertCount = sprites.length * 4;
@@ -94,14 +95,7 @@ class SpriteBatch {
 
 	public inline function drawGeometry(target:Canvas) {
 		unlock();
-		DeferredRenderer.geometry.draw(target, vertices, indices, [
-			gbuffer[0],
-			gbuffer[1],
-			gbuffer[2],
-			gbuffer[3],
-			sprites.length,
-			blendModes
-		]);
+		DeferredRenderer.geometry.draw(target, vertices, indices, [gbuffer[0], gbuffer[1], gbuffer[2], gbuffer[3], sprites.length, blendModes]);
 		lock();
 	}
 }
