@@ -95,7 +95,9 @@ class SpriteBatch {
 
 	public inline function drawGeometry(target:Canvas) {
 		unlock();
+		#if SUI_SHADING_DEFERRED
 		DeferredRenderer.geometry.draw(target, vertices, indices, [gbuffer[0], gbuffer[1], gbuffer[2], gbuffer[3], sprites.length, blendModes]);
+		#end
 		lock();
 	}
 }
