@@ -29,7 +29,9 @@ class GeometryPass extends Shader2D {
 		pipeline.inputLayout = [structure];
 		pipeline.vertexShader = vert;
 		pipeline.fragmentShader = frag;
-		pipeline.colorAttachmentCount = 3;
+		pipeline.depthWrite = true;
+		pipeline.depthStencilAttachment = DepthOnly;
+		pipeline.colorAttachmentCount = 4;
 		pipeline.blendSource = SourceAlpha;
 		pipeline.blendDestination = InverseSourceAlpha;
 		pipeline.alphaBlendSource = SourceAlpha;
@@ -56,5 +58,6 @@ class GeometryPass extends Shader2D {
 		target.g4.setFloats(zArrCL, uniforms[4]);
 		target.g4.setInt(instancesCountCL, uniforms[5]);
 		target.g4.setInts(blendModeArrCL, uniforms[6]);
+		pipeline.depthMode = Greater;
 	}
 }

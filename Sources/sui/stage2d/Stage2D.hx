@@ -104,7 +104,7 @@ class Stage2D extends DrawableElement {
 		target.g2.end();
 
 		gbuffer[0].g4.begin([gbuffer[1], gbuffer[2], gbuffer[3]]);
-		gbuffer[0].g4.clear(Color.Transparent);
+		gbuffer[0].g4.clear(Color.Transparent, 0.0);
 		for (batch in batches)
 			batch.drawGeometry(gbuffer[0]);
 		gbuffer[0].g4.end();
