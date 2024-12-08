@@ -9,7 +9,7 @@ import kha.graphics4.VertexBuffer;
 // sui
 import sui.core.graphics.DeferredRenderer;
 import sui.elements.DrawableElement;
-import sui.stage2d.batches.MapPack;
+import sui.stage2d.graphics.MapPack;
 import sui.stage2d.batches.SpriteBatch;
 import sui.stage2d.objects.Object;
 import sui.stage2d.objects.Sprite;
@@ -103,19 +103,19 @@ class Stage2D extends DrawableElement {
 	override inline function draw(target:Canvas) {
 		target.g2.end();
 
-		gbuffer.maps[0].g4.begin([gbuffer.maps[1], gbuffer.maps[2], gbuffer.maps[3]]);
-		gbuffer.maps[0].g4.clear(Color.Black);
+		gbuffer[0].g4.begin([gbuffer[1], gbuffer[2], gbuffer[3]]);
+		gbuffer[0].g4.clear(Color.Black);
 		for (batch in batches)
-			batch.drawGeometry(gbuffer.maps[0]);
-		gbuffer.maps[0].g4.end();
+			batch.drawGeometry(gbuffer[0]);
+		gbuffer[0].g4.end();
 
 		backbuffer.g2.begin();
 		for (light in lights) {
 			DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
-				gbuffer.maps[0],
-				gbuffer.maps[1],
-				gbuffer.maps[2],
-				gbuffer.maps[3],
+				gbuffer[0],
+				gbuffer[1],
+				gbuffer[2],
+				gbuffer[3],
 				light.x,
 				light.y,
 				light.z,

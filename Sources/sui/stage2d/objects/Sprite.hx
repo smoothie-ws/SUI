@@ -67,7 +67,7 @@ class Sprite extends Object {
 	}
 
 	inline function set_albedoMap(value:Image):Image {
-		batch.gbuffer.setMapInstance(0, value, instanceID);
+		batch.gbuffer.setMapInstance(0, instanceID, value);
 		return value;
 	}
 
@@ -76,7 +76,7 @@ class Sprite extends Object {
 	}
 
 	inline function set_emissionMap(value:Image):Image {
-		batch.gbuffer.setMapInstance(1, value, instanceID);
+		batch.gbuffer.setMapInstance(1, instanceID, value);
 		return value;
 	}
 
@@ -85,7 +85,7 @@ class Sprite extends Object {
 	}
 
 	inline function set_normalMap(value:Image):Image {
-		batch.gbuffer.setMapInstance(2, value, instanceID);
+		batch.gbuffer.setMapInstance(2, instanceID, value);
 		return value;
 	}
 
@@ -94,7 +94,7 @@ class Sprite extends Object {
 	}
 
 	inline function set_ormMap(value:Image):Image {
-		batch.gbuffer.setMapInstance(3, value, instanceID);
+		batch.gbuffer.setMapInstance(3, instanceID, value);
 		return value;
 	}
 
@@ -104,22 +104,22 @@ class Sprite extends Object {
 	public var ormColor(never, set):Color;
 
 	function set_albedoColor(value:Color):Color {
-		batch.gbuffer.setMapInstanceColor(0, value, instanceID);
+		batch.gbuffer.setMapInstanceColor(0, instanceID, value);
 		return value;
 	}
 
 	function set_emissionColor(value:Color):Color {
-		batch.gbuffer.setMapInstanceColor(1, value, instanceID);
+		batch.gbuffer.setMapInstanceColor(1, instanceID, value);
 		return value;
 	}
 
 	function set_normalColor(value:Color):Color {
-		batch.gbuffer.setMapInstanceColor(2, value, instanceID);
+		batch.gbuffer.setMapInstanceColor(2, instanceID, value);
 		return value;
 	}
 
 	function set_ormColor(value:Color):Color {
-		batch.gbuffer.setMapInstanceColor(3, value, instanceID);
+		batch.gbuffer.setMapInstanceColor(3, instanceID, value);
 		return value;
 	}
 }
