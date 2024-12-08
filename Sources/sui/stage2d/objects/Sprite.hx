@@ -1,5 +1,6 @@
 package sui.stage2d.objects;
 
+import sui.core.graphics.DeferredRenderer;
 import kha.Image;
 import kha.Color;
 import kha.FastFloat;
@@ -20,11 +21,11 @@ class Sprite extends Object {
 	public var isCastingShadows:Bool = true;
 
 	public inline function get_blendMode():BlendMode {
-		return batch.blendModes[instanceID];
+		return batch.blendModeArr[instanceID];
 	}
 
 	public inline function set_blendMode(value:BlendMode):BlendMode {
-		batch.blendModes[instanceID] = value;
+		batch.blendModeArr[instanceID] = value;
 		return value;
 	}
 
@@ -37,9 +38,17 @@ class Sprite extends Object {
 		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
 	}
 
+	override inline function scale(x:FastFloat, y:FastFloat) {
+		for (i in 0...4) {
+			var offset = (instanceID * 4 + i) * DeferredRenderer.geometry.structSize;
+			batch.vertData[offset + 0] *= x;
+			batch.vertData[offset + 1] *= y;
+		}
+	}
+
 	override inline function translate(x:FastFloat, y:FastFloat) {
 		for (i in 0...4) {
-			var offset = (instanceID * 4 + i) * 6;
+			var offset = (instanceID * 4 + i) * DeferredRenderer.geometry.structSize;
 			batch.vertData[offset + 0] += x;
 			batch.vertData[offset + 1] += y;
 		}
@@ -48,7 +57,7 @@ class Sprite extends Object {
 	public var vertices(get, set):Array<FastVector2>;
 
 	public inline function getVertex(i:Int):FastVector2 {
-		var offset = (instanceID * 4 + i) * 6;
+		var offset = (instanceID * 4 + i) * DeferredRenderer.geometry.structSize;
 		return {
 			x: batch.vertData[offset + 0],
 			y: batch.vertData[offset + 1],
@@ -56,7 +65,7 @@ class Sprite extends Object {
 	}
 
 	public inline function setVertex(i:Int, vertex:FastVector2) {
-		var offset = (instanceID * 4 + i) * 6;
+		var offset = (instanceID * 4 + i) * DeferredRenderer.geometry.structSize;
 		batch.vertData[offset + 0] = vertex.x;
 		batch.vertData[offset + 1] = vertex.y;
 	}
@@ -76,10 +85,10 @@ class Sprite extends Object {
 	}
 
 	override inline function set_z(value:FastFloat):FastFloat {
+		batch.zArr[instanceID] = z;
 		for (c in children)
 			c.z += value - z;
-		for (i in 0...4)
-			batch.vertData[instanceID * 24 + i * 6 + 2] = z;
+		z = value;
 		return value;
 	}
 

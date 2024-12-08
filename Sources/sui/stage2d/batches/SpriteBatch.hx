@@ -1,7 +1,6 @@
 package sui.stage2d.batches;
 
 import kha.Canvas;
-import kha.arrays.Int32Array;
 import kha.arrays.Uint32Array;
 import kha.arrays.Float32Array;
 import kha.graphics4.IndexBuffer;
@@ -19,7 +18,8 @@ class SpriteBatch {
 	public var sprites:Array<Sprite> = [];
 	public var gbuffer:MapBatch = new MapBatch(512, 4);
 
-	var blendModes:Int32Array = new Int32Array(64);
+	var zArr:Float32Array = new Float32Array(64);
+	var blendModeArr:Uint32Array = new Uint32Array(64);
 
 	@readonly var vertData:Float32Array;
 	@readonly var indData:Uint32Array;
@@ -42,10 +42,9 @@ class SpriteBatch {
 		if (sprites.length > 0)
 			gbuffer.extend();
 
-		var structLength = 6;
 		var vertCount = sprites.length * 4;
 		var indCount = sprites.length * 6;
-		var vertOffset = vertCount * structLength;
+		var vertOffset = vertCount * DeferredRenderer.geometry.structSize;
 
 		vertices?.delete();
 		vertices = new VertexBuffer(vertCount + 4, DeferredRenderer.geometry.structure, StaticUsage);
@@ -56,25 +55,21 @@ class SpriteBatch {
 		for (i in 0...vertData?.length)
 			vert[i] = vertData[i];
 
-		vert[vertOffset + 2] = sprite.z;
-		vert[vertOffset + 3] = sprite.instanceID;
+		vert[vertOffset + 2] = sprite.instanceID;
+		vert[vertOffset + 3] = 0;
 		vert[vertOffset + 4] = 0;
-		vert[vertOffset + 5] = 0;
 
-		vert[vertOffset + 8] = sprite.z;
-		vert[vertOffset + 9] = sprite.instanceID;
-		vert[vertOffset + 10] = 0;
-		vert[vertOffset + 11] = 1;
+		vert[vertOffset + 7] = sprite.instanceID;
+		vert[vertOffset + 8] = 0;
+		vert[vertOffset + 9] = 1;
 
-		vert[vertOffset + 14] = sprite.z;
-		vert[vertOffset + 15] = sprite.instanceID;
-		vert[vertOffset + 16] = 1;
-		vert[vertOffset + 17] = 1;
+		vert[vertOffset + 12] = sprite.instanceID;
+		vert[vertOffset + 13] = 1;
+		vert[vertOffset + 14] = 1;
 
-		vert[vertOffset + 20] = sprite.z;
-		vert[vertOffset + 21] = sprite.instanceID;
-		vert[vertOffset + 22] = 1;
-		vert[vertOffset + 23] = 0;
+		vert[vertOffset + 17] = sprite.instanceID;
+		vert[vertOffset + 18] = 1;
+		vert[vertOffset + 19] = 0;
 
 		var ind = indices.lock();
 		for (i in 0...indData?.length)
@@ -95,7 +90,15 @@ class SpriteBatch {
 
 	public inline function drawGeometry(target:Canvas) {
 		unlock();
-		DeferredRenderer.geometry.draw(target, vertices, indices, [gbuffer[0], gbuffer[1], gbuffer[2], gbuffer[3], sprites.length, blendModes]);
+		DeferredRenderer.geometry.draw(target, vertices, indices, [
+			gbuffer[0],
+			gbuffer[1],
+			gbuffer[2],
+			gbuffer[3],
+			zArr,
+			sprites.length,
+			blendModeArr
+		]);
 		lock();
 	}
 }

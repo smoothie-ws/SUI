@@ -1,12 +1,17 @@
 #version 450
 
-in vec4 vertData;
+#define BATCH_SIZE 64
+
+uniform int instancesCount;
+uniform float zArr[BATCH_SIZE];
+
+in vec3 vertData;
 in vec2 vertUV;
 flat out int instanceID;
 out vec2 fragCoord;
 
 void main() {
-	fragCoord = vertUV;
-	instanceID = int(vertData.w);
-	gl_Position = vec4(vertData.xyz, 1.0);
+	instanceID = int(vertData.z);
+    fragCoord = vec2(vertUV.x, (vertUV.y + instanceID) / instancesCount);
+	gl_Position = vec4(vertData.xy, zArr[instanceID], 1.0);
 }

@@ -12,6 +12,11 @@ import kha.graphics4.VertexShader;
 class Shader2D {
 	public var pipeline:PipelineState;
 	public var structure:VertexStructure;
+	public var structSize(get, never):Int;
+
+	inline function get_structSize():Int {
+		return structure.byteSize() >> 2;
+	}
 
 	public inline function new() {
 		initStructure();

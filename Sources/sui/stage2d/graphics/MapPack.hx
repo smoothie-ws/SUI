@@ -2,12 +2,16 @@ package sui.stage2d.graphics;
 
 import kha.Color;
 import kha.Image;
+import kha.graphics4.TextureFormat;
+import kha.graphics4.DepthStencilFormat;
 
 enum abstract MapPack(Array<Image>) from Array<Image> to Array<Image> {
-	public inline function new(width:Int, height:Int, ?mapCount:Int = 4) {
+	public inline function new(width:Int, height:Int, ?mapCount:Int = 4, format:TextureFormat = null,
+			depthStencil:DepthStencilFormat = DepthStencilFormat.NoDepthAndStencil, antiAliasingSamples:Int = 1) {
 		this = [];
+
 		for (_ in 0...mapCount)
-			this.push(Image.createRenderTarget(width, height));
+			this.push(Image.createRenderTarget(width, height, format, depthStencil, antiAliasingSamples));
 	}
 
 	public var width(get, never):Int;

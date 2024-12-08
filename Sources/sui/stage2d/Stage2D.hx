@@ -30,8 +30,8 @@ class Stage2D extends DrawableElement {
 	public function new(scene:Scene) {
 		super(scene);
 
-		backbuffer = Image.createRenderTarget(1, 1);
-		gbuffer = new MapPack(1, 1, 4);
+		backbuffer = Image.createRenderTarget(1, 1, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
+		gbuffer = new MapPack(1, 1, 4, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
 
 		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
 		var vert = vertices.lock();
