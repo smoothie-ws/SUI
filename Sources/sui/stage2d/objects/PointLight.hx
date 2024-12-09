@@ -1,7 +1,7 @@
 package sui.stage2d.objects;
 
 import kha.Canvas;
-import kha.math.FastVector2;
+import kha.math.FastVector3;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.VertexBuffer;
 // sui
@@ -13,16 +13,18 @@ class PointLight extends Light {
 		super(stage);
 	}
 
-	override inline function drawShadows(target:Canvas, vertices:Array<FastVector2>):Void {
+	override inline function drawShadows(target:Canvas, shadowVerts:Array<FastVector3>):Void {
 		if (!isCastingShadows)
 			return;
+
 		var vertData:Array<Float> = [];
 		var indData:Array<Int> = [];
 		var indOffset = 0;
 
-		for (i in 0...vertices.length) {
-			var v1 = vertices[(i + 0) % vertices.length];
-			var v2 = vertices[(i + 1) % vertices.length];
+		for (i in 0...shadowVerts.length) {
+			var v1 = shadowVerts[(i + 0) % shadowVerts.length];
+			var v2 = shadowVerts[(i + 1) % shadowVerts.length];
+			var opacity = v1.z;
 			var x1 = v1.x;
 			var y1 = v1.y;
 			var x2 = v2.x;
@@ -36,14 +38,23 @@ class PointLight extends Light {
 				var shadowY1 = y1 - lightVecY * 100;
 				var shadowX2 = x2 - (x - x2) * 100;
 				var shadowY2 = y2 - (y - y2) * 100;
+
 				vertData.push(x1);
 				vertData.push(y1);
+				vertData.push(opacity);
+
 				vertData.push(x2);
 				vertData.push(y2);
+				vertData.push(opacity);
+
 				vertData.push(shadowX1);
 				vertData.push(shadowY1);
+				vertData.push(opacity);
+
 				vertData.push(shadowX2);
 				vertData.push(shadowY2);
+				vertData.push(opacity);
+
 				indData.push(indOffset);
 				indData.push(indOffset + 1);
 				indData.push(indOffset + 3);
@@ -54,7 +65,7 @@ class PointLight extends Light {
 			}
 		}
 
-		var vertices = new VertexBuffer(Std.int(vertData.length / 2), SUIShaders.shadowCaster.structure, StaticUsage);
+		var vertices = new VertexBuffer(Std.int(vertData.length / 3), SUIShaders.shadowCaster.structure, StaticUsage);
 		var vert = vertices.lock();
 		for (i in 0...vertData.length)
 			vert[i] = vertData[i];
@@ -64,6 +75,7 @@ class PointLight extends Light {
 		for (i in 0...indData.length)
 			ind[i] = indData[i];
 		indices.unlock();
+
 		SUIShaders.shadowCaster.draw(target, vertices, indices);
 	}
 }

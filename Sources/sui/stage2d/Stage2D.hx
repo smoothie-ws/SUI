@@ -19,19 +19,25 @@ using sui.core.utils.ArrayExt;
 
 class Stage2D extends DrawableElement {
 	var backbuffer:Image;
+	#if SUI_SHADING_DEFERRED
 	var gbuffer:MapPack;
+	#end
 
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;
 
+	#if SUI_BATCHING
 	var batches:Array<SpriteBatch> = [];
+	#end
 	var lights:Array<Light> = [];
 
 	public function new(scene:Scene) {
 		super(scene);
 
 		backbuffer = Image.createRenderTarget(1, 1, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
-		gbuffer = new MapPack(1, 1, 4, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
+		#if SUI_SHADING_DEFERRED
+		gbuffer = new MapPack(1, 1, 5, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
+		#end
 
 		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
 		var vert = vertices.lock();
@@ -66,7 +72,9 @@ class Stage2D extends DrawableElement {
 		var h = Std.int(height);
 
 		backbuffer = Image.createRenderTarget(w, h);
+		#if SUI_SHADING_DEFERRED
 		gbuffer.resize(w, h);
+		#end
 	}
 
 	inline function setLeft(value:FastFloat) {
@@ -88,6 +96,7 @@ class Stage2D extends DrawableElement {
 	public inline function add(object:Object) {
 		if (object is Sprite) {
 			var sprite:Sprite = cast object;
+			#if SUI_BATCHING
 			var lb = batches.last();
 			if (lb is SpriteBatch && lb.gbuffer.packsCount < lb.gbuffer.packsCapacity) {
 				lb.add(sprite);
@@ -96,6 +105,7 @@ class Stage2D extends DrawableElement {
 				b.add(sprite);
 				batches.push(b);
 			}
+			#end
 		} else if (object is Light)
 			lights.push(cast object);
 	}
@@ -103,14 +113,19 @@ class Stage2D extends DrawableElement {
 	override inline function draw(target:Canvas) {
 		target.g2.end();
 
+		#if SUI_SHADING_DEFERRED
 		gbuffer[0].g4.begin([gbuffer[1], gbuffer[2], gbuffer[3]]);
 		gbuffer[0].g4.clear(Color.Transparent, 0.0);
+		#if SUI_BATCHING
 		for (batch in batches)
 			batch.drawGeometry(gbuffer[0]);
+		#end
 		gbuffer[0].g4.end();
+		#end
 
 		backbuffer.g2.begin();
 		for (light in lights) {
+			#if SUI_SHADING_DEFERRED
 			DeferredRenderer.lighting.draw(backbuffer, vertices, indices, [
 				gbuffer[0],
 				gbuffer[1],
@@ -125,6 +140,7 @@ class Stage2D extends DrawableElement {
 				light.power,
 				light.radius
 			]);
+			#end
 		}
 		backbuffer.g2.end();
 

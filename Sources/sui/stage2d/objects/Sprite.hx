@@ -1,20 +1,46 @@
 package sui.stage2d.objects;
 
-import sui.core.graphics.DeferredRenderer;
 import kha.Image;
 import kha.Color;
 import kha.FastFloat;
 import kha.math.FastVector2;
 // sui
+import sui.core.graphics.DeferredRenderer;
 import sui.stage2d.graphics.BlendMode;
 import sui.stage2d.batches.SpriteBatch;
 
 @:structInit
 @:allow(sui.stage2d.Stage2D)
+#if SUI_BATCHING
 @:allow(sui.stage2d.batches.SpriteBatch)
+#end
 class Sprite extends Object {
-	@readonly var batch:SpriteBatch;
+	public var isShaded:Bool = true;
+	public var shadowVerts:Array<FastVector2> = [];
+	public var shadowOpacity:FastFloat = 1.0;
+	public var shadowCasting:Bool = true;
 
+	public var blendMode(get, set):BlendMode;
+	public var albedoMap(get, set):Image;
+	public var emissionMap(get, set):Image;
+	public var normalMap(get, set):Image;
+	public var ormMap(get, set):Image;
+	public var albedoColor(never, set):Color;
+	public var emissionColor(never, set):Color;
+	public var normalColor(never, set):Color;
+	public var ormColor(never, set):Color;
+
+	public inline function new(stage:Stage2D) {
+		super(stage);
+
+		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
+		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
+		normalColor = Color.fromFloats(0.5, 0.5, 1.0);
+		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
+	}
+
+	// #if SUI_BATCHING
+	@readonly var batch:SpriteBatch;
 	var vertOffset:Int = 0;
 
 	override inline function get_instanceID():Int {
@@ -32,11 +58,6 @@ class Sprite extends Object {
 		return value;
 	}
 
-	public var isShaded:Bool = true;
-	public var blendMode(get, set):BlendMode;
-	public var shadowOpacity:FastFloat = 1.0;
-	public var isCastingShadows:Bool = true;
-
 	public inline function get_blendMode():BlendMode {
 		return batch.blendModeArr[instanceID];
 	}
@@ -44,15 +65,6 @@ class Sprite extends Object {
 	public inline function set_blendMode(value:BlendMode):BlendMode {
 		batch.blendModeArr[instanceID] = value;
 		return value;
-	}
-
-	public inline function new(stage:Stage2D) {
-		super(stage);
-
-		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
-		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
-		normalColor = Color.fromFloats(0.5, 0.5, 1.0);
-		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
 	}
 
 	public var centerPoint(get, never):FastVector2;
@@ -125,11 +137,6 @@ class Sprite extends Object {
 		return value;
 	}
 
-	public var albedoMap(get, set):Image;
-	public var emissionMap(get, set):Image;
-	public var normalMap(get, set):Image;
-	public var ormMap(get, set):Image;
-
 	inline function get_albedoMap() {
 		return batch.gbuffer.getMapInstance(0, instanceID);
 	}
@@ -166,11 +173,6 @@ class Sprite extends Object {
 		return value;
 	}
 
-	public var albedoColor(never, set):Color;
-	public var emissionColor(never, set):Color;
-	public var normalColor(never, set):Color;
-	public var ormColor(never, set):Color;
-
 	function set_albedoColor(value:Color):Color {
 		batch.gbuffer.setMapInstanceColor(0, instanceID, value);
 		return value;
@@ -190,4 +192,6 @@ class Sprite extends Object {
 		batch.gbuffer.setMapInstanceColor(3, instanceID, value);
 		return value;
 	}
+
+	// #end
 }

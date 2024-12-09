@@ -19,7 +19,10 @@ project.addDefine('SUI_DEBUG_FPS');
 project.addDefine('SUI_SHADING_DEFERRED');
 // TODO:
 // project.addDefine('SUI_SHADING_FORWARD');
-// project.addDefine('SUI_SHADING_BATCHING');
-// project.addDefine('SUI_SHADING_INSTANCING');
+// project.addDefine('SUI_SHADING_MIXED');
+
+// --> Grouping
+project.addDefine('SUI_BATCHING');
+// project.addDefine('SUI_INSTANCING');
 
 resolve(project);

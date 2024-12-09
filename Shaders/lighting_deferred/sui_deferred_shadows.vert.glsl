@@ -1,7 +1,9 @@
 #version 450
 
-in vec2 vertPos;
+in vec3 vertData;
+out float factor;
 
 void main() {
-	gl_Position = vec4(vertPos, 0.0, 1.0);
+	gl_Position = vec4(vertData.xy, 0.0, 1.0);
+	factor = vertData.z;
 }

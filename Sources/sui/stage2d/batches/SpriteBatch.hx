@@ -1,6 +1,7 @@
 package sui.stage2d.batches;
 
 import kha.Canvas;
+import kha.math.FastVector3;
 import kha.arrays.Uint32Array;
 import kha.arrays.Float32Array;
 import kha.graphics4.IndexBuffer;
@@ -15,7 +16,20 @@ using sui.core.utils.ArrayExt;
 @:allow(sui.stage2d.Stage2D)
 @:allow(sui.stage2d.objects.Sprite)
 class SpriteBatch {
+	@readonly public var sprites:Array<Sprite> = [];
+	public var shadowVerts(get, never):Array<FastVector3>;
 	@readonly public var gbuffer:MapBatch = new MapBatch(512, 4);
+
+	inline function get_shadowVerts():Array<FastVector3> {
+		var sv:Array<FastVector3> = [];
+		for (sprite in sprites) {
+			if (!sprite.shadowCasting)
+				continue;
+			for (sVert in sprite.shadowVerts)
+				sv.push({x: sVert.x, y: sVert.y, z: sprite.shadowOpacity});
+		}
+		return sv;
+	}
 
 	@readonly var zArr:Float32Array = new Float32Array(64);
 	@readonly var blendModeArr:Uint32Array = new Uint32Array(64);
@@ -37,6 +51,7 @@ class SpriteBatch {
 
 	inline function add(sprite:Sprite) {
 		sprite.batch = this;
+		sprites.push(sprite);
 
 		var vertCount = 0;
 		if (vertices != null) {
