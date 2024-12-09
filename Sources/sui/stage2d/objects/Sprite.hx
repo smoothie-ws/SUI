@@ -28,7 +28,6 @@ class Sprite extends Object {
 		}
 		if (value >= batch.gbuffer.packsCount)
 			batch.gbuffer.extend();
-		trace(value, batch.gbuffer.packsCount);
 
 		return value;
 	}

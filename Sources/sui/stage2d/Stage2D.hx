@@ -89,7 +89,7 @@ class Stage2D extends DrawableElement {
 		if (object is Sprite) {
 			var sprite:Sprite = cast object;
 			var lb = batches.last();
-			if (lb is SpriteBatch) {
+			if (lb is SpriteBatch && lb.gbuffer.packsCount < lb.gbuffer.packsCapacity) {
 				lb.add(sprite);
 			} else {
 				var b = new SpriteBatch();

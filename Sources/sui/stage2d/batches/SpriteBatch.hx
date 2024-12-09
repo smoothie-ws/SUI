@@ -27,15 +27,15 @@ class SpriteBatch {
 
 	public inline function new() {}
 
-	public inline function lock() {
+	inline function lock() {
 		vertData = vertices.lock();
 	}
 
-	public inline function unlock() {
+	inline function unlock() {
 		vertices.unlock();
 	}
 
-	public inline function add(sprite:Sprite) {
+	inline function add(sprite:Sprite) {
 		sprite.batch = this;
 
 		var vertCount = 0;
@@ -86,7 +86,7 @@ class SpriteBatch {
 		indData = ind;
 	}
 
-	public inline function drawGeometry(target:Canvas) {
+	inline function drawGeometry(target:Canvas) {
 		unlock();
 		DeferredRenderer.geometry.draw(target, vertices, indices, [
 			gbuffer[0],
