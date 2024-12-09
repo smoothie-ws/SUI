@@ -18,8 +18,8 @@ import sui.stage2d.objects.Light;
 using sui.core.utils.ArrayExt;
 
 class Stage2D extends DrawableElement {
-	public var backbuffer:Image;
-	public var gbuffer:MapPack;
+	var backbuffer:Image;
+	var gbuffer:MapPack;
 
 	var indices:IndexBuffer;
 	var vertices:VertexBuffer;

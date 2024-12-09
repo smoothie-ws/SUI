@@ -6,7 +6,15 @@ import kha.math.FastVector2;
 @:structInit
 @:autoBuild(sui.core.macro.SUIMacro.build())
 class Object {
-	public var instanceID:Int = 0;
+	public var instanceID(get, set):Int;
+
+	function get_instanceID():Int {
+		return null;
+	}
+
+	function set_instanceID(value:Int):Int {
+		return value;
+	}
 
 	public inline function new(?stage:Stage2D) {
 		if (stage != null)

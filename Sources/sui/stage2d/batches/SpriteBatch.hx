@@ -15,11 +15,10 @@ using sui.core.utils.ArrayExt;
 @:allow(sui.stage2d.Stage2D)
 @:allow(sui.stage2d.objects.Sprite)
 class SpriteBatch {
-	public var sprites:Array<Sprite> = [];
-	public var gbuffer:MapBatch = new MapBatch(512, 4);
+	@readonly public var gbuffer:MapBatch = new MapBatch(512, 4);
 
-	var zArr:Float32Array = new Float32Array(64);
-	var blendModeArr:Uint32Array = new Uint32Array(64);
+	@readonly var zArr:Float32Array = new Float32Array(64);
+	@readonly var blendModeArr:Uint32Array = new Uint32Array(64);
 
 	@readonly var vertData:Float32Array;
 	@readonly var indData:Uint32Array;
@@ -38,36 +37,36 @@ class SpriteBatch {
 
 	public inline function add(sprite:Sprite) {
 		sprite.batch = this;
-		sprite.instanceID = sprites.length;
-		if (sprites.length > 0)
-			gbuffer.extend();
 
-		var vertCount = sprites.length * 4;
-		var indCount = sprites.length * 6;
+		var vertCount = 0;
+		if (vertices != null) {
+			vertCount = vertices.count();
+			vertices.delete();
+		}
+		var indCount = 0;
+		if (indices != null) {
+			indCount = indices.count();
+			indices.delete();
+		}
 		var vertOffset = vertCount * DeferredRenderer.geometry.structSize;
+		sprite.vertOffset = vertOffset;
 
-		vertices?.delete();
 		vertices = new VertexBuffer(vertCount + 4, DeferredRenderer.geometry.structure, StaticUsage);
-		indices?.delete();
 		indices = new IndexBuffer(indCount + 6, StaticUsage);
 
 		var vert = vertices.lock();
 		for (i in 0...vertData?.length)
 			vert[i] = vertData[i];
 
-		vert[vertOffset + 2] = sprite.instanceID;
 		vert[vertOffset + 3] = 0;
 		vert[vertOffset + 4] = 0;
 
-		vert[vertOffset + 7] = sprite.instanceID;
 		vert[vertOffset + 8] = 0;
 		vert[vertOffset + 9] = 1;
 
-		vert[vertOffset + 12] = sprite.instanceID;
 		vert[vertOffset + 13] = 1;
 		vert[vertOffset + 14] = 1;
 
-		vert[vertOffset + 17] = sprite.instanceID;
 		vert[vertOffset + 18] = 1;
 		vert[vertOffset + 19] = 0;
 
@@ -83,7 +82,6 @@ class SpriteBatch {
 		ind[indCount + 5] = vertCount + 3;
 		indices.unlock();
 
-		sprites.push(sprite);
 		vertData = vert;
 		indData = ind;
 	}
@@ -96,7 +94,7 @@ class SpriteBatch {
 			gbuffer[2],
 			gbuffer[3],
 			zArr,
-			sprites.length,
+			gbuffer.packsCount,
 			blendModeArr
 		]);
 		lock();

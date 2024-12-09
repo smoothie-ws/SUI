@@ -13,7 +13,25 @@ import sui.stage2d.batches.SpriteBatch;
 @:allow(sui.stage2d.Stage2D)
 @:allow(sui.stage2d.batches.SpriteBatch)
 class Sprite extends Object {
-	var batch:SpriteBatch;
+	@readonly var batch:SpriteBatch;
+
+	var vertOffset:Int = 0;
+
+	override inline function get_instanceID():Int {
+		return Std.int(batch.vertData[vertOffset + 2]);
+	}
+
+	override inline function set_instanceID(value:Int):Int {
+		for (i in 0...4) {
+			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
+			batch.vertData[offset + 2] = value;
+		}
+		if (value >= batch.gbuffer.packsCount)
+			batch.gbuffer.extend();
+		trace(value, batch.gbuffer.packsCount);
+
+		return value;
+	}
 
 	public var isShaded:Bool = true;
 	public var blendMode(get, set):BlendMode;
@@ -38,17 +56,33 @@ class Sprite extends Object {
 		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
 	}
 
-	override inline function scale(x:FastFloat, y:FastFloat) {
+	public var centerPoint(get, never):FastVector2;
+
+	inline function get_centerPoint():FastVector2 {
+		var c:FastVector2 = {};
+
 		for (i in 0...4) {
-			var offset = (instanceID * 4 + i) * DeferredRenderer.geometry.structSize;
-			batch.vertData[offset + 0] *= x;
-			batch.vertData[offset + 1] *= y;
+			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
+			c.x += batch.vertData[offset + 0];
+			c.y += batch.vertData[offset + 1];
+		}
+		c.x /= 4;
+		c.y /= 4;
+		return c;
+	}
+
+	override inline function scale(x:FastFloat, y:FastFloat) {
+		var c = centerPoint;
+		for (i in 0...4) {
+			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
+			batch.vertData[offset + 0] = (batch.vertData[offset + 0] - c.x) * x + c.x;
+			batch.vertData[offset + 1] = (batch.vertData[offset + 1] - c.y) * y + c.y;
 		}
 	}
 
 	override inline function translate(x:FastFloat, y:FastFloat) {
 		for (i in 0...4) {
-			var offset = (instanceID * 4 + i) * DeferredRenderer.geometry.structSize;
+			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
 			batch.vertData[offset + 0] += x;
 			batch.vertData[offset + 1] += y;
 		}
@@ -57,7 +91,7 @@ class Sprite extends Object {
 	public var vertices(get, set):Array<FastVector2>;
 
 	public inline function getVertex(i:Int):FastVector2 {
-		var offset = (instanceID * 4 + i) * DeferredRenderer.geometry.structSize;
+		var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
 		return {
 			x: batch.vertData[offset + 0],
 			y: batch.vertData[offset + 1],
@@ -65,7 +99,7 @@ class Sprite extends Object {
 	}
 
 	public inline function setVertex(i:Int, vertex:FastVector2) {
-		var offset = (instanceID * 4 + i) * DeferredRenderer.geometry.structSize;
+		var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
 		batch.vertData[offset + 0] = vertex.x;
 		batch.vertData[offset + 1] = vertex.y;
 	}
