@@ -22,7 +22,7 @@ void main() {
     int bm = blendMode;
     if (bm == 0)
         albedoColor.a = 1.0; // opaque
-    else if (bm == 1)
+    else
         albedoColor.a = step(0.5, albedoColor.a); // alpha clip
 
     emissionColor.a = albedoColor.a;

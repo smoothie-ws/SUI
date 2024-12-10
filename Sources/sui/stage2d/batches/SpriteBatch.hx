@@ -10,6 +10,7 @@ import kha.graphics4.VertexBuffer;
 import sui.core.graphics.DeferredRenderer;
 import sui.stage2d.graphics.MapBatch;
 import sui.stage2d.objects.Sprite;
+import sui.stage2d.objects.Light;
 
 using sui.core.utils.ArrayExt;
 
@@ -92,9 +93,28 @@ class SpriteBatch {
 		sprites.push(sprite);
 	}
 
-	#if SUI_STAGE2D_SHADING_DEFERRED
+	#if (SUI_STAGE2D_SHADING_DEFERRED || SUI_STAGE2D_SHADING_MIXED)
 	inline function drawGeometry(target:Canvas) {
 		DeferredRenderer.geometry.draw(target, vertices, indices, [gbuffer[0], gbuffer[1], gbuffer[2], gbuffer[3], gbuffer.packsCount, blendModeArr]);
+	}
+	#else
+	public inline function draw(target:Canvas, lights:Array<Light>) {
+		for (light in lights) {
+			DeferredRenderer.lighting.draw(target, vertices, indices, [
+				gbuffer[0],
+				gbuffer[1],
+				gbuffer[2],
+				gbuffer[3],
+				light.x,
+				light.y,
+				light.z,
+				light.color.R,
+				light.color.G,
+				light.color.B,
+				light.power,
+				light.radius
+			]);
+		}
 	}
 	#end
 	#end

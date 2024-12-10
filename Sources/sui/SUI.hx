@@ -117,10 +117,11 @@ class SUI {
 
 		#if SUI_STAGE2D_BATCHING
 		DeferredRenderer.geometry.compile(Shaders.sui_geometry_pass_batched_vert, Shaders.sui_geometry_pass_batched_frag);
+		DeferredRenderer.lighting.compile(Shaders.sui_lighting_pass_pbr_batched_vert, Shaders.sui_lighting_pass_pbr_batched_frag);
 		#else
 		DeferredRenderer.geometry.compile(Shaders.sui_geometry_pass_vert, Shaders.sui_geometry_pass_frag);
+		DeferredRenderer.lighting.compile(Shaders.sui_lighting_pass_pbr_vert, Shaders.sui_lighting_pass_pbr_frag);
 		#end
-		DeferredRenderer.lighting.compile(Shaders.sui_point_light_vert, Shaders.sui_point_light_frag);
 	}
 
 	public static inline function update() {
