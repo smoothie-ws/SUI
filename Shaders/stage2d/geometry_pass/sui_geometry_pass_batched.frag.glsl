@@ -6,7 +6,7 @@ uniform sampler2D albedoMap;
 uniform sampler2D emissionMap;
 uniform sampler2D normalMap;
 uniform sampler2D ormMap;
-uniform int blendModeArr[BATCH_SIZE];
+uniform int blendMode[BATCH_SIZE];
 
 in vec2 fragCoord;
 flat in int instanceID;
@@ -22,14 +22,15 @@ void main() {
     normalColor = texture(normalMap, fragCoord);
     ormColor = texture(ormMap, fragCoord);
 
-    int bm = blendModeArr[instanceID];
+    int bm = blendMode[instanceID];
     if (bm == 0)
         albedoColor.a = 1.0; // opaque
     else if (bm == 1)
         albedoColor.a = step(0.5, albedoColor.a); // alpha clip
-    // else if (bm == 2) -> alpha blend (no need to change anything)
 
     emissionColor.a = albedoColor.a;
     normalColor.a = albedoColor.a;
     ormColor.a = albedoColor.a;
+
+    albedoColor = vec4(fragCoord, 0.0, 1.0);
 }

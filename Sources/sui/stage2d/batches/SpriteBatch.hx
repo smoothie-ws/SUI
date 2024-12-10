@@ -15,7 +15,7 @@ using sui.core.utils.ArrayExt;
 
 @:allow(sui.stage2d.Stage2D, sui.stage2d.objects.Sprite, sui.stage2d.graphics.RenderPath)
 class SpriteBatch {
-	#if (SUI_STAGE2D_BATCHING)
+	#if SUI_STAGE2D_BATCHING
 	@readonly public var sprites:Array<Sprite> = [];
 	public var shadowVerts(get, never):Array<FastVector3>;
 	@readonly public var gbuffer:MapBatch = new MapBatch(512, 4);
@@ -31,7 +31,6 @@ class SpriteBatch {
 		return sv;
 	}
 
-	@readonly var zArr:Float32Array = new Float32Array(64);
 	@readonly var blendModeArr:Uint32Array = new Uint32Array(64);
 
 	@readonly var vertData:Float32Array;
@@ -110,7 +109,6 @@ class SpriteBatch {
 			gbuffer[1],
 			gbuffer[2],
 			gbuffer[3],
-			zArr,
 			gbuffer.packsCount,
 			blendModeArr
 		]);

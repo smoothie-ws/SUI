@@ -115,7 +115,11 @@ class SUI {
 		SUIShaders.imageDrawer.compile(Shaders.sui_image_vert, Shaders.sui_image_frag);
 		SUIShaders.shadowCaster.compile(Shaders.sui_deferred_shadows_vert, Shaders.sui_deferred_shadows_frag);
 
-		DeferredRenderer.geometry.compile(Shaders.sui_deferred_geometry_vert, Shaders.sui_deferred_geometry_frag);
+		#if SUI_STAGE2D_BATCHING
+		DeferredRenderer.geometry.compile(Shaders.sui_geometry_pass_batched_vert, Shaders.sui_geometry_pass_batched_frag);
+		#else
+		DeferredRenderer.geometry.compile(Shaders.sui_geometry_pass_vert, Shaders.sui_geometry_pass_frag);
+		#end
 		DeferredRenderer.lighting.compile(Shaders.sui_point_light_vert, Shaders.sui_point_light_frag);
 	}
 

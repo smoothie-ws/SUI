@@ -22,16 +22,17 @@ import sui.stage2d.graphics.MapPack;
 @:structInit
 @:allow(sui.stage2d.Stage2D, sui.stage2d.batches.SpriteBatch)
 class Sprite extends Object {
-	public var blendMode(get, set):BlendMode;
 	public var albedoMap(get, set):Image;
 	public var emissionMap(get, set):Image;
 	public var normalMap(get, set):Image;
 	public var ormMap(get, set):Image;
-	public var albedoColor(never, set):Color;
-	public var emissionColor(never, set):Color;
-	public var normalColor(never, set):Color;
-	public var ormColor(never, set):Color;
-	
+	@:isVar public var albedoColor(default, set):Color;
+	@:isVar public var emissionColor(default, set):Color;
+	@:isVar public var normalColor(default, set):Color;
+	@:isVar public var ormColor(default, set):Color;
+
+	@:isVar public var blendMode(default, set):BlendMode;
+
 	public var shadowVerts:Array<FastVector2> = [];
 	public var shadowOpacity:FastFloat = 1.0;
 	public var shadowCasting:Bool = true;
@@ -66,19 +67,14 @@ class Sprite extends Object {
 	}
 
 	#if SUI_STAGE2D_BATCHING
-	public inline function new(stage:Stage2D) {
-		super(stage);
-
-		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
-		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
-		normalColor = Color.fromFloats(0.5, 0.5, 1.0);
-		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
-	}
-
 	@readonly var batch:SpriteBatch;
 	var vertOffset:Int = 0;
 
 	public var instanceID(get, set):Int;
+
+	public inline function new(stage:Stage2D) {
+		super(stage);
+	}
 
 	inline function get_instanceID():Int {
 		return Std.int(batch.vertData[vertOffset + 2]);
@@ -95,12 +91,9 @@ class Sprite extends Object {
 		return value;
 	}
 
-	public inline function get_blendMode():BlendMode {
-		return batch.blendModeArr[instanceID];
-	}
-
 	public inline function set_blendMode(value:BlendMode):BlendMode {
-		batch.blendModeArr[instanceID] = value;
+		blendMode = value;
+		batch.blendModeArr[instanceID] = blendMode;
 		return value;
 	}
 
@@ -136,7 +129,11 @@ class Sprite extends Object {
 	}
 
 	override inline function set_z(value:FastFloat):FastFloat {
-		batch.zArr[instanceID] = z;
+		for (i in 0...4) {
+			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
+			batch.vertData[offset + 2] = value;
+		}
+
 		for (c in children)
 			c.z += value - z;
 		z = value;
@@ -180,21 +177,25 @@ class Sprite extends Object {
 	}
 
 	function set_albedoColor(value:Color):Color {
+		albedoColor = value;
 		batch.gbuffer.setMapInstanceColor(0, instanceID, value);
 		return value;
 	}
 
 	function set_emissionColor(value:Color):Color {
+		emissionColor = value;
 		batch.gbuffer.setMapInstanceColor(1, instanceID, value);
 		return value;
 	}
 
 	function set_normalColor(value:Color):Color {
+		normalColor = value;
 		batch.gbuffer.setMapInstanceColor(2, instanceID, value);
 		return value;
 	}
 
 	function set_ormColor(value:Color):Color {
+		ormColor = value;
 		batch.gbuffer.setMapInstanceColor(3, instanceID, value);
 		return value;
 	}
@@ -219,11 +220,6 @@ class Sprite extends Object {
 		indBuffer.unlock();
 
 		gbuffer = new MapPack(512, 512, 4, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
-
-		albedoColor = Color.fromFloats(0.9, 0.9, 0.9);
-		emissionColor = Color.fromFloats(0.0, 0.0, 0.0);
-		normalColor = Color.fromFloats(0.5, 0.5, 1.0);
-		ormColor = Color.fromFloats(1.0, 0.5, 0.0);
 
 		lock();
 	}
@@ -267,38 +263,75 @@ class Sprite extends Object {
 		}
 	}
 
+	public inline function set_blendMode(value:BlendMode):BlendMode {
+		blendMode = value;
+		return value;
+	}
+
+	inline function get_albedoMap() {
+		return gbuffer[0];
+	}
+
+	inline function set_albedoMap(value:Image):Image {
+		gbuffer.setMap(0, value);
+		return value;
+	}
+
+	inline function get_emissionMap() {
+		return gbuffer[1];
+	}
+
+	inline function set_emissionMap(value:Image):Image {
+		gbuffer.setMap(1, value);
+		return value;
+	}
+
+	inline function get_normalMap() {
+		return gbuffer[2];
+	}
+
+	inline function set_normalMap(value:Image):Image {
+		gbuffer.setMap(2, value);
+		return value;
+	}
+
+	inline function get_ormMap() {
+		return gbuffer[3];
+	}
+
+	inline function set_ormMap(value:Image):Image {
+		gbuffer.setMap(3, value);
+		return value;
+	}
+
 	function set_albedoColor(value:Color):Color {
-		setMapColor(albedoMap, value);
+		albedoColor = value;
+		gbuffer.setMapColor(0, value);
 		return value;
 	}
 
 	function set_emissionColor(value:Color):Color {
-		setMapColor(emissionMap, value);
+		emissionColor = value;
+		gbuffer.setMapColor(1, value);
 		return value;
 	}
 
 	function set_normalColor(value:Color):Color {
-		setMapColor(normalMap, value);
+		normalColor = value;
+		gbuffer.setMapColor(2, value);
 		return value;
 	}
 
 	function set_ormColor(value:Color):Color {
-		setMapColor(ormMap, value);
+		ormColor = value;
+		gbuffer.setMapColor(3, value);
 		return value;
-	}
-
-	inline function setMapColor(map:Image, color:Color) {
-		map.g2.begin(true, Color.Transparent);
-		map.g2.color = color;
-		map.g2.fillRect(0, 0, map.width, map.height);
-		map.g2.color = Color.White;
-		map.g2.end();
 	}
 
 	#if SUI_STAGE2D_SHADING_DEFERRED
 	public inline function drawGeometry(target:Canvas) {
 		unlock();
-		DeferredRenderer.geometry.draw(target, vertBuffer, indBuffer, [albedoMap, emissionMap, normalMap, ormMap, z, blendMode]);
+		DeferredRenderer.geometry.draw(target, vertBuffer, indBuffer, [gbuffer[0], gbuffer[1], gbuffer[2], gbuffer[3], blendMode]);
 		lock();
 	}
 	#end

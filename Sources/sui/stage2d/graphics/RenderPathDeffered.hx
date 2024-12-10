@@ -31,22 +31,23 @@ class RenderPathDeffered implements RenderPath {
 		gbuffer[0].g4.end();
 
 		target.g2.begin();
-		for (light in stage.lights) {
-			DeferredRenderer.lighting.draw(target, stage.vertices, stage.indices, [
-				gbuffer[0],
-				gbuffer[1],
-				gbuffer[2],
-				gbuffer[3],
-				light.x,
-				light.y,
-				light.z,
-				light.color.R,
-				light.color.G,
-				light.color.B,
-				light.power,
-				light.radius
-			]);
-		}
+		target.g2.drawImage(gbuffer[0], 0, 0);
+		// for (light in stage.lights) {
+		// 	DeferredRenderer.lighting.draw(target, stage.vertices, stage.indices, [
+		// 		gbuffer[0],
+		// 		gbuffer[1],
+		// 		gbuffer[2],
+		// 		gbuffer[3],
+		// 		light.x,
+		// 		light.y,
+		// 		light.z,
+		// 		light.color.R,
+		// 		light.color.G,
+		// 		light.color.B,
+		// 		light.power,
+		// 		light.radius
+		// 	]);
+		// }
 		target.g2.end();
 	}
 }
