@@ -6,24 +6,17 @@ import kha.math.FastVector2;
 @:structInit
 @:autoBuild(sui.core.macro.SUIMacro.build())
 class Object {
-	public var instanceID(get, set):Int;
-
-	function get_instanceID():Int {
-		return null;
-	}
-
-	function set_instanceID(value:Int):Int {
-		return value;
-	}
+	@:isVar public var x(default, set):FastFloat = 0.0;
+	@:isVar public var y(default, set):FastFloat = 0.0;
+	@:isVar public var z(default, set):FastFloat = 0.0;
+	public var origin:FastVector2 = {};
+	public var parent:Object = null;
+	public var children:Array<Object> = [];
 
 	public inline function new(?stage:Stage2D) {
 		if (stage != null)
 			stage.add(this);
 	}
-
-	@:isVar public var x(default, set):FastFloat = 0.0;
-	@:isVar public var y(default, set):FastFloat = 0.0;
-	@:isVar public var z(default, set):FastFloat = 0.0;
 
 	function set_x(value:FastFloat):FastFloat {
 		for (c in children)
@@ -45,11 +38,6 @@ class Object {
 		z = value;
 		return value;
 	}
-
-	public var origin:FastVector2 = {};
-
-	public var parent:Object = null;
-	public var children:Array<Object> = [];
 
 	public function rotate(angle:FastFloat) {
 		for (c in children)

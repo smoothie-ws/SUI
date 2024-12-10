@@ -13,9 +13,9 @@ import sui.stage2d.objects.Sprite;
 
 using sui.core.utils.ArrayExt;
 
-@:allow(sui.stage2d.Stage2D)
-@:allow(sui.stage2d.objects.Sprite)
+@:allow(sui.stage2d.Stage2D, sui.stage2d.objects.Sprite, sui.stage2d.graphics.RenderPath)
 class SpriteBatch {
+	#if (SUI_STAGE2D_BATCHING)
 	@readonly public var sprites:Array<Sprite> = [];
 	public var shadowVerts(get, never):Array<FastVector3>;
 	@readonly public var gbuffer:MapBatch = new MapBatch(512, 4);
@@ -73,6 +73,7 @@ class SpriteBatch {
 		for (i in 0...vertData?.length)
 			vert[i] = vertData[i];
 
+		// init sprite UV
 		vert[vertOffset + 3] = 0;
 		vert[vertOffset + 4] = 0;
 
@@ -101,6 +102,7 @@ class SpriteBatch {
 		indData = ind;
 	}
 
+	#if SUI_STAGE2D_SHADING_DEFERRED
 	inline function drawGeometry(target:Canvas) {
 		unlock();
 		DeferredRenderer.geometry.draw(target, vertices, indices, [
@@ -114,4 +116,6 @@ class SpriteBatch {
 		]);
 		lock();
 	}
+	#end
+	#end
 }
