@@ -36,12 +36,12 @@ class Stage2D extends DrawableElement {
 	public function new(scene:Scene) {
 		super(scene);
 
+		backbuffer = Image.createRenderTarget(1, 1, RGBA32, DepthOnly);
 		#if SUI_STAGE2D_SHADING_DEFERRED
 		renderPath = new RenderPathDeffered(this);
-		#end
-		backbuffer = Image.createRenderTarget(1, 1, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
-
 		vertices = new VertexBuffer(4, DeferredRenderer.lighting.structure, StaticUsage);
+		#end
+
 		var vert = vertices.lock();
 		vert[0] = -1;
 		vert[1] = -1;
@@ -114,7 +114,9 @@ class Stage2D extends DrawableElement {
 
 	override inline function draw(target:Canvas) {
 		target.g2.end();
+
 		renderPath.render(backbuffer);
+
 		target.g2.begin(false);
 		target.g2.drawScaledImage(backbuffer, x, y, width, height);
 	}

@@ -41,7 +41,7 @@ class Scene extends DrawableElement {
 
 	public inline function createBackbuffer(w:Int, h:Int) {
 		resolution = w > h ? w : h;
-		backbuffer = Image.createRenderTarget(resolution, resolution, null, NoDepthAndStencil, SUI.options.samplesPerPixel);
+		backbuffer = Image.createRenderTarget(resolution, resolution, null, NoDepthAndStencil);
 	}
 
 	public inline function update() {};

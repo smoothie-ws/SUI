@@ -33,33 +33,25 @@ class SpriteBatch {
 
 	@readonly var blendModeArr:Uint32Array = new Uint32Array(64);
 
-	@readonly var vertData:Float32Array;
-	@readonly var indData:Uint32Array;
 	@readonly var vertices:VertexBuffer;
 	@readonly var indices:IndexBuffer;
 
-	public inline function new() {}
-
-	inline function lock() {
-		vertData = vertices.lock();
-	}
-
-	inline function unlock() {
-		vertices.unlock();
-	}
+	public function new() {}
 
 	inline function add(sprite:Sprite) {
-		sprite.batch = this;
-		sprites.push(sprite);
-
 		var vertCount = 0;
+		var vertData:Float32Array = null;
+		var indData:Uint32Array = null;
+
 		if (vertices != null) {
 			vertCount = vertices.count();
+			vertData = vertices.lock();
 			vertices.delete();
 		}
 		var indCount = 0;
 		if (indices != null) {
 			indCount = indices.count();
+			indData = indices.lock();
 			indices.delete();
 		}
 		var vertOffset = vertCount * DeferredRenderer.geometry.structSize;
@@ -73,17 +65,16 @@ class SpriteBatch {
 			vert[i] = vertData[i];
 
 		// init sprite UV
-		vert[vertOffset + 3] = 0;
-		vert[vertOffset + 4] = 0;
+		for (i in 0...4) {
+			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
 
-		vert[vertOffset + 8] = 0;
-		vert[vertOffset + 9] = 1;
-
-		vert[vertOffset + 13] = 1;
-		vert[vertOffset + 14] = 1;
-
-		vert[vertOffset + 18] = 1;
-		vert[vertOffset + 19] = 0;
+			vert[offset + 0] = 0; // X
+			vert[offset + 1] = 0; // Y
+			vert[offset + 2] = 0; // Z
+			vert[offset + 3] = 0; // I
+			vert[offset + 4] = i == 2 || i == 3 ? 1 : 0; // U
+			vert[offset + 5] = i == 1 || i == 2 ? 1 : 0; // V
+		}
 
 		var ind = indices.lock();
 		for (i in 0...indData?.length)
@@ -97,22 +88,13 @@ class SpriteBatch {
 		ind[indCount + 5] = vertCount + 3;
 		indices.unlock();
 
-		vertData = vert;
-		indData = ind;
+		sprite.batch = this;
+		sprites.push(sprite);
 	}
 
 	#if SUI_STAGE2D_SHADING_DEFERRED
 	inline function drawGeometry(target:Canvas) {
-		unlock();
-		DeferredRenderer.geometry.draw(target, vertices, indices, [
-			gbuffer[0],
-			gbuffer[1],
-			gbuffer[2],
-			gbuffer[3],
-			gbuffer.packsCount,
-			blendModeArr
-		]);
-		lock();
+		DeferredRenderer.geometry.draw(target, vertices, indices, [gbuffer[0], gbuffer[1], gbuffer[2], gbuffer[3], gbuffer.packsCount, blendModeArr]);
 	}
 	#end
 	#end

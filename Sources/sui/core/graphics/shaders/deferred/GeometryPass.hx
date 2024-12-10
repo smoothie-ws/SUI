@@ -21,7 +21,11 @@ class GeometryPass extends Shader2D {
 
 	override inline function initStructure() {
 		structure = new VertexStructure();
+		#if SUI_STAGE2D_BATCHING
 		structure.add("vertData", VertexData.Float32_4X);
+		#else
+		structure.add("vertPos", VertexData.Float32_3X);
+		#end
 		structure.add("vertUV", VertexData.Float32_2X);
 	}
 

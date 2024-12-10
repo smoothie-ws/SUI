@@ -26,6 +26,6 @@ project.addDefine("SUI_STAGE2D_SHADING_DEFERRED");
 // project.addDefine('SUI_STAGE2D_SHADING_MIXED');
 
 // --> Misc
-project.addDefine("SUI_STAGE2D_BATCHING");
+// project.addDefine("SUI_STAGE2D_BATCHING");
 
 resolve(project);

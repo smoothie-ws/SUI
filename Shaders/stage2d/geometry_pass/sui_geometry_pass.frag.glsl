@@ -1,7 +1,5 @@
 #version 450
 
-#define BATCH_SIZE 64
-
 uniform sampler2D albedoMap;
 uniform sampler2D emissionMap;
 uniform sampler2D normalMap;

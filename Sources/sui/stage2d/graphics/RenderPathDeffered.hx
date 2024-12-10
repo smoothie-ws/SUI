@@ -11,7 +11,8 @@ class RenderPathDeffered implements RenderPath {
 
 	public inline function new(stage:Stage2D) {
 		this.stage = stage;
-		gbuffer = new MapPack(1, 1, 4, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
+
+		gbuffer = new MapPack(1, 1, 4);
 	}
 
 	inline function resize(width:Int, height:Int) {
@@ -31,23 +32,22 @@ class RenderPathDeffered implements RenderPath {
 		gbuffer[0].g4.end();
 
 		target.g2.begin();
-		target.g2.drawImage(gbuffer[0], 0, 0);
-		// for (light in stage.lights) {
-		// 	DeferredRenderer.lighting.draw(target, stage.vertices, stage.indices, [
-		// 		gbuffer[0],
-		// 		gbuffer[1],
-		// 		gbuffer[2],
-		// 		gbuffer[3],
-		// 		light.x,
-		// 		light.y,
-		// 		light.z,
-		// 		light.color.R,
-		// 		light.color.G,
-		// 		light.color.B,
-		// 		light.power,
-		// 		light.radius
-		// 	]);
-		// }
+		for (light in stage.lights) {
+			DeferredRenderer.lighting.draw(target, stage.vertices, stage.indices, [
+				gbuffer[0],
+				gbuffer[1],
+				gbuffer[2],
+				gbuffer[3],
+				light.x,
+				light.y,
+				light.z,
+				light.color.R,
+				light.color.G,
+				light.color.B,
+				light.power,
+				light.radius
+			]);
+		}
 		target.g2.end();
 	}
 }

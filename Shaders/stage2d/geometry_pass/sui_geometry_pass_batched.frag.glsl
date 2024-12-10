@@ -31,6 +31,4 @@ void main() {
     emissionColor.a = albedoColor.a;
     normalColor.a = albedoColor.a;
     ormColor.a = albedoColor.a;
-
-    albedoColor = vec4(fragCoord, 0.0, 1.0);
 }

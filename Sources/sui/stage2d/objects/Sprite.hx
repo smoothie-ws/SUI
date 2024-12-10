@@ -4,20 +4,15 @@ import kha.Image;
 import kha.Color;
 import kha.FastFloat;
 import kha.math.FastVector2;
-#if (!SUI_STAGE2D_BATCHING)
 import kha.Canvas;
 import kha.arrays.Float32Array;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.IndexBuffer;
-#end
 // sui
 import sui.core.graphics.DeferredRenderer;
 import sui.stage2d.graphics.BlendMode;
-#if SUI_STAGE2D_BATCHING
 import sui.stage2d.batches.SpriteBatch;
-#else
 import sui.stage2d.graphics.MapPack;
-#end
 
 @:structInit
 @:allow(sui.stage2d.Stage2D, sui.stage2d.batches.SpriteBatch)
@@ -39,20 +34,6 @@ class Sprite extends Object {
 
 	public var vertices(get, set):Array<FastVector2>;
 	public var centerPoint(get, never):FastVector2;
-
-	public inline function get_vertices():Array<FastVector2> {
-		var v = [];
-		for (i in 0...4)
-			v.push(getVertex(i));
-		return v;
-	}
-
-	public inline function set_vertices(v:Array<FastVector2>):Array<FastVector2> {
-		if (v.length == 4)
-			for (i in 0...4)
-				setVertex(i, v[i]);
-		return v;
-	}
 
 	inline function get_centerPoint():FastVector2 {
 		var c:FastVector2 = {};
@@ -77,18 +58,49 @@ class Sprite extends Object {
 	}
 
 	inline function get_instanceID():Int {
-		return Std.int(batch.vertData[vertOffset + 2]);
+		var vertData = batch.vertices.lock();
+		var _id = Std.int(vertData[vertOffset + 2]);
+		batch.vertices.unlock();
+		return _id;
 	}
 
 	inline function set_instanceID(value:Int):Int {
+		var vertData = batch.vertices.lock();
 		for (i in 0...4) {
 			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
-			batch.vertData[offset + 2] = value;
+			vertData[offset + 2] = value;
 		}
 		if (value >= batch.gbuffer.packsCount)
 			batch.gbuffer.extend();
+		batch.vertices.unlock();
 
 		return value;
+	}
+
+	public inline function get_vertices():Array<FastVector2> {
+		var v = new Array<FastVector2>();
+		var vertData = batch.vertices.lock();
+		for (i in 0...4) {
+			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
+			v.push({
+				x: vertData[offset + 0],
+				y: vertData[offset + 1],
+			});
+		}
+		batch.vertices.unlock();
+		return v;
+	}
+
+	public inline function set_vertices(v:Array<FastVector2>):Array<FastVector2> {
+		var vertData = batch.vertices.lock();
+		if (v.length == 4)
+			for (i in 0...4) {
+				var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
+				vertData[offset + 0] = v[i].x;
+				vertData[offset + 1] = v[i].y;
+			}
+		batch.vertices.unlock();
+		return v;
 	}
 
 	public inline function set_blendMode(value:BlendMode):BlendMode {
@@ -99,40 +111,32 @@ class Sprite extends Object {
 
 	override inline function scale(x:FastFloat, y:FastFloat) {
 		var c = centerPoint;
+		var vertData = batch.vertices.lock();
 		for (i in 0...4) {
 			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
-			batch.vertData[offset + 0] = (batch.vertData[offset + 0] - c.x) * x + c.x;
-			batch.vertData[offset + 1] = (batch.vertData[offset + 1] - c.y) * y + c.y;
+			vertData[offset + 0] = (vertData[offset + 0] - c.x) * x + c.x;
+			vertData[offset + 1] = (vertData[offset + 1] - c.y) * y + c.y;
 		}
+		batch.vertices.unlock();
 	}
 
 	override inline function translate(x:FastFloat, y:FastFloat) {
+		var vertData = batch.vertices.lock();
 		for (i in 0...4) {
 			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
-			batch.vertData[offset + 0] += x;
-			batch.vertData[offset + 1] += y;
+			vertData[offset + 0] += x;
+			vertData[offset + 1] += y;
 		}
-	}
-
-	public inline function getVertex(i:Int):FastVector2 {
-		var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
-		return {
-			x: batch.vertData[offset + 0],
-			y: batch.vertData[offset + 1],
-		}
-	}
-
-	public inline function setVertex(i:Int, vertex:FastVector2) {
-		var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
-		batch.vertData[offset + 0] = vertex.x;
-		batch.vertData[offset + 1] = vertex.y;
+		batch.vertices.unlock();
 	}
 
 	override inline function set_z(value:FastFloat):FastFloat {
+		var vertData = batch.vertices.lock();
 		for (i in 0...4) {
 			var offset = vertOffset + i * DeferredRenderer.geometry.structSize;
-			batch.vertData[offset + 2] = value;
+			vertData[offset + 2] = value;
 		}
+		batch.vertices.unlock();
 
 		for (c in children)
 			c.z += value - z;
@@ -200,15 +204,28 @@ class Sprite extends Object {
 		return value;
 	}
 	#else
-	var gbuffer:MapPack;
+	public var gbuffer:MapPack;
+
 	var vertBuffer:VertexBuffer;
 	var indBuffer:IndexBuffer;
 
-	@readonly public var vertData:Float32Array;
-
 	public inline function new(stage:Stage2D) {
 		super(stage);
+
 		vertBuffer = new VertexBuffer(4, DeferredRenderer.geometry.structure, StaticUsage);
+
+		var vertData = vertBuffer.lock();
+		for (i in 0...4) {
+			var offset = i * DeferredRenderer.geometry.structSize;
+
+			vertData[offset + 0] = 0; // X
+			vertData[offset + 1] = 0; // Y
+			vertData[offset + 2] = 0; // Z
+			vertData[offset + 3] = i == 2 || i == 3 ? 1 : 0; // U
+			vertData[offset + 4] = i == 1 || i == 2 ? 1 : 0; // V
+		}
+		vertBuffer.unlock();
+
 		indBuffer = new IndexBuffer(6, StaticUsage);
 		var ind = indBuffer.lock();
 		ind[0] = 0;
@@ -219,48 +236,54 @@ class Sprite extends Object {
 		ind[5] = 0;
 		indBuffer.unlock();
 
-		gbuffer = new MapPack(512, 512, 4, RGBA32, DepthOnly, SUI.options.samplesPerPixel);
-
-		lock();
+		gbuffer = new MapPack(512, 512, 4);
 	}
 
-	inline function lock() {
-		vertData = vertBuffer.lock();
-	}
-
-	inline function unlock() {
-		vertBuffer.unlock();
-	}
-
-	public inline function getVertex(i:Int):FastVector2 {
-		var offset = i * DeferredRenderer.geometry.structSize;
-		return {
-			x: vertData[offset + 0],
-			y: vertData[offset + 1],
+	public inline function get_vertices():Array<FastVector2> {
+		var v = new Array<FastVector2>();
+		var vertData = vertBuffer.lock();
+		for (i in 0...4) {
+			var offset = i * DeferredRenderer.geometry.structSize;
+			v.push({
+				x: vertData[offset + 0],
+				y: vertData[offset + 1],
+			});
 		}
+		vertBuffer.unlock();
+		return v;
 	}
 
-	public inline function setVertex(i:Int, vertex:FastVector2) {
-		var offset = i * DeferredRenderer.geometry.structSize;
-		vertData[offset + 0] = vertex.x;
-		vertData[offset + 1] = vertex.y;
+	public inline function set_vertices(v:Array<FastVector2>):Array<FastVector2> {
+		var vertData = vertBuffer.lock();
+		if (v.length == 4)
+			for (i in 0...4) {
+				var offset = i * DeferredRenderer.geometry.structSize;
+				vertData[offset + 0] = v[i].x;
+				vertData[offset + 1] = v[i].y;
+			}
+		vertBuffer.unlock();
+		return v;
 	}
 
 	override inline function scale(x:FastFloat, y:FastFloat) {
+		var vertData = vertBuffer.lock();
 		var c = centerPoint;
 		for (i in 0...4) {
 			var offset = i * DeferredRenderer.geometry.structSize;
 			vertData[offset + 0] = (vertData[offset + 0] - c.x) * x + c.x;
 			vertData[offset + 1] = (vertData[offset + 1] - c.y) * y + c.y;
 		}
+		vertBuffer.unlock();
 	}
 
 	override inline function translate(x:FastFloat, y:FastFloat) {
+		var vertData = vertBuffer.lock();
 		for (i in 0...4) {
 			var offset = i * DeferredRenderer.geometry.structSize;
 			vertData[offset + 0] += x;
 			vertData[offset + 1] += y;
 		}
+		vertBuffer.unlock();
 	}
 
 	public inline function set_blendMode(value:BlendMode):BlendMode {
@@ -330,9 +353,7 @@ class Sprite extends Object {
 
 	#if SUI_STAGE2D_SHADING_DEFERRED
 	public inline function drawGeometry(target:Canvas) {
-		unlock();
 		DeferredRenderer.geometry.draw(target, vertBuffer, indBuffer, [gbuffer[0], gbuffer[1], gbuffer[2], gbuffer[3], blendMode]);
-		lock();
 	}
 	#end
 	#end
